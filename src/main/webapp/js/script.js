@@ -1,4 +1,4 @@
-var app = angular.module('influx', [ 'ngAnimate', 'ui.grid', 'ui.grid.moveColumns', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.bootstrap', 'ui.grid.edit', 'ui.grid.pagination' ])
+var app = angular.module('influx', ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.pinning', 'ui.grid.moveColumns', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.bootstrap', 'ui.grid.edit', 'ui.grid.pagination' ])
 
 app.controller('MainCtrl', MainCtrl);
 app.controller('RowEditCtrl', RowEditCtrl);
@@ -15,7 +15,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
 	var vm = this;
     vm.resultMessage;
 	vm.editRow = RowEditor.editRow;
-    vm.numberOfItemsOnPage = 8;
+    vm.numberOfItemsOnPage = 10;
     var urlGetNumberOfParts = '/api/part/number';
     // var totalItems = 0;
     var currentPageNumber = 0;
@@ -29,7 +29,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
 		enableFiltering : true,
 		enableGridMenu : false,
         paginationPageSize: vm.numberOfItemsOnPage,
-
+        enableHorizontalScrollbar: true,
+        enableVerticalScrollbar: false,
+        // excessColumns: 10,
+        minRowsToShow: 11,
 
         enableFiltering: true,
 
@@ -39,7 +42,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         showGridFooter: true,
         // gridFooterTemplate: "<button ng-click='edit-button.html'> Add Part </button>",
         gridFooterTemplate: "<button ng-click='grid.appScope.addRow()' align='left'> Add Part </button>",
-		rowTemplate : "<div ng-dblclick=\"grid.appScope.vm.editRow(grid, row)\" ng-repeat=\"(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name\" class=\"ui-grid-cell\" ng-class=\"{ 'ui-grid-row-header-cell': col.isRowHeader }\" ui-grid-cell></div>"
+		/*rowTemplate : "<div ng-dblclick=\"grid.appScope.vm.editRow(grid, row)\" ng-repeat=\"(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name\" class=\"ui-grid-cell\" ng-class=\"{ 'ui-grid-row-header-cell': col.isRowHeader }\" ui-grid-cell></div>"*/
+		rowTemlate : "ng-class='ui-grid-row-header-cell'"
 	};
 
     vm.serviceGrid.onRegisterApi= function (gridApi) {
@@ -68,20 +72,23 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     };
 
 	vm.serviceGrid.columnDefs = [
-        {name: 'id', displayName: "ID", width: '5%', enableCellEdit: false},
+        {name: 'id', displayName: "ID", width: '5%', enableCellEdit: false , pinnedRight:true},
         {
-            name: 'component', displayName: "Наименование", width: '60%', enableCellEdit: true,
+            name: 'component', displayName: "Наименование", width: '70%', enableCellEdit: true, pinnedRight:true,
             cellTooltip: function (row) {
                 return row.entity.title;
             },
             cellTemplate: '<div  style="text-align:left" white-space: normal title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'
         },
-        {name: 'quantity', displayName: "Количество", width: '10%', enableCellEdit: true, type: 'number'},
-        {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: true, type: 'boolean'},
+        {name: 'quantity', displayName: "Количество", width: '10%', enableCellEdit: true, type: 'number', pinnedRight:true},
+        {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: true, type: 'boolean', pinnedRight:true},
         {
             name: ' ',
             width: '5%',
+            pinnedRight:true,
             enableCellEdit: false,
+            enableFiltering: false,
+            enableSorting: false,
             cellTemplate: /*'<button class="btn primary" ng-click="grid.appScope.myclick()">Delete</button>'*/
             '<button class="glyphicon glyphicon-remove"' +
             /*' ng-click="grid.appScope.getDeletePart(row.entity.id).onClick(row.entity.id)">' +*/
@@ -90,6 +97,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         },
         {
             name: '  ',
+            visible: true,
+            pinnedRight:true,
             width: '5%',
             enableCellEdit: false,
             enableFiltering: false,

@@ -2,40 +2,47 @@
 <html>
 
 <head>
-<link rel="styleSheet" href="http://ui-grid.info/release/ui-grid.min.css" />
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular-animate.min.js"></script>
-<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular-touch.min.js"></script>
-<script src="http://ui-grid.info/release/ui-grid.js"></script>
-<script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.4.js"></script>
+    <link rel="styleSheet" href="http://ui-grid.info/release/ui-grid.min.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular-animate.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular-touch.min.js"></script>
+    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.6.6/ui-grid.pinning.min.js"></script>-->
+    <script src="http://ui-grid.info/release/ui-grid.js"></script>
+    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.4.js"></script>
 
-<script src="/js/script.js"></script>
-	<meta charset="utf-8">
+
+
+    <script src="/js/script.js"></script>
+    <meta charset="utf-8">
 
 </head>
 
 <body ng-app="influx">
 
-	<div ng-controller="MainCtrl as vm" align="center">
-		<div style="padding-left: 10px;">
-			<button type="button" id="addRow" class="btn btn-success" ng-click="addRow()">Add Row</button>
-		</div>
-		<br /><!--ui-grid-move-columns
+<div ng-controller="MainCtrl as vm" align="center">
+    <div style="padding-left: 10px;">
+        <button type="button" id="addRow" class="btn btn-success" ng-click="addRow()">Add Row</button>
+    </div>
+    <br/><!--ui-grid-move-columns
 		ui-grid-resize-columns
 		ui-grid-pinning
 		ui-grid-exporter
 		ui-grid-auto-resize-->
-		<ui-grid-pagination class="grid" id="serviceGrid"
-							ui-grid-cellNav
-							ui-grid-selection
-							ui-grid-edit
-							style="width:150vh"
-							ui-grid="vm.serviceGrid" >
+    <ui-grid-pagination class="grid" id="serviceGrid"
 
-		</ui-grid-pagination>
-	</div>
-	
+                        ui-grid-auto-resize
+                        ui-grid-cellNav
+                        ui-grid-selection
+                        ui-grid-edit
+                        ui-grid-pinning
+                        style="width:50%"
+                        ui-grid="vm.serviceGrid">
+
+    </ui-grid-pagination>
+</div>
+
 </body>
 
 </html>
