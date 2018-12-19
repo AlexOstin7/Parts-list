@@ -1,0 +1,42 @@
+[ui-grid-row] {
+    display: table-row;
+}
+
+.ui-grid-row, .ui-grid-cell {
+    height: auto!important;
+}
+
+.ui-grid-cell {
+    float: none;
+    display: table-cell;
+}
+
+.ui-grid-header-cell, .ui-grid-cell-contents {
+    white-space: normal;
+    padding: 2px;
+    /*word-break: break-word;*/
+}
+.fonts {
+    font-size: 16px;
+    line-height: 1.5;
+}
+.btn-lg {
+    margin-bottom: 30px;
+}
+h1, h2, h3 {
+    padding-bottom: 10px;
+}
+.main {
+    margin-top: 100px;
+}
+.main-btn {
+    margin-top: 15px;
+}
+/*
+.grid {
+    width: 500px;
+    height: 400px;
+}*/
+
+
+

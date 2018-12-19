@@ -1,0 +1,126 @@
+<!DOCTYPE HTML>
+<html lang="ru" xmlns:word-wrap="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Persons CRUD</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/main.css">
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/jquery.min.js"></script>
+
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.7.0/angular-touch.js"></script>
+
+    <!-- <script src="js/angularjs/1.6.4/angular.min.js"></script>-->
+    <script src="/js/angularApp.js"></script>
+    <!-- <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js"></script>
+     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>-->
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.js"></script>-->
+    <link rel="stylesheet" href="https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.css">
+    <!--<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.6/angular.min.js"></script>-->
+    <!-- <script src="https://cdn.rawgit.com/angular-ui/bower-ui-grid/master/ui-grid.min.js"></script>-->
+    <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.6.3/ui-grid.js"></script>-->
+
+    <script src="http://ui-grid.info/release/ui-grid.js"></script>
+    <link rel="stylesheet" href="http://ui-grid.info/release/ui-grid.css" type="text/css">
+    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.4.js"></script>
+    <script src="https://cdn.rawgit.com/Textalk/angular-schema-form/0.8.0/dist/schema-form.js"></script>
+
+    </head>
+
+<div class="fonts">
+
+    <div class="container" ng-app="app">
+        <!--<h1>AngularJS - Spring JPA - MySQL</h1>
+        <div class="row">
+            <div ng-controller="postController" class="col-md-3">
+                <form name="customerForm" ng-submit="submitForm()">
+                    <label>Name</label>
+                    <input type="text" name="title" class="form-control" ng-model="name"/>
+                    <label>FullName</label>
+                    <input type="text" name="fullName" class="form-control" ng-model="fullName"/>
+                    <label>Inn</label>
+                    <input type="text" name="inn" class="form-control" ng-model="inn"/>
+                    <label>Kpp</label>
+                    <input type="text" name="kpp" class="form-control" ng-model="kpp"/>
+                    <label>Address</label>
+                    <input type="text" name="address" class="form-control" ng-model="address"/>
+                    <label>Phone</label>
+                    <input type="text" name="phone" class="form-control" ng-model="phone"/>
+                    <label>isActive</label>
+                    <input type="text" name="isActive" class="form-control" ng-model="isActive"/>
+
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+                <p>{{postResultMessage}}</p>
+            </div>
+        </div>
+        <div class="row">-->
+
+        <div ng-controller="MainCtrl as vm" class="col-md-3">
+            <div style="padding-left: 30px;">
+                <button type="button" id="addRow" class="btn btn-success" ng-click="addRow()">Add Row</button>
+            </div>
+            <p>{{title}}</p>
+            <p><strong>Result:</strong> {{resultMessage}}</p>
+            <strong>Last Cell Edited:</strong> {{vm.msg.lastCellEdited}}
+            <!--style="width:90vh"-->
+            <div class="grid" id="grd"
+                 ui-grid="gridOptions" ui-grid-edit ui-grid-selection ui-grid-cellNav style="width:200vh; height: 90vh"
+
+                 ui-grid-pagination>
+
+            </div>
+        </div>
+
+    </div>
+    <div class="row">
+
+        <div ng-controller="getAllBooksController" class="col-md-3">
+            <h3>All Books</h3>
+
+            <button ng-click="getAllBooks()">Get All Books</button>
+            <button ng-click="my()">Paging 1 All Books</button>
+            <div ng-show="showAllBooks">
+                <table class="table table-striped">
+                    <thead>
+                    <tr>
+                        <th>Edit</th>
+                        <th>№</th>
+                        <th>Id</th>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Autor</th>
+                        <th>Isbn</th>
+                        <th>Print year</th>
+                        <th>Already Read</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr ng-repeat="part in allBooks.data">
+                        <td>
+                            <button class="btn" ng-click="editUser(user.id)">
+                                <span class="glyphicon glyphicon-pencil"></span>  Edit
+                            </button>
+                        </td>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ part.id }}</td>
+                        <td>{{ part.title }}</td>
+                        <td>{{ part.description }}</td>
+                        <td>{{ part.author }}</td>
+                        <td>{{ part.isbn }}</td>
+                        <td>{{ part.printYear }}</td>
+                        <td>{{ part.readAlready }}</td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <p>{{getResultMessage}}</p>
+        </div>
+
+    </div>
+
+</div>
+</div>
+</html>

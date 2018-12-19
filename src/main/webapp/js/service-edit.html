@@ -1,0 +1,44 @@
+<div>
+  <div class="modal-header">
+      <h3 class="modal-title">Edit Book</h3>
+  </div>
+  <div class="modal-body">
+    
+    <form name="serviceForm">
+	<div class="block">
+  		<label>id</label>
+  		<input class="input" type="text" disabled value="{{vm.entity.id}}" />
+	</div>
+	<div class="block">
+  		<label>title</label>
+  		<input class="input" type="text" ng-model="vm.entity.title"/>
+	</div>
+	<div class="block">
+  		<label>description</label>
+  		<input class="input" type="text" ng-model="vm.entity.description"/>
+	</div>
+	<div class="block">
+  		<label>author</label>
+  		<input class="input" type="text" ng-model="vm.entity.author"/>
+	</div>
+	<div class="block">
+  		<label>isbn</label>
+  		<input class="input" type="text" ng-model="vm.entity.isbn"/>
+	</div>
+	<div class="block">
+  		<label>printYear</label>
+  		<input class="input" type="text" ng-model="vm.entity.printYear"/>
+	</div>
+	<div class="block">
+  		<label>readAlready</label>
+  		<input class="input" type="text" ng-model="vm.entity.readAlready"/>
+	</div>
+	</form>
+	
+  </div>
+  <div class="modal-footer">
+      <button class="btn btn-primary" ng-click="vm.save()">Save</button>
+      <button class="btn btn-primary" ng-click="vm.remove()">Delete</button>
+      <button class="btn btn-primary" ng-click="$close()">Cancel</button>
+  </div>
+</div>

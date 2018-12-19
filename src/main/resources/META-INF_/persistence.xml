@@ -1,0 +1,41 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+    <class name="project.model" table="Book">
+        <id name="id" type="java.lang.Long">
+            <column name="Id" />
+            <generator class="identity" />
+        </id>
+	<property name="version" type="Integer">
+            <column name="version"  not-null="true" />
+        </property>
+        <property name="name" type="String">
+            <column name="name" not-null="true" />
+        </property>
+        <property name="fullName" type="String">
+            <column name="fullName"  not-null="true" />
+        </property>
+        <property name="inn" type="Integer">
+            <column name="inn" length="255" not-null="true" />
+        </property>
+        <property name="kpp" type="Integer">
+            <column name="kpp" not-null="true" />
+        </property>
+	<property name="phone" type="Integer">
+            <column name="phone" not-null="true" />
+        </property>
+	<property name="isActive" type="Boolean">
+            <column name="isActive" not-null="true" />
+        </property>
+	<set name="Book" table="Book"
+				inverse="true" lazy="true" fetch="select">
+            <key>
+                <column name="Id" not-null="true" />
+            </key>
+            <one-to-many class="project.model" />
+        </set>
+    </class>
+
+</hibernate-mapping>
