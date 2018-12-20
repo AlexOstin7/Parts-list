@@ -18,7 +18,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     vm.numberOfItemsOnPage = 10;
     var urlGetNumberOfParts = '/api/part/number';
     // var totalItems = 0;
-    var currentPageNumber = 1;
+    vm.currentPageNumber = 1;
     // var totalPage = Math.ceil(vm.serviceGrid.totalItems / numberOfItemsOnPage);
 	vm.serviceGrid = {
         paginationPageSizes: [vm.numberOfItemsOnPage, vm.numberOfItemsOnPage * 2, vm.numberOfItemsOnPage * 3],
@@ -52,14 +52,14 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     vm.serviceGrid.onRegisterApi= function (gridApi) {
         $scope.gridApi = gridApi;
         console.log("onRegisterApi  ", vm.serviceGrid.totalItems);
-        getCurrentPage(currentPageNumber -1, vm.serviceGrid.paginationPageSize);
+        getCurrentPage(vm.currentPageNumber -1, vm.serviceGrid.paginationPageSize);
         getNubmberOfElements();
         /*vm.gridApi = gridApi;*/
         gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
             // alert("Hello! I am an alert box!");
-            currentPageNumber = newPage;
+            vm.currentPageNumber = newPage;
             vm.numberOfItemsOnPage = pageSize;
-            getCurrentPage(currentPageNumber - 1, pageSize);
+            getCurrentPage(vm.currentPageNumber - 1, pageSize);
 
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.pageSize ", pageSize);
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.totalItems ", vm.serviceGrid.totalItems);
@@ -155,11 +155,11 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
                 if (response.data.result == "success") {
                     console.log("delete success ", response.data);
                     var index = vm.serviceGrid.data.indexOf(row.entity);
-                    console.log("delete catch  gridOptionsNumber ", currentPageNumber, " index ", index);
+                    console.log("delete catch  gridOptionsNumber ", vm.currentPageNumber, " index ", index);
                     // $scope.gridOptions.data.splice(index, 1);
-                    console.log("cur page", currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
+                    console.log("cur page", vm.currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
                     console.log("newPage ", newPage, " pageSize ", pageSize);
-                     getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
+                     $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
                     //  getCurrentPage(newPage, pageSize);
                     // getNubmberOfElements();
                     console.log("vm.serviceGrid.totalItems", vm.serviceGrid.totalItems);
@@ -193,7 +193,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
 		rowTmp.entity = newService;
 		vm.editRow(vm.serviceGrid, rowTmp);
 		console.log("add row ", newService, " service ", vm.serviceGrid);
-		// getCurrentPage(newPage, pageSize);
+         // getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
 	};
 
 }
@@ -232,8 +232,9 @@ function RowEditCtrl($http, $modalInstance, grid, row) {
 		if (row.entity.id == '0') {
 			console.log("rowEditCtrel row.entity", row.entity);
             row.entity = angular.extend(row.entity, vm.entity);
-            // grid.data.push(row.entity);
+             // grid.data.push(row.entity);
             console.log("rowEditCtrel row.entity after", row.entity);
+            console.log("grid data ", grid.data, " grid ", grid);
             var data = {
                 component: row.entity.component,
                 quantity: row.entity.quantity,
@@ -244,6 +245,11 @@ function RowEditCtrl($http, $modalInstance, grid, row) {
                     vm.resultMessage = response.data.result;
                     vm.totalItems=1;
                     $modalInstance.close(row.entity);
+                    //console.log("Mainctrel" , MainCtrl);
+                    // grid.vm.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
+                    grid.totalItems+=1;
+                    grid.paginationCurrentPage = Math.ceil(grid.totalItems / grid.paginationPageSize);
+                    grid.data.push(row.entity);
                 } else {
                     vm.resultMessage = response.data.error;
                 }
