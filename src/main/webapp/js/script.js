@@ -31,7 +31,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         paginationPageSize: vm.numberOfItemsOnPage,
         enableHorizontalScrollbar: true,
         enableVerticalScrollbar: true,
-        // excessColumns: 10,
+         // excessColumns: 10,
+
         minRowsToShow: 12,
 
         enableFiltering: true,
@@ -57,10 +58,13 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
             // alert("Hello! I am an alert box!");
             currentPageNumber = newPage;
+            vm.numberOfItemsOnPage = pageSize;
             getCurrentPage(currentPageNumber - 1, pageSize);
+
+            console.log("getNumberOfParts paginationChanged vm.serviceGrid.pageSize ", pageSize);
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.totalItems ", vm.serviceGrid.totalItems);
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.numberOfItemsOnPage ", vm.numberOfItemsOnPage);
-            vm.serviceGrid.totalPage = Math.ceil(vm.serviceGrid.totalItems / vm.numberOfItemsOnPage);
+            vm.serviceGrid.totalPage = Math.ceil(vm.serviceGrid.totalItems / pageSize);
             console.log("Received: pageNumber=" + newPage + ", pageSize= " + pageSize, " total pages ", vm.serviceGrid.totalPage);
         });
         vm.msg = {};
@@ -74,20 +78,19 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     };
 
 	vm.serviceGrid.columnDefs = [
-        {name: 'id', displayName: "ID", width: '5%', enableCellEdit: false , pinnedRight:true},
+        {name: 'id', displayName: "ID", width: '5%', enableCellEdit: false},
         {
-            name: 'component', displayName: "Наименование", width: '65%', enableCellEdit: true, pinnedRight:true,
+            name: 'component', displayName: "Наименование", width: '65%', enableCellEdit: true,
             cellTooltip: function (row) {
                 return row.entity.title;
             },
             cellTemplate: '<div  style="text-align:left" white-space: normal title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'
         },
-        {name: 'quantity', displayName: "Количество", width: '10%', enableCellEdit: true, type: 'number', pinnedRight:true},
-        {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: true, type: 'boolean', pinnedRight:true},
+        {name: 'quantity', displayName: "Количество", width: '10%', enableCellEdit: true, type: 'number'},
+        {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: true, type: 'boolean'},
         {
             name: ' ',
             width: '5%',
-            pinnedRight:true,
             enableCellEdit: false,
             enableFiltering: false,
             enableSorting: false,
@@ -100,7 +103,6 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         {
             name: '  ',
             visible: true,
-            pinnedRight:true,
             width: '10%',
             enableCellEdit: false,
             enableFiltering: false,
@@ -144,6 +146,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     $scope.getDeletePart = function (row, newPage, pageSize) {
         var url = '/api/part/delete/' + row.entity.id;
         console.log("delete id", row.entity.id);
+        console.log("newPage ", newPage, " pageSize ", pageSize);
         $http.get(url, config)
             .then(function (response) {
                 // handleResult(result.value);
@@ -155,8 +158,14 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
                     console.log("delete catch  gridOptionsNumber ", currentPageNumber, " index ", index);
                     // $scope.gridOptions.data.splice(index, 1);
                     console.log("cur page", currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
-                    getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
-                    getNubmberOfElements();
+                    console.log("newPage ", newPage, " pageSize ", pageSize);
+                     getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
+                    //  getCurrentPage(newPage, pageSize);
+                    // getNubmberOfElements();
+                    console.log("vm.serviceGrid.totalItems", vm.serviceGrid.totalItems);
+                    vm.serviceGrid.totalItems -=1;
+                    console.log("vm.serviceGrid.totalItems =-1 ", vm.serviceGrid.totalItems);
+
                     // $scope.gridOptions.data = response.data.data.content;
                 }
             }).catch(function () {
@@ -176,12 +185,9 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
 	$scope.addRow = function() {
 		var newService = {
 			"id" : "0",
-			"title" : "public",
-			"description" : "ttt",
-			"author" : "Ret",
-			"isbn" : "0123-34",
-			"printYear" : "2000",
-			"readAlready" : "true"
+			"component" : "public",
+			"quantity" : "2000",
+			"necessary" : "true"
 		};
 		var rowTmp = {};
 		rowTmp.entity = newService;
@@ -196,9 +202,9 @@ RowEditor.$inject = [ '$http', '$rootScope', '$modal' ];
 function RowEditor($http, $rootScope, $modal) {
 	var service = {};
 	service.editRow = editRow;
-// console.log("row editor ", editRow)
+console.log("editRow  ", editRow)
 	function editRow(grid, row) {
-		// console.log("editRow ", row.entity);
+		console.log("ediRow row.entity ", row.entity);
 		$modal.open({
 			templateUrl : '/js/service-edit.html',
 			controller : [ '$http', '$modalInstance', 'grid', 'row', RowEditCtrl ],
@@ -229,17 +235,14 @@ function RowEditCtrl($http, $modalInstance, grid, row) {
             // grid.data.push(row.entity);
             console.log("rowEditCtrel row.entity after", row.entity);
             var data = {
-                title: row.entity.title,
-                description: row.entity.description,
-                author: row.entity.author,
-                isbn: row.entity.isbn,
-                pritnYear: row.entity.printYear,
-                alreadyRead: row.entity.alreadyRead
+                component: row.entity.component,
+                quantity: row.entity.quantity,
+                necessary: row.entity.necessary
             };
             $http.post(urlAdd, data, config).then(function(response) {
                 if (response.data.result == "success") {
                     vm.resultMessage = response.data.result;
-                    vm.serviceGrid.totalItems=1;
+                    vm.totalItems=1;
                     $modalInstance.close(row.entity);
                 } else {
                     vm.resultMessage = response.data.error;
@@ -264,6 +267,7 @@ function RowEditCtrl($http, $modalInstance, grid, row) {
 			 * $http.post('http://localhost:8080/service/save', row.entity).success(function(response) { $modalInstance.close(row.entity); }).error(function(response) { alert('Cannot edit row (error in console)'); console.dir(response); });
 			 */
 		}
+
 		$modalInstance.close(row.entity);
 	}
 
