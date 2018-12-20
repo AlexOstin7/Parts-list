@@ -18,7 +18,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     vm.numberOfItemsOnPage = 10;
     var urlGetNumberOfParts = '/api/part/number';
     // var totalItems = 0;
-    var currentPageNumber = 0;
+    var currentPageNumber = 1;
     // var totalPage = Math.ceil(vm.serviceGrid.totalItems / numberOfItemsOnPage);
 	vm.serviceGrid = {
         paginationPageSizes: [vm.numberOfItemsOnPage, vm.numberOfItemsOnPage * 2, vm.numberOfItemsOnPage * 3],
@@ -41,16 +41,17 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         useExternalPagination: true,
         showGridFooter: true,
         // gridFooterTemplate: "<button ng-click='edit-button.html'> Add Part </button>",
-        gridFooterTemplate:'<div  style="text-align:left" ><button ng-click=\'grid.appScope.addRow()\' > Add Part </button></div>',
+        /*gridFooterTemplate:'<div  style="text-align:left" ><button ng-click=\'addRow()\' > Add Part </button></div>',*/
+        gridFooterTemplate: "<button ng-click='alert()'> Add Book </button>",
             /*"<button ng-click='grid.appScope.addRow()' > Add Part </button>",*/
 		/*rowTemplate : "<div ng-dblclick=\"grid.appScope.vm.editRow(grid, row)\" ng-repeat=\"(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name\" class=\"ui-grid-cell\" ng-class=\"{ 'ui-grid-row-header-cell': col.isRowHeader }\" ui-grid-cell></div>"*/
-		rowTemlate : "ng-class='ui-grid-row-header-cell'"
+		/*rowTemlate : "ng-class='ui-grid-row-header-cell'"*/
 	};
 
     vm.serviceGrid.onRegisterApi= function (gridApi) {
         $scope.gridApi = gridApi;
         console.log("onRegisterApi  ", vm.serviceGrid.totalItems);
-        getCurrentPage(currentPageNumber, vm.serviceGrid.paginationPageSize);
+        getCurrentPage(currentPageNumber -1, vm.serviceGrid.paginationPageSize);
         getNubmberOfElements();
         /*vm.gridApi = gridApi;*/
         gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
@@ -137,6 +138,32 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
                     vm.serviceGrid.data = response.data.data.content;
                 }
             });
+
+    };
+
+    $scope.getDeletePart = function (row, newPage, pageSize) {
+        var url = '/api/part/delete/' + row.entity.id;
+        console.log("delete id", row.entity.id);
+        $http.get(url, config)
+            .then(function (response) {
+                // handleResult(result.value);
+                console.log("delete then ", response.data);
+
+                if (response.data.result == "success") {
+                    console.log("delete success ", response.data);
+                    var index = vm.serviceGrid.data.indexOf(row.entity);
+                    console.log("delete catch  gridOptionsNumber ", currentPageNumber, " index ", index);
+                    // $scope.gridOptions.data.splice(index, 1);
+                    console.log("cur page", currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
+                    getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
+                    getNubmberOfElements();
+                    // $scope.gridOptions.data = response.data.data.content;
+                }
+            }).catch(function () {
+                console.log("catch data ", vm.serviceGrid.data);
+
+
+        });
 
     };
 	// $http.get('/js/dataPartJson').success(function(response) {
