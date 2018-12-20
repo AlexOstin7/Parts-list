@@ -30,9 +30,9 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
 		enableGridMenu : false,
         paginationPageSize: vm.numberOfItemsOnPage,
         enableHorizontalScrollbar: true,
-        enableVerticalScrollbar: false,
+        enableVerticalScrollbar: true,
         // excessColumns: 10,
-        minRowsToShow: 11,
+        minRowsToShow: 12,
 
         enableFiltering: true,
 
@@ -41,7 +41,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         useExternalPagination: true,
         showGridFooter: true,
         // gridFooterTemplate: "<button ng-click='edit-button.html'> Add Part </button>",
-        gridFooterTemplate: "<button ng-click='grid.appScope.addRow()' align='left'> Add Part </button>",
+        gridFooterTemplate:'<div  style="text-align:left" ><button ng-click=\'grid.appScope.addRow()\' > Add Part </button></div>',
+            /*"<button ng-click='grid.appScope.addRow()' > Add Part </button>",*/
 		/*rowTemplate : "<div ng-dblclick=\"grid.appScope.vm.editRow(grid, row)\" ng-repeat=\"(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name\" class=\"ui-grid-cell\" ng-class=\"{ 'ui-grid-row-header-cell': col.isRowHeader }\" ui-grid-cell></div>"*/
 		rowTemlate : "ng-class='ui-grid-row-header-cell'"
 	};
@@ -74,7 +75,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
 	vm.serviceGrid.columnDefs = [
         {name: 'id', displayName: "ID", width: '5%', enableCellEdit: false , pinnedRight:true},
         {
-            name: 'component', displayName: "Наименование", width: '70%', enableCellEdit: true, pinnedRight:true,
+            name: 'component', displayName: "Наименование", width: '65%', enableCellEdit: true, pinnedRight:true,
             cellTooltip: function (row) {
                 return row.entity.title;
             },
@@ -99,7 +100,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
             name: '  ',
             visible: true,
             pinnedRight:true,
-            width: '5%',
+            width: '10%',
             enableCellEdit: false,
             enableFiltering: false,
             enableSorting: false,
