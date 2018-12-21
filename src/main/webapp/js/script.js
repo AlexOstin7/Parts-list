@@ -52,14 +52,14 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     vm.serviceGrid.onRegisterApi= function (gridApi) {
         $scope.gridApi = gridApi;
         console.log("onRegisterApi  ", vm.serviceGrid.totalItems);
-        getCurrentPage(vm.currentPageNumber -1, vm.serviceGrid.paginationPageSize);
+        $scope.getCurrentPage(vm.currentPageNumber -1, vm.serviceGrid.paginationPageSize);
         getNubmberOfElements();
         /*vm.gridApi = gridApi;*/
         gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
             // alert("Hello! I am an alert box!");
             vm.currentPageNumber = newPage;
             vm.numberOfItemsOnPage = pageSize;
-            getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
+            $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
 
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.pageSize ", pageSize);
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.totalItems ", vm.serviceGrid.totalItems);
@@ -128,7 +128,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
             });
     }
 
-    var getCurrentPage = function (newPage, pageSize) {
+    $scope.getCurrentPage = function (newPage, pageSize) {
         var url = '/api/part/get?page=' + newPage + '&size=' + pageSize;
         $http.get(url, config)
             .then(function (response) {
