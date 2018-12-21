@@ -56,9 +56,9 @@ public class PartControllerImpl implements PartController {
     @RequestMapping(value = "/part/add", method = {POST})
     public Response addPart(@RequestBody PartView part) {
         log.info("part contr add befor " + part.toString());
-        partService.addPart(part);
+//        partService.addPart(part);
         log.info("part contr add after " + part.toString());
-        return new ResponseSuccess("success");
+        return new ResponseSuccess("success", partService.addPart(part));
     }
 
     @Override

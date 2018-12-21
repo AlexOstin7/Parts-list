@@ -59,7 +59,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
             // alert("Hello! I am an alert box!");
             vm.currentPageNumber = newPage;
             vm.numberOfItemsOnPage = pageSize;
-            getCurrentPage(vm.currentPageNumber - 1, pageSize);
+            getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
 
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.pageSize ", pageSize);
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.totalItems ", vm.serviceGrid.totalItems);
@@ -248,8 +248,23 @@ function RowEditCtrl($http, $modalInstance, grid, row) {
                     //console.log("Mainctrel" , MainCtrl);
                     // grid.vm.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
                     grid.totalItems+=1;
+                    console.log("response.data.data.id ", response.data);
+                    row.entity.id = response.data.data;
+
                     grid.paginationCurrentPage = Math.ceil(grid.totalItems / grid.paginationPageSize);
                     grid.data.push(row.entity);
+                    /*console.log("rpaginationLastPage ", paginationLastPage, "grid.paginationCurrentPage ", grid.paginationCurrentPage);
+                    if (grid.paginationCurrentPage < paginationLastPage) {
+                        grid.paginationCurrentPage = paginationLastPage;
+                        //grid.data.push(row.entity);
+
+                    } else {
+                        console.log("data.push row ", row.entity);
+                    }*/
+
+
+                    // grid.gridApi.core.refresh();
+                    // grid.refresh();
                 } else {
                     vm.resultMessage = response.data.error;
                 }

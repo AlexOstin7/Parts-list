@@ -38,7 +38,7 @@ public interface PartDAO {
      *
      * @param part
      */
-    void save(Part part);
+    Long save(Part part);
 
     void remove(Part part);
 

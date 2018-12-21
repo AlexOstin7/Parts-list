@@ -50,8 +50,12 @@ public class PartDAOImpl implements PartDAO {
 
 
     @Override
-    public void save(Part part) {
+    public Long save(Part part) {
         em.persist(part);
+        log.info("DAO save em.getId() before" + part.getId() + "part.toString" + part.toString());
+        em.flush();
+        log.info("DAO save em.getId() after" + part.getId() + "part.toString" + part.toString());
+        return part.getId();
     }
 
     @Override

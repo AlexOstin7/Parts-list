@@ -45,11 +45,11 @@ public class PartServiceImpl implements PartService {
 
     @Override
     @Transactional
-    public void addPart(PartView partView) {
+    public Long addPart(PartView partView) {
         log.info("org serv add before " + partView.toString());
         Part part = new Part(partView.getComponent(), partView.getQuantity(), partView.isNecessary());
         log.info("org serv add before " + partView.toString());
-        dao.save(part);
+        return dao.save(part);
     }
 
     @Override

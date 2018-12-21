@@ -16,7 +16,7 @@ public interface PartService {
 
     Part getPartById(Long id);
 
-    void addPart(PartView partView);
+    Long addPart(PartView partView);
 
     void deletePart(Long id);
 
