@@ -1,11 +1,14 @@
-var app = angular.module('influx', ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.pinning', 'ui.grid.moveColumns', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.bootstrap', 'ui.grid.edit', 'ui.grid.pagination'])
+var app = angular.module('influx', ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.pinning', 'ui.grid.moveColumns', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.bootstrap', 'ui.grid.edit', 'ui.grid.pagination', 'schemaForm'])
     .constant('PersonSchema', {
         type: 'object',
         properties: {
-            name: { type: 'string', title: 'Name' },
-            company: { type: 'string', title: 'Company' },
-            phone: { type: 'string', title: 'Phone' },
-            'address.city': { type: 'string', title: 'City' }
+            id: { type: 'string',editable: false, title: 'ID',  "default": "0", nullable: false },
+            component: { type: 'string', title: 'Component',  "default": "San FranciscoЙЦФЫ" },
+            quantity: { type: 'number', title: 'Quantity', "default": 25, "minimum": 0, "maximum": 99, validation : {
+                required:true,
+                customRule: function(input){alert('bad data');}
+            } },
+            necessary: { type: 'string', title: 'Necesssary', "default": 'true' }
         }
     })
 
@@ -15,7 +18,7 @@ app.service('RowEditor', RowEditor);
 
 var config = {
     headers: {
-        'Content-Type': 'application/json;charset=utf-8;'
+        'Content-Type': 'application/json; charset=utf-8'
     }
 }
 
@@ -197,10 +200,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
 
     $scope.addRow = function () {
         var newService = {
-            "id": "0",
-            "component": "public",
-            "quantity": "2000",
-            "necessary": "true"
+            "id": "0"
+           /* "component": "publicФЫЙЦУЯ",
+            "quantity": 2000,
+            "necessary": 'true'*/
         };
         var rowTmp = {};
         rowTmp.entity = newService;
@@ -283,10 +286,10 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
     vm.schema = PersonSchema;
     vm.entity = angular.copy(row.entity);
     vm.form = [
-        'name',
-        'company',
-        'phone',
-        'address.city'
+        'id',
+        'component',
+        'quantity',
+        'necessary'
     ];
 
     vm.grid = grid;
@@ -353,12 +356,15 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
             console.log(" update vm.entity before ", vm.entity, "row.entity ", row.entity);
             row.entity = angular.extend(row.entity, vm.entity);
             console.log(" update vm.entity after", vm.entity, "row.entity ", row.entity);
-            var data = {
+            var data ={};
+            data = angular.copy(row.entity);
+            console.log(" copy data ", data);
+            /*var data = {
                 id: row.entity.id,
                 component: row.entity.component,
                 quantity: row.entity.quantity,
                 necessary: row.entity.necessary
-            };
+            };*/
             /*
              * $http.post('http://localhost:8080/service/save', row.entity).success(function(response) { $modalInstance.close(row.entity); }).error(function(response) { alert('Cannot edit row (error in console)'); console.dir(response); });
              */
