@@ -1,10 +1,14 @@
+<html lang="ru">
+<head>
+	<meta charset="utf-8">
 <div>
   <div class="modal-header">
       <h3 class="modal-title">Edit Book</h3>
   </div>
   <div class="modal-body">
-    
+
     <form name="serviceForm">
+
 	<div class="block">
   		<label>id</label>
   		<input class="input" type="text" disabled value="{{vm.entity.id}}" />
@@ -23,7 +27,7 @@
   		<input class="input" type="text" ng-model="vm.entity.necessary"/>
 	</div>
 	</form>
-	
+
   </div>
   <div class="modal-footer">
       <button class="btn btn-primary" ng-click="vm.save()">Save</button>
@@ -31,3 +35,5 @@
       <button class="btn btn-primary" ng-click="$close()">Cancel</button>
   </div>
 </div>
+</head>
+</html>

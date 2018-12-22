@@ -72,27 +72,29 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         vm.serviceGrid.currentFocused = "";
         gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
             vm.msg.lastCellEdited = 'edited row id:' + rowEntity.id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue + " propName " + rowEntity.name;
-            console.log("rowEntity ", rowEntity);
-            postUpdatePart($scope, rowEntity);
+            console.log("rowEntity cell edit", rowEntity);
+            // postUpdatePart($scope, rowEntity);
+            // $scope.updateRow(rowEntity);
             $scope.$apply();
+
         });
     };
 
     vm.serviceGrid.columnDefs = [
-        {name: 'id', displayName: "ID", width: '5%', enableCellEdit: false},
+        {name: 'id', displayName: "ID", width: '10%', enableCellEdit: false},
         {
-            name: 'component', displayName: "Наименование", width: '65%', enableCellEdit: true,
+            name: 'component', displayName: "Наименование", width: '50%', enableCellEdit: true, type: 'string',
             cellTooltip: function (row) {
                 return row.entity.title;
             },
             cellTemplate: '<div  style="text-align:left" white-space: normal title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'
         },
         /*{name: 'quantity', displayName: "Количество", width: '10%', enableCellEdit: true, type: 'number'},*/
-        {name: 'quantity' , displayName: "Количество", width: '10%', enableCellEdit: true, type: 'number'},
+        {name: 'quantity' , displayName: "Количество", width: '15%', enableCellEdit: true, type: 'number'},
         {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: true, type: 'boolean'},
         {
             name: ' ',
-            width: '5%',
+            width: '10%',
             enableCellEdit: false,
             enableFiltering: false,
             enableSorting: false,
@@ -138,8 +140,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
 
                 if (response.data.result == "success") {
                     console.log("getPage success ", response.data.data.content);
-
-                    vm.serviceGrid.data = response.data.data.content;
+                    vm.serviceGrid.data =  response.data.data.content ;
+                    console.log("vm.serviceGrid.data after ", vm.serviceGrid.data);
                 }
             });
 
@@ -166,7 +168,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
                     // getNubmberOfElements();
                     console.log("vm.serviceGrid.totalItems", vm.serviceGrid.totalItems);
                     vm.serviceGrid.totalItems -= 1;
-                    console.log("vm.serviceGrid.totalItems =-1 ", vm.serviceGrid.totalItems);
+                    console.log("(row.entity) ", row.entity);
 
                     // $scope.gridOptions.data = response.data.data.content;
                 }
@@ -199,16 +201,20 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     };
 
     $scope.updateRow = function (row) {
-        var newService = {
+        /*var newService = {
             "id": row.entity.id,
             "component": row.entity.component,
             "quantity": row.entity.quantity,
             "necessary": row.entity.necessary
-        };
+        };*/
+        var newService = row.entity;
+        console.log("add row row.entity ++++++++++++", row.entity);
+        console.log("newService ++++++++++++", newService);
+
         var rowTmp = {};
         rowTmp.entity = newService;
         vm.editRow(vm.serviceGrid, rowTmp);
-        console.log("add row ", newService, " service ", vm.serviceGrid);
+        console.log("add row !!!!! ", newService, " service !!!!!!!!!!", vm.serviceGrid);
         // getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
     };
 
@@ -223,6 +229,7 @@ function RowEditor($http, $rootScope, $modal) {
 // console.log("editRow  ", editRow)
     function editRow(grid, row) {
         console.log("ediRow row.entity ", row.entity);
+        console.log("grid ", grid);
         $modal.open({
             templateUrl: '/js/service-edit.html',
             controller: ['$http', '$modalInstance', 'grid', 'row', RowEditCtrl],
@@ -243,8 +250,13 @@ function RowEditor($http, $rootScope, $modal) {
 
 function RowEditCtrl($http, $modalInstance, grid, row) {
     var vm = this;
-    console.log("row.entity ", row.entity);
+    console.log("row.entity ctrl ", row.entity);
+    console.log("grid ", grid);
+    console.log("grid.data.indexOf(row.entity) ", grid.data.indexOf(row.entity));
     vm.entity = angular.copy(row.entity);
+    console.log("vm.entity before", vm.entity)
+    console.log("vm.entity after", vm.entity)
+
     vm.save = save;
 
     function save() {
@@ -256,6 +268,7 @@ function RowEditCtrl($http, $modalInstance, grid, row) {
             // grid.data.push(row.entity);
             console.log("rowEditCtrel row.entity after", row.entity);
             console.log("grid data ", grid.data, " grid ", grid);
+            console.log("grid data index", grid.data.indexOf(row.entity), " grid ", grid);
             var data = {
                 component: row.entity.component,
                 quantity: row.entity.quantity,
@@ -297,9 +310,6 @@ function RowEditCtrl($http, $modalInstance, grid, row) {
             /*
              * $http.post('http://localhost:8080/service/save', row.entity).success(function(response) { $modalInstance.close(row.entity); }).error(function(response) { alert('Cannot edit row (error in console)'); console.dir(response); });
              */
-            // row.entity = angular.extend(row.entity, vm.entity);
-            //real ID come back from response after the save in DB
-            // row.entity.id = Math.floor(100 + Math.random() * 1000);
             console.log("rowEditCtrel row.entity push ", row.entity);
             // grid.data.push(row.entity);
 
@@ -322,14 +332,10 @@ function RowEditCtrl($http, $modalInstance, grid, row) {
                     vm.resultMessage = response.data.result;
                     vm.totalItems = 1;
                     $modalInstance.close(row.entity);
-                    //console.log("Mainctrel" , MainCtrl);
-                    // grid.vm.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
-                    // grid.totalItems += 1;
-                    console.log("update response ", response);
-                    // row.entity.id = response.data.data;
 
-                    // grid.gridApi.core.refresh();
-                    // grid.refresh();
+                    // grid.data[grid.data.indexOf(row.entity)] = row.entity;
+                    grid.data[grid.data.indexOf(row.entity)] = angular.copy(row.entity);
+
                 } else {
                     vm.resultMessage = response.data.error;
                 }
