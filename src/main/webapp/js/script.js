@@ -1,4 +1,13 @@
 var app = angular.module('influx', ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.pinning', 'ui.grid.moveColumns', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.bootstrap', 'ui.grid.edit', 'ui.grid.pagination'])
+    .constant('PersonSchema', {
+        type: 'object',
+        properties: {
+            name: { type: 'string', title: 'Name' },
+            company: { type: 'string', title: 'Company' },
+            phone: { type: 'string', title: 'Phone' },
+            'address.city': { type: 'string', title: 'City' }
+        }
+    })
 
 app.controller('MainCtrl', MainCtrl);
 app.controller('RowEditCtrl', RowEditCtrl);
@@ -227,7 +236,7 @@ function RowEditor($http, $rootScope, $modal) {
     service.editRow = editRow;
 
 // console.log("editRow  ", editRow)
-    function editRow(grid, row) {
+    /*function editRow(grid, row) {
         console.log("ediRow row.entity ", row.entity);
         console.log("grid ", grid);
         $modal.open({
@@ -243,19 +252,45 @@ function RowEditor($http, $rootScope, $modal) {
                 }
             }
         });
+    }*/
+
+    function editRow(grid, row) {
+        $modal.open({
+            templateUrl: '/js/edit-modal.html',
+            controller: ['$http','$modalInstance', 'PersonSchema', 'grid', 'row', RowEditCtrl],
+            controllerAs: 'vm',
+            resolve: {
+                grid: function () { return grid; },
+                row: function () { return row; }
+            }
+        });
     }
 
     return service;
 }
 
-function RowEditCtrl($http, $modalInstance, grid, row) {
+
+
+function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
     var vm = this;
-    console.log("row.entity ctrl ", row.entity);
+     console.log("row.ENtity ", row.entity);
     console.log("grid ", grid);
-    console.log("grid.data.indexOf(row.entity) ", grid.data.indexOf(row.entity));
-    vm.entity = angular.copy(row.entity);
+    // console.log("grid.data.indexOf(row.entity) ", grid.data.indexOf(row.entity));
+     vm.entity = angular.copy(row.entity);
     console.log("vm.entity before", vm.entity)
     console.log("vm.entity after", vm.entity)
+
+    vm.schema = PersonSchema;
+    vm.entity = angular.copy(row.entity);
+    vm.form = [
+        'name',
+        'company',
+        'phone',
+        'address.city'
+    ];
+
+    vm.grid = grid;
+    vm.row = row;
 
     vm.save = save;
 

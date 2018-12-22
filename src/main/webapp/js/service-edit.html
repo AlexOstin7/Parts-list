@@ -7,7 +7,7 @@
   </div>
   <div class="modal-body">
 
-    <form name="serviceForm">
+    <!--<form name="serviceForm">
 
 	<div class="block">
   		<label>id</label>
@@ -26,7 +26,9 @@
   		<label>necessary</label>
   		<input class="input" type="text" ng-model="vm.entity.necessary"/>
 	</div>
-	</form>
+	</form>-->
+
+          <form sf-schema="vm.schema" sf-form="vm.form" sf-model="vm.entity"></form>
 
   </div>
   <div class="modal-footer">
