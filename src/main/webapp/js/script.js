@@ -2,13 +2,19 @@ var app = angular.module('influx', ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.
     .constant('PersonSchema', {
         type: 'object',
         properties: {
-            id: { type: 'string',editable: false, title: 'ID',  "default": "0", nullable: false },
-            component: { type: 'string', title: 'Component',  "default": "San FranciscoЙЦФЫ" },
-            quantity: { type: 'number', title: 'Quantity', "default": 25, "minimum": 0, "maximum": 99, validation : {
+            id: { type: 'string',editable: false, title: 'ID',  "default": "0", nullable: false, "readOnly":true  },
+            component: { type: 'string', title: 'Component',  "default": "San FranciscoЙЦФЫ", "minLength": 3, "maxLength": 10,
+                "validationMessage": "Don't be greedy!" },
+            quantity: { type: 'number', title: 'Кgjdв Quantity', "default": 25, "minimum": 0, "maximum": 99, validation : {
                 required:true,
                 customRule: function(input){alert('bad data');}
             } },
-            necessary: { type: 'string', title: 'Necesssary', "default": 'true' }
+            /*necessary: { type: 'boolean', title: 'Necessary', "default": true }*/
+            necessary: {
+                title: "Необходимость",
+                type: 'boolean',
+                "default": false
+            },
         }
     })
 
@@ -301,7 +307,8 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
         var urlAdd = "/api/part/add";
         var urlUpDate = "/api/part/update";
         if (row.entity.id == '0') {
-            console.log("rowEditCtrel row.entity", row.entity);
+            console.log("rowEditCtrel add row.entity", row.entity);
+            console.log("rowEditCtrel add vm.entity", vm.entity);
             row.entity = angular.extend(row.entity, vm.entity);
             // grid.data.push(row.entity);
             console.log("rowEditCtrel row.entity after", row.entity);
