@@ -30,9 +30,9 @@ var config = {
     }
 }
 
-MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants'];
+MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants', '$interval'];
 
-function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
+function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) {
     var vm = this;
     vm.resultMessage;
     vm.editRow = RowEditor.editRow;
@@ -48,6 +48,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         multiSelect: false,
         enableSorting: true,
         enableFiltering: true,
+        useExternalFiltering: true,
         enableGridMenu: false,
         paginationPageSize: vm.numberOfItemsOnPage,
         enableHorizontalScrollbar: true,
@@ -75,6 +76,26 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         console.log("onRegisterApi  ", vm.serviceGrid.totalItems);
         $scope.getCurrentPage(vm.currentPageNumber - 1, vm.serviceGrid.paginationPageSize);
         getNubmberOfElements();
+
+        $scope.gridApi.core.on.filterChanged( $scope, function() {
+            var grid = this.grid;
+            if( grid.columns[1].filters[0].term === '' ) {
+                $http.get('/data/100_male.json')
+                    .then(function(response) {
+                        $scope.gridOptions.data = response.data;
+                    });
+            } else if ( grid.columns[1].filters[0].term === '' ) {
+                $http.get('/data/100_female.json')
+                    .then(function(response) {
+                        $scope.gridOptions.data = response.data;
+                    });
+            } else {
+                $http.get('/data/100.json')
+                    .then(function(response) {
+                        $scope.gridOptions.data = response.data;
+                    });
+            }
+        });
         /*vm.gridApi = gridApi;*/
         gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
             // alert("Hello! I am an alert box!");
@@ -102,7 +123,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     };
 
     vm.serviceGrid.columnDefs = [
-        {name: 'id', displayName: "ID", width: '10%', enableCellEdit: false},
+        {name: 'id', displayName: "ID", width: '10%', enableCellEdit: false, enableFiltering: false},
         {
             name: 'component', displayName: "Наименование", width: '50%', enableCellEdit: false, type: 'string',
             cellTooltip: function (row) {
@@ -111,7 +132,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
             cellTemplate: '<div  style="text-align:left" white-space: normal title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'
         },
         /*{name: 'quantity', displayName: "Количество", width: '10%', enableCellEdit: true, type: 'number'},*/
-        {name: 'quantity' , displayName: "Количество", width: '15%', enableCellEdit: false, type: 'number'},
+        {name: 'quantity' , displayName: "Количество", width: '15%', enableCellEdit: false, type: 'number', enableFiltering: false},
         {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: false, type: 'boolean', cellTemplate: "<div class='ui-grid-cell-contents'>{{row.entity.necessary ? 'Да' : 'Нет'}}</div>"},
         {
             name: ' ',
