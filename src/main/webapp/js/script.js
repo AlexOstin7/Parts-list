@@ -15,33 +15,7 @@ var app = angular.module('influx', ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.
                 title: "Необходимость",
                 type: 'boolean',
                 "default": true,
-                // "enum": ['true', 'false'],
-                "widget": "boolean"
             }
-            /*necessary: {
-                title: "Необходимость",
-                type: "checkbox",
-                titleMap: {
-                    "true": "Да",
-                    "false": "Нет"
-                }
-
-            },*/
-           /* necessary: {
-                title: "Необходимость",
-                titleMap: [
-                    { value: "true", name: "Yes I do" },
-                    { value: "default", name: "Hell no" },
-                    { value: "Нет", name: "Hell no" }
-                ]
-
-            }*/
-            /*,
-            "required": [
-                "component",
-                "quantity",
-                "necessary"
-            ],*/
         }
 
     })
@@ -69,7 +43,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     // var totalPage = Math.ceil(vm.serviceGrid.totalItems / numberOfItemsOnPage);
     vm.serviceGrid = {
         paginationPageSizes: [vm.numberOfItemsOnPage, vm.numberOfItemsOnPage * 2, vm.numberOfItemsOnPage * 3],
-        enableRowSelection: true,
+        enableRowSelection:false,
         enableRowHeaderSelection: false,
         multiSelect: false,
         enableSorting: true,
@@ -119,6 +93,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
             vm.msg.lastCellEdited = 'edited row id:' + rowEntity.id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue + " propName " + rowEntity.name;
             console.log("rowEntity cell edit", rowEntity);
+           // $scope.addRow();
             // postUpdatePart($scope, rowEntity);
             // $scope.updateRow(rowEntity);
             $scope.$apply();
@@ -129,15 +104,15 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     vm.serviceGrid.columnDefs = [
         {name: 'id', displayName: "ID", width: '10%', enableCellEdit: false},
         {
-            name: 'component', displayName: "Наименование", width: '50%', enableCellEdit: true, type: 'string',
+            name: 'component', displayName: "Наименование", width: '50%', enableCellEdit: false, type: 'string',
             cellTooltip: function (row) {
                 return row.entity.title;
             },
             cellTemplate: '<div  style="text-align:left" white-space: normal title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'
         },
         /*{name: 'quantity', displayName: "Количество", width: '10%', enableCellEdit: true, type: 'number'},*/
-        {name: 'quantity' , displayName: "Количество", width: '15%', enableCellEdit: true, type: 'number'},
-        {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: true, type: 'boolean', cellTemplate: "<div class='ui-grid-cell-contents'>{{row.entity.necessary ? 'Да' : 'Нет'}}</div>"},
+        {name: 'quantity' , displayName: "Количество", width: '15%', enableCellEdit: false, type: 'number'},
+        {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: false, type: 'boolean', cellTemplate: "<div class='ui-grid-cell-contents'>{{row.entity.necessary ? 'Да' : 'Нет'}}</div>"},
         {
             name: ' ',
             width: '10%',
