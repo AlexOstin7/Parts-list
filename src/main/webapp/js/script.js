@@ -9,13 +9,41 @@ var app = angular.module('influx', ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.
                 required:true,
                 customRule: function(input){alert('bad data');}
             } },
-            /*necessary: { type: 'boolean', title: 'Necessary', "default": true }*/
+
+         /*   necessary: { type: 'string', title: 'Necessary', "default": true },*/
             necessary: {
                 title: "Необходимость",
                 type: 'boolean',
-                "default": false
-            },
+                "default": true,
+                // "enum": ['true', 'false'],
+                "widget": "boolean"
+            }
+            /*necessary: {
+                title: "Необходимость",
+                type: "checkbox",
+                titleMap: {
+                    "true": "Да",
+                    "false": "Нет"
+                }
+
+            },*/
+           /* necessary: {
+                title: "Необходимость",
+                titleMap: [
+                    { value: "true", name: "Yes I do" },
+                    { value: "default", name: "Hell no" },
+                    { value: "Нет", name: "Hell no" }
+                ]
+
+            }*/
+            /*,
+            "required": [
+                "component",
+                "quantity",
+                "necessary"
+            ],*/
         }
+
     })
 
 app.controller('MainCtrl', MainCtrl);
@@ -109,7 +137,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         },
         /*{name: 'quantity', displayName: "Количество", width: '10%', enableCellEdit: true, type: 'number'},*/
         {name: 'quantity' , displayName: "Количество", width: '15%', enableCellEdit: true, type: 'number'},
-        {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: true, type: 'boolean'},
+        {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: true, type: 'boolean', cellTemplate: "<div class='ui-grid-cell-contents'>{{row.entity.necessary ? 'Да' : 'Нет'}}</div>"},
         {
             name: ' ',
             width: '10%',
@@ -295,7 +323,15 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
         'id',
         'component',
         'quantity',
-        'necessary'
+       /* 'necessary',*/
+        {
+            key: "necessary",
+            type: "select",
+            titleMap: [
+                { value: true, name: "Да" },
+                { value: false, name: "Нет" }
+            ]
+        }
     ];
 
     vm.grid = grid;
