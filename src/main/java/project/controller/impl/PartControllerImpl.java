@@ -92,19 +92,6 @@ public class PartControllerImpl implements PartController {
     }
 
     @Override
-    @ApiOperation(value = "findPaginated", nickname = "findPaginated", httpMethod = "GET")
-    @RequestMapping(value = "/part/get", params = {"page", "size"}, method = {GET})
-    public Response findPaginated(@RequestParam("page") int page, @RequestParam("size") int size) {
-        log.info("/parts/get contr before findPaginated ");
-        Page<Part> resultPage = partService.findPaginated(page, size);
-        if (page > resultPage.getTotalPages()) {
-            throw new CustomErrorException("Page number error");
-        }
-
-        return new ResponseSuccess("success", resultPage);
-    }
-
-    @Override
     @ApiOperation(value = "getNuberOfParts", nickname = "getNuberOfParts", httpMethod = "GET")
     @RequestMapping(value = "/part/number", method = {GET})
     public Response getNumberOfParts() {
@@ -126,6 +113,29 @@ public class PartControllerImpl implements PartController {
         return new ResponseSuccess("success");
     }
 
+    @Override
+    @ApiOperation(value = "findPaginated", nickname = "findPaginated", httpMethod = "GET")
+    @RequestMapping(value = "/part/get", params = {"page", "size"}, method = {GET})
+    public Response findPaginated(@RequestParam("page") int page, @RequestParam("size") int size) {
+        log.info("/part/get contr before findPaginated ");
+        Page<Part> resultPage = partService.findPaginated(page, size);
+        if (page > resultPage.getTotalPages()) {
+            throw new CustomErrorException("Page number error");
+        }
 
+        return new ResponseSuccess("success", resultPage);
+    }
 
+    @Override
+    @ApiOperation(value = "findPaginatedFilterNecessary", nickname = "findPaginatedFilterNecessary", httpMethod = "GET")
+    @RequestMapping(value = "/part/getnecessary", params = {"page", "size", "necessary"}, method = {GET})
+    public Response findPaginatedFilterNecessary(int page, int size, boolean necessary) {
+        log.info("/parts/getnecessary contr before findPaginated ");
+        Page<Part> resultPage = partService.findPaginated(page, size, necessary);
+        if (page > resultPage.getTotalPages()) {
+            throw new CustomErrorException("Page number error");
+        }
+
+        return new ResponseSuccess("success", resultPage);
+    }
 }

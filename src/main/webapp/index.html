@@ -25,10 +25,23 @@
 <body ng-app="influx">
 
 <div ng-controller="MainCtrl as vm" align="center">
+   <!-- <h3>Custom Filter Example</h3>
+    <div>Custom Component Filter: <input type="text" ng-model="componentFilter">
+        <button ng-click="filterComponent()">Filter By Component</button>
+    </div>
+
+    <div>Custom necessary Filter: <input type="text" ng-model="necessaryFilter">
+        <button ng-click="filterNecessary()">Filter By Necessary</button>
+        <button ng-click="filterReset()">Reset</button>
+    </div>
+
+    <br>-->
+
     <div style="padding-left: 10px;">
         <button type="button" id="addRow" class="btn btn-success" ng-click="addRow()">Add Row</button>
     </div>
-    <br/><!--ui-grid-move-columns
+    <br/>
+    <!--ui-grid-move-columns
 		ui-grid-resize-columns
 		ui-grid-pinning
 		ui-grid-exporter

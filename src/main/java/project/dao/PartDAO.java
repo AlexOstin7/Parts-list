@@ -44,9 +44,15 @@ public interface PartDAO {
 
    /* List<Part> filterPartList(PartFilterView partFilterView);*/
 
+    Long getNubmerOfParts();
+
+
     @Query("SELECT n FROM Network n")
     Page<Part> findPaginated(Pageable pageable);
 
-    Long getNubmerOfParts();
+
+    @Query("SELECT n FROM Network n")
+    Page<Part> findPaginated(Pageable pageable, boolean necessary);
+
 
 }

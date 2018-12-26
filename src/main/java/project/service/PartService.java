@@ -24,9 +24,11 @@ public interface PartService {
 
     /*Page<Part> getAllByPage(Pageable pageable);*/
 
+    Long getNubmerOfParts();
+
     Page<Part> findPaginated(int page, int size);
 
-    Long getNubmerOfParts();
+    Page<Part> findPaginated(int page, int size, boolean necessary);
 
 /*
     Page<Part> findAllPartsByPage(Pageable pageable);

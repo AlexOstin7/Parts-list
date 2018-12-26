@@ -77,6 +77,11 @@ public class PartServiceImpl implements PartService {
     }
 
 
+    @Override
+    @Transactional(readOnly=true)
+    public Long getNubmerOfParts() {
+        return dao.getNubmerOfParts();
+    }
 
     @Override
     @Transactional(readOnly=true)
@@ -88,8 +93,10 @@ public class PartServiceImpl implements PartService {
 
     @Override
     @Transactional(readOnly=true)
-    public Long getNubmerOfParts() {
-        return dao.getNubmerOfParts();
+    public Page<Part> findPaginated(int page, int size, boolean necessary) {
+        log.info("findPaginated serv before run " );
+//            return dao.loadAllPaging(new PageRequest(page, size));
+        return dao.findPaginated(new PageRequest(page, size), necessary);
     }
 
     /*

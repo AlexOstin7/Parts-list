@@ -77,25 +77,6 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
         $scope.getCurrentPage(vm.currentPageNumber - 1, vm.serviceGrid.paginationPageSize);
         getNubmberOfElements();
 
-        $scope.gridApi.core.on.filterChanged( $scope, function() {
-            var grid = this.grid;
-            if( grid.columns[1].filters[0].term === '' ) {
-                $http.get('/data/100_male.json')
-                    .then(function(response) {
-                        $scope.gridOptions.data = response.data;
-                    });
-            } else if ( grid.columns[1].filters[0].term === '' ) {
-                $http.get('/data/100_female.json')
-                    .then(function(response) {
-                        $scope.gridOptions.data = response.data;
-                    });
-            } else {
-                $http.get('/data/100.json')
-                    .then(function(response) {
-                        $scope.gridOptions.data = response.data;
-                    });
-            }
-        });
         /*vm.gridApi = gridApi;*/
         gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
             // alert("Hello! I am an alert box!");
@@ -125,7 +106,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
     vm.serviceGrid.columnDefs = [
         {name: 'id', displayName: "ID", width: '10%', enableCellEdit: false, enableFiltering: false},
         {
-            name: 'component', displayName: "Наименование", width: '50%', enableCellEdit: false, type: 'string',
+            name: 'component', displayName: "Наименование", width: '50%', enableCellEdit: false, type: 'string', enableFiltering: false,
             cellTooltip: function (row) {
                 return row.entity.title;
             },
@@ -133,7 +114,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
         },
         /*{name: 'quantity', displayName: "Количество", width: '10%', enableCellEdit: true, type: 'number'},*/
         {name: 'quantity' , displayName: "Количество", width: '15%', enableCellEdit: false, type: 'number', enableFiltering: false},
-        {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: false, type: 'boolean', cellTemplate: "<div class='ui-grid-cell-contents'>{{row.entity.necessary ? 'Да' : 'Нет'}}</div>"},
+        {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: false, type: 'boolean', enableFiltering: false, cellTemplate: "<div class='ui-grid-cell-contents'>{{row.entity.necessary ? 'Да' : 'Нет'}}</div>"},
         {
             name: ' ',
             width: '10%',
