@@ -2,19 +2,25 @@ var app = angular.module('influx', ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.
     .constant('PersonSchema', {
         type: 'object',
         properties: {
-            id: { type: 'string',editable: false, title: 'ID',  "default": "0", nullable: false, "readOnly":true  },
-            component: { type: 'string', title: 'Component',  "default": "San FranciscoЙЦФЫ", "minLength": 3, "maxLength": 10,
-                "validationMessage": "Don't be greedy!" },
-            quantity: { type: 'number', title: 'Кgjdв Quantity', "default": 25, "minimum": 0, "maximum": 99, validation : {
-                required:true,
-                customRule: function(input){alert('bad data');}
-            } },
+            id: {type: 'string', editable: false, title: 'ID', "default": "0", nullable: false, "readOnly": true},
+            component: {
+                type: 'string', title: 'Component', "default": "San FranciscoЙЦФЫ", "minLength": 3, "maxLength": 10,
+                "validationMessage": "Don't be greedy!"
+            },
+            quantity: {
+                type: 'number', title: 'Quantity', "default": 25, "minimum": 0, "maximum": 99, validation: {
+                    required: true,
+                    customRule: function (input) {
+                        alert('bad data');
+                    }
+                }
+            },
 
-         /*   necessary: { type: 'string', title: 'Necessary', "default": true },*/
+            /*   necessary: { type: 'string', title: 'Necessary', "default": true },*/
             necessary: {
                 title: "Необходимость",
                 type: 'boolean',
-                "default": true,
+                "default": true
             }
         }
 
@@ -35,15 +41,17 @@ MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants',
 function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) {
     var vm = this;
     vm.resultMessage;
+    vm.filterNecessary = false;
     vm.editRow = RowEditor.editRow;
     vm.numberOfItemsOnPage = 10;
+    vm.size = 10;
     var urlGetNumberOfParts = '/api/part/number';
     // var totalItems = 0;
     vm.currentPageNumber = 1;
     // var totalPage = Math.ceil(vm.serviceGrid.totalItems / numberOfItemsOnPage);
     vm.serviceGrid = {
         paginationPageSizes: [vm.numberOfItemsOnPage, vm.numberOfItemsOnPage * 2, vm.numberOfItemsOnPage * 3],
-        enableRowSelection:false,
+        enableRowSelection: false,
         enableRowHeaderSelection: false,
         multiSelect: false,
         enableSorting: true,
@@ -74,28 +82,38 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
     vm.serviceGrid.onRegisterApi = function (gridApi) {
         $scope.gridApi = gridApi;
         console.log("onRegisterApi  ", vm.serviceGrid.totalItems);
-        $scope.getCurrentPage(vm.currentPageNumber - 1, vm.serviceGrid.paginationPageSize);
+        // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.serviceGrid.paginationPageSize);
+        $scope.getCurrentPage();
         getNubmberOfElements();
 
-        /*vm.gridApi = gridApi;*/
         gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
             // alert("Hello! I am an alert box!");
             vm.currentPageNumber = newPage;
             vm.numberOfItemsOnPage = pageSize;
-            $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
+            console.log("vm.filterNecessary ", vm.filterNecessary);
+            console.log("vm.necessary ", vm.necessary);
+            if (vm.filterNecessary) {
+                console.log(" getCurrentPage Filter nec");
+
+                $scope.getCurrentPageFilterNecessary(vm.necessary);
+            } else {
+                // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
+                console.log(" getCurrentPage ");
+                $scope.getCurrentPage();
+            }
 
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.pageSize ", pageSize);
-            console.log("getNumberOfParts paginationChanged vm.serviceGrid.totalItems ", vm.serviceGrid.totalItems);
+            // console.log("getNumberOfParts paginationChanged vm.serviceGrid.totalItems ", vm.serviceGrid.totalItems);
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.numberOfItemsOnPage ", vm.numberOfItemsOnPage);
-            vm.serviceGrid.totalPage = Math.ceil(vm.serviceGrid.totalItems / pageSize);
-            console.log("Received: pageNumber=" + newPage + ", pageSize= " + pageSize, " total pages ", vm.serviceGrid.totalPage);
+            /* vm.serviceGrid.totalPage = Math.ceil(vm.serviceGrid.totalItems / pageSize);
+             console.log("Received: pageNumber=" + newPage + ", pageSize= " + pageSize, " total pages ", vm.serviceGrid.totalPage);*/
         });
         vm.msg = {};
         vm.serviceGrid.currentFocused = "";
         gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
             vm.msg.lastCellEdited = 'edited row id:' + rowEntity.id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue + " propName " + rowEntity.name;
             console.log("rowEntity cell edit", rowEntity);
-           // $scope.addRow();
+            // $scope.addRow();
             // postUpdatePart($scope, rowEntity);
             // $scope.updateRow(rowEntity);
             $scope.$apply();
@@ -106,15 +124,43 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
     vm.serviceGrid.columnDefs = [
         {name: 'id', displayName: "ID", width: '10%', enableCellEdit: false, enableFiltering: false},
         {
-            name: 'component', displayName: "Наименование", width: '50%', enableCellEdit: false, type: 'string', enableFiltering: false,
+            name: 'component',
+            displayName: "Наименование",
+            width: '50%',
+            enableCellEdit: false,
+            type: 'string',
+            enableFiltering: false,
             cellTooltip: function (row) {
                 return row.entity.title;
             },
             cellTemplate: '<div  style="text-align:left" white-space: normal title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'
         },
         /*{name: 'quantity', displayName: "Количество", width: '10%', enableCellEdit: true, type: 'number'},*/
-        {name: 'quantity' , displayName: "Количество", width: '15%', enableCellEdit: false, type: 'number', enableFiltering: false},
-        {name: 'necessary', displayName: "Необходимость", width: '10%', enableCellEdit: false, type: 'boolean', enableFiltering: false, cellTemplate: "<div class='ui-grid-cell-contents'>{{row.entity.necessary ? 'Да' : 'Нет'}}</div>"},
+        {
+            name: 'quantity',
+            displayName: "Количество",
+            width: '15%',
+            enableCellEdit: false,
+            type: 'number',
+            enableFiltering: false
+        },
+        {
+            name: 'necessary',
+            displayName: "Необходимость",
+            width: '10%',
+            enableCellEdit: false,
+            type: 'boolean',
+            enableFiltering: false,
+            cellTemplate: "<div class='ui-grid-cell-contents'>{{row.entity.necessary ? 'Да' : 'Нет'}}</div>",
+            // cellFilter: "Да",
+            /*filter: {
+                /!*noTerm: true,*!/
+                // term: true
+                condition: function (searchTerm, cellValue) {
+                    return cellValue.match(searchTerm);
+                }
+            }*/
+        },
         {
             name: ' ',
             width: '10%',
@@ -141,10 +187,16 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
         }
     ];
 
+    /*$scope.searchGrid = function(searchTerm){
+        $scope.gridApi.grid.columns[3].filters[0] = { term: searchTerm };
+        console.log("searchTerm ", searchTerm);
+        console.log("$scope.gridApi.grid.columns[3].filters[0] ", $scope.gridApi.grid.columns[3].filters[0])
+    }*/
+
     var getNubmberOfElements = function () {
-        $http.get(urlGetNumberOfParts, config)
+        $http.get(urlGetNumberOfParts, config, $scope)
             .then(function (response) {
-                console.log("getNumberOfParts ", response.data);
+                console.log("getNumberOfElements ", response.data);
                 if (response.data.result == "success") {
                     console.log("getNumberOfParts success ", response.data.data);
                     console.log("getNumberOfParts success numberOfItemsOnPage ", vm.numberOfItemsOnPage);
@@ -155,91 +207,147 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
             });
     }
 
-    $scope.getCurrentPage = function (newPage, pageSize) {
-        var url = '/api/part/get?page=' + newPage + '&size=' + pageSize;
+    // $scope.getCurrentPage = function (newPage, pageSize) {
+    $scope.getCurrentPage = function () {
+        // var url = '/api/part/get?page=' + newPage + '&size=' + pageSize;
+        var url = '/api/part/get?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
         $http.get(url, config)
             .then(function (response) {
-                console.log("getPage then  ", response.data);
+                console.log("getCurrentPage then  ", response.data);
 
                 if (response.data.result == "success") {
-                    console.log("getPage success ", response.data.data.content);
-                    vm.serviceGrid.data =  response.data.data.content ;
-                    console.log("vm.serviceGrid.data after ", vm.serviceGrid.data);
+                    vm.serviceGrid.totalItems = response.data.data.totalElements;
+                    console.log("getPage success ", response.data.data);
+                    vm.serviceGrid.data = response.data.data.content;
+                    console.log("vm.serviceGrid.data  ", vm.serviceGrid);
+                    // console.log(" value ", vm.serviceGrid.columnDefs[3].cellValue);
                 }
             });
 
     };
 
-    $scope.getDeletePart = function (row, newPage, pageSize) {
-        var url = '/api/part/delete/' + row.entity.id;
-        console.log("delete id", row.entity.id);
-        console.log("newPage ", newPage, " pageSize ", pageSize);
-        $http.get(url, config)
-            .then(function (response) {
-                // handleResult(result.value);
-                console.log("delete then ", response.data);
+    $scope.getCurrentPageFilterNecessary = function (necessary) {
+        // vm.currentPageNumber - 1, vm.numberOfItemsOnPage
+        if (necessary == 1) {
 
-                if (response.data.result == "success") {
-                    console.log("delete success ", response.data);
-                    var index = vm.serviceGrid.data.indexOf(row.entity);
-                    console.log("delete catch  gridOptionsNumber ", vm.currentPageNumber, " index ", index);
-                    // $scope.gridOptions.data.splice(index, 1);
-                    console.log("cur page", vm.currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
-                    console.log("newPage ", newPage, " pageSize ", pageSize);
-                    $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
-                    //  getCurrentPage(newPage, pageSize);
-                    // getNubmberOfElements();
-                    console.log("vm.serviceGrid.totalItems", vm.serviceGrid.totalItems);
-                    vm.serviceGrid.totalItems -= 1;
-                    console.log("(row.entity) ", row.entity);
+            if (vm.necessary == 0 || vm.necessary == 'undefined') {
 
-                    // $scope.gridOptions.data = response.data.data.content;
+                vm.currentPageNumber = 1;
+                console.log(" necessary 1  vm.necessary ", vm.necessary);
+            }
+            vm.necessary = 1;
+
+        }
+        if (necessary == 0) {
+            console.log(" necessary 0 ", vm.necessary);
+
+            if (vm.necessary == 1 || vm.necessary == 'undefined') {
+
+                vm.currentPageNumber = 1;
+                console.log(" necessary 0  vm.necessary ", vm.necessary);
+            }
+            vm.necessary = 0;
+            console.log(" necessary 0  vm.necessary after ", vm.necessary);
+
+        }
+
+
+    var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + necessary;
+
+    $http.get(url, config)
+        .then(function (response) {
+            console.log("getCurrentPageFilterPage then  ", response.data);
+
+            if (response.data.result == "success") {
+                vm.serviceGrid.totalItems = response.data.data.totalElements;
+                console.log("getPage filter necessary success ", response.data.data.content);
+                vm.serviceGrid.data = response.data.data.content;
+                console.log("vm.serviceGrid.data necessary after ", vm.serviceGrid.data);
+                console.log("vm.filterNecessary before ", vm.filterNecessary);
+
+                if (vm.filterNecessary == false) {
+                    vm.filterNecessary = true;
                 }
-            }).catch(function () {
-            console.log("catch data ", vm.serviceGrid.data);
+                console.log("vm.filterNecessary after ", vm.filterNecessary);
+                console.log("necessary ", necessary);
 
+            }
+            console.log("vm.necessary  ", vm.necessary);
 
         });
 
-    };
-    // $http.get('/js/dataPartJson').success(function(response) {
-    /*$http.get('/api/parts').success(function(response) {
-        console.log(" get all parts", response.data)
-         vm.serviceGrid.data = response.data;
-        getNubmberOfElements();
-    });*/
+};
+/*$scope.filterGrid = function (value) {
+    console.log(value);
+    $scope.gridApi.grid.columns[3].filters[0].term = value;
+};*/
+$scope.getDeletePart = function (row, newPage, pageSize) {
+    var url = '/api/part/delete/' + row.entity.id;
+    console.log("delete id", row.entity.id);
+    console.log("newPage ", newPage, " pageSize ", pageSize);
+    $http.get(url, config)
+        .then(function (response) {
+            // handleResult(result.value);
+            console.log("delete then ", response.data);
 
-    $scope.addRow = function () {
-        var newService = {
-            "id": "0"
-           /* "component": "publicФЫЙЦУЯ",
-            "quantity": 2000,
-            "necessary": 'true'*/
-        };
-        var rowTmp = {};
-        rowTmp.entity = newService;
-        vm.editRow(vm.serviceGrid, rowTmp);
-        console.log("add row ", newService, " service ", vm.serviceGrid);
-        // getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
-    };
+            if (response.data.result == "success") {
+                console.log("delete success ", response.data);
+                var index = vm.serviceGrid.data.indexOf(row.entity);
+                console.log("delete catch  gridOptionsNumber ", vm.currentPageNumber, " index ", index);
+                // $scope.gridOptions.data.splice(index, 1);
+                console.log("cur page", vm.currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
+                console.log("newPage ", newPage, " pageSize ", pageSize);
+                $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
+                //  getCurrentPage(newPage, pageSize);
+                // getNubmberOfElements();
+                console.log("vm.serviceGrid.totalItems", vm.serviceGrid.totalItems);
+                vm.serviceGrid.totalItems -= 1;
+                console.log("(row.entity) ", row.entity);
 
-    $scope.updateRow = function (row) {
-        /*var newService = {
-            "id": row.entity.id,
-            "component": row.entity.component,
-            "quantity": row.entity.quantity,
-            "necessary": row.entity.necessary
-        };*/
-        var newService = row.entity;
-        console.log("add row row.entity ++++++++++++", row.entity);
-        console.log("newService ++++++++++++", newService);
+                // $scope.gridOptions.data = response.data.data.content;
+            }
+        }).catch(function () {
+        console.log("catch data ", vm.serviceGrid.data);
+    });
+};
+// $http.get('/js/dataPartJson').success(function(response) {
+/*$http.get('/api/parts').success(function(response) {
+    console.log(" get all parts", response.data)
+     vm.serviceGrid.data = response.data;
+    getNubmberOfElements();
+});*/
 
-        var rowTmp = {};
-        rowTmp.entity = newService;
-        vm.editRow(vm.serviceGrid, rowTmp);
-        console.log("add row !!!!! ", newService, " service !!!!!!!!!!", vm.serviceGrid);
-        // getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
+$scope.addRow = function () {
+    var newService = {
+        "id": "0"
+        /* "component": "publicФЫЙЦУЯ",
+         "quantity": 2000,
+         "necessary": 'true'*/
     };
+    var rowTmp = {};
+    rowTmp.entity = newService;
+    vm.editRow(vm.serviceGrid, rowTmp);
+    console.log("add row ", newService, " service ", vm.serviceGrid);
+    // getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
+};
+
+$scope.updateRow = function (row) {
+    /*var newService = {
+        "id": row.entity.id,
+        "component": row.entity.component,
+        "quantity": row.entity.quantity,
+        "necessary": row.entity.necessary
+    };*/
+    var newService = row.entity;
+    console.log("add row row.entity ++++++++++++", row.entity);
+    console.log("newService ++++++++++++", newService);
+
+    var rowTmp = {};
+    rowTmp.entity = newService;
+    vm.editRow(vm.serviceGrid, rowTmp);
+    console.log("add row !!!!! ", newService, " service !!!!!!!!!!", vm.serviceGrid);
+    // getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
+};
 
 }
 
@@ -271,11 +379,15 @@ function RowEditor($http, $rootScope, $modal) {
     function editRow(grid, row) {
         $modal.open({
             templateUrl: '/js/edit-modal.html',
-            controller: ['$http','$modalInstance', 'PersonSchema', 'grid', 'row', RowEditCtrl],
+            controller: ['$http', '$modalInstance', 'PersonSchema', 'grid', 'row', RowEditCtrl],
             controllerAs: 'vm',
             resolve: {
-                grid: function () { return grid; },
-                row: function () { return row; }
+                grid: function () {
+                    return grid;
+                },
+                row: function () {
+                    return row;
+                }
             }
         });
     }
@@ -284,15 +396,14 @@ function RowEditor($http, $rootScope, $modal) {
 }
 
 
-
 function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
     var vm = this;
-     console.log("row.ENtity ", row.entity);
+    console.log("row.ENtity ", row.entity);
     console.log("grid ", grid);
     // console.log("grid.data.indexOf(row.entity) ", grid.data.indexOf(row.entity));
-     vm.entity = angular.copy(row.entity);
-    console.log("vm.entity before", vm.entity)
-    console.log("vm.entity after", vm.entity)
+    vm.entity = angular.copy(row.entity);
+    console.log("vm.entity before", vm.entity);
+    console.log("vm.entity after", vm.entity);
 
     vm.schema = PersonSchema;
     vm.entity = angular.copy(row.entity);
@@ -300,13 +411,13 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
         'id',
         'component',
         'quantity',
-       /* 'necessary',*/
+        /* 'necessary',*/
         {
             key: "necessary",
             type: "select",
             titleMap: [
-                { value: true, name: "Да" },
-                { value: false, name: "Нет" }
+                {value: true, name: "Да"},
+                {value: false, name: "Нет"}
             ]
         }
     ];
@@ -376,7 +487,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
             console.log(" update vm.entity before ", vm.entity, "row.entity ", row.entity);
             row.entity = angular.extend(row.entity, vm.entity);
             console.log(" update vm.entity after", vm.entity, "row.entity ", row.entity);
-            var data ={};
+            var data = {};
             data = angular.copy(row.entity);
             console.log(" copy data ", data);
             /*var data = {

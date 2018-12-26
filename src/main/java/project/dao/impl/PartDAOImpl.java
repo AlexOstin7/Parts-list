@@ -96,7 +96,8 @@ public class PartDAOImpl implements PartDAO {
         TypedQuery<Part> typedQuery = em.createQuery(select);
         List<Part> list = Collections.emptyList();
 
-        Long count = getNubmerOfParts();
+//        Long count = getNubmerOfParts();
+        int count = typedQuery.getResultList().size();
         int pageNumber = (int) ((count / pageSize) + 1);
         if (pageable.getPageNumber() < pageNumber) {
             typedQuery.setFirstResult(pageable.getPageNumber()*pageSize );
@@ -107,7 +108,7 @@ public class PartDAOImpl implements PartDAO {
         /*TypedQuery<Part> query = em.createQuery("SELECT p FROM Part p", Part.class);
         List<Part> list = loadAll();*/
         log.info("findPaginated dao before " + "size List " + list.size() + " count " + count + "page Number " + pageNumber + " list.toString " + list.toString());
-        Page<Part> page = new PageImpl<>(list, pageable, count.intValue());
+        Page<Part> page = new PageImpl<>(list, pageable, count);
         log.info("findPaginated dao before " + "page elements " + page.getTotalElements() + " page.toString " + page.toString() + " page content " + page.getContent().toString());
         return page;
 
