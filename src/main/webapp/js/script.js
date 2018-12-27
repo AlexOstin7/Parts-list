@@ -38,7 +38,7 @@ var config = {
 
 MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants', '$interval'];
 
-function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) {
+function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
     var vm = this;
     vm.resultMessage;
     vm.filterNecessary = false;
@@ -48,6 +48,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
     var urlGetNumberOfParts = '/api/part/number';
     // var totalItems = 0;
     vm.currentPageNumber = 1;
+    vm.necessary ='undefined';
     // var totalPage = Math.ceil(vm.serviceGrid.totalItems / numberOfItemsOnPage);
     vm.serviceGrid = {
         paginationPageSizes: [vm.numberOfItemsOnPage, vm.numberOfItemsOnPage * 2, vm.numberOfItemsOnPage * 3],
@@ -56,7 +57,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
         multiSelect: false,
         enableSorting: true,
         enableFiltering: true,
-        useExternalFiltering: true,
+        useExternalFiltering: false,
         enableGridMenu: false,
         paginationPageSize: vm.numberOfItemsOnPage,
         enableHorizontalScrollbar: true,
@@ -85,14 +86,26 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
         // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.serviceGrid.paginationPageSize);
         $scope.getCurrentPage();
         getNubmberOfElements();
+        // gridApi.core.refresh();
+        console.log(" gridApi ", gridApi);
+        console.log(" gridApi current page ", gridApi.pagination.getPage());
 
+        gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT) ;
+
+        $scope.gridApi.core.on.rowsRendered( $scope, myFunction );
+        /*{
+            console.log(" gridApi.selection.on.rowSelectionChanged($scope,function(row)" );
+            alert(' !');
+            var msg = 'row selected ' + row.isSelected;
+            $log.log(msg);
+        };*/
         gridApi.pagination.on.paginationChanged($scope, function (newPage, pageSize) {
             // alert("Hello! I am an alert box!");
             vm.currentPageNumber = newPage;
             vm.numberOfItemsOnPage = pageSize;
             console.log("vm.filterNecessary ", vm.filterNecessary);
             console.log("vm.necessary ", vm.necessary);
-            if (vm.filterNecessary) {
+            if (vm.filterNecessary == true) {
                 console.log(" getCurrentPage Filter nec");
 
                 $scope.getCurrentPageFilterNecessary(vm.necessary);
@@ -105,6 +118,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.pageSize ", pageSize);
             // console.log("getNumberOfParts paginationChanged vm.serviceGrid.totalItems ", vm.serviceGrid.totalItems);
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.numberOfItemsOnPage ", vm.numberOfItemsOnPage);
+            console.log(" gridApi Pagination changed current page ", gridApi.pagination.getPage());
             /* vm.serviceGrid.totalPage = Math.ceil(vm.serviceGrid.totalItems / pageSize);
              console.log("Received: pageNumber=" + newPage + ", pageSize= " + pageSize, " total pages ", vm.serviceGrid.totalPage);*/
         });
@@ -152,14 +166,14 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
             type: 'boolean',
             enableFiltering: false,
             cellTemplate: "<div class='ui-grid-cell-contents'>{{row.entity.necessary ? 'Да' : 'Нет'}}</div>",
-            // cellFilter: "Да",
-            /*filter: {
-                /!*noTerm: true,*!/
-                // term: true
+             cellFilter: true,
+            filter: {
+                /*noTerm: true,*/
+                // term: true,
                 condition: function (searchTerm, cellValue) {
-                    return cellValue.match(searchTerm);
+                    return cellValue.match(filterTerm);
                 }
-            }*/
+            }
         },
         {
             name: ' ',
@@ -192,7 +206,9 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
         console.log("searchTerm ", searchTerm);
         console.log("$scope.gridApi.grid.columns[3].filters[0] ", $scope.gridApi.grid.columns[3].filters[0])
     }*/
-
+    var myFunction = function() {
+        // alert("!!")
+    };
     var getNubmberOfElements = function () {
         $http.get(urlGetNumberOfParts, config, $scope)
             .then(function (response) {
@@ -228,11 +244,13 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
 
     $scope.getCurrentPageFilterNecessary = function (necessary) {
         // vm.currentPageNumber - 1, vm.numberOfItemsOnPage
+        console.log("-------- getCurrentPageFilterNecessary >>>>>>>>>>>");
         if (necessary == 1) {
 
             if (vm.necessary == 0 || vm.necessary == 'undefined') {
 
                 vm.currentPageNumber = 1;
+
                 console.log(" necessary 1  vm.necessary ", vm.necessary);
             }
             vm.necessary = 1;
@@ -250,6 +268,9 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
             console.log(" necessary 0  vm.necessary after ", vm.necessary);
 
         }
+        console.log(" necessary ", necessary);
+        console.log(" vm.necessary ", vm.necessary);
+        console.log(" vm.currentPageNumber ", vm.currentPageNumber);
 
 
     var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + necessary;
@@ -257,11 +278,17 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
     $http.get(url, config)
         .then(function (response) {
             console.log("getCurrentPageFilterPage then  ", response.data);
+            console.log("vm.serviceGrid ", vm.serviceGrid);
 
             if (response.data.result == "success") {
                 vm.serviceGrid.totalItems = response.data.data.totalElements;
+                 vm.currentPageNumber = response.data.data.number + 1;
+                 console.log("response.data.data.number ", response.data.data.number);
+                 vm.serviceGrid.paginationCurrentPage = vm.currentPageNumber ;
+               // vm.serviceGrid.paginationCurrentPage = response.data.data.number;
                 console.log("getPage filter necessary success ", response.data.data.content);
                 vm.serviceGrid.data = response.data.data.content;
+
                 console.log("vm.serviceGrid.data necessary after ", vm.serviceGrid.data);
                 console.log("vm.filterNecessary before ", vm.filterNecessary);
 
@@ -273,8 +300,12 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $interval) 
 
             }
             console.log("vm.necessary  ", vm.necessary);
+            console.log("vm.serviceGrid  ", vm.serviceGrid);
+            console.log("vm.serviceGrid paginationCurrentPage ", vm.serviceGrid.paginationCurrentPage);
+
 
         });
+        console.log("=========== getCurrentPageFilterNecessary <<<<<<<<<");
 
 };
 /*$scope.filterGrid = function (value) {
@@ -339,6 +370,7 @@ $scope.updateRow = function (row) {
         "necessary": row.entity.necessary
     };*/
     var newService = row.entity;
+    console.log("--------- updaterow >>>>>>>>>>>>>");
     console.log("add row row.entity ++++++++++++", row.entity);
     console.log("newService ++++++++++++", newService);
 
@@ -346,7 +378,24 @@ $scope.updateRow = function (row) {
     rowTmp.entity = newService;
     vm.editRow(vm.serviceGrid, rowTmp);
     console.log("add row !!!!! ", newService, " service !!!!!!!!!!", vm.serviceGrid);
-    // getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
+    console.log(" service !!!!!!!!!! vm ", vm);
+    console.log("$scope.gridApi.core.getVisibleRows($scope.gridApi.grid) ", $scope.gridApi.core.getVisibleRows($scope.gridApi.grid));
+    console.log(" dataFilter ",  $scope.gridApi);
+
+    /*$scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.ALL)  ;
+    $scope.gridApi.core.refresh();*/
+   /* if (vm.filterNecessary == true) {
+        console.log(" getCurrentPage Filter nec");
+
+        $scope.getCurrentPageFilterNecessary(vm.necessary);
+    } else {
+        // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
+        console.log(" getCurrentPage ");
+        $scope.getCurrentPage();
+    }*/
+    console.log("============ updaterow <<<<<<<<<<<<<<");
+
+    // $scope.getCurrentPage();
 };
 
 }
@@ -489,7 +538,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
             console.log(" update vm.entity after", vm.entity, "row.entity ", row.entity);
             var data = {};
             data = angular.copy(row.entity);
-            console.log(" copy data ", data);
+            // var dataFilter
             /*var data = {
                 id: row.entity.id,
                 component: row.entity.component,
@@ -507,6 +556,8 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
 
                     // grid.data[grid.data.indexOf(row.entity)] = row.entity;
                     grid.data[grid.data.indexOf(row.entity)] = angular.copy(row.entity);
+                    console.log(" grid ", grid);
+                    // gridApi.core.refresh();
 
                 } else {
                     vm.resultMessage = response.data.error;
