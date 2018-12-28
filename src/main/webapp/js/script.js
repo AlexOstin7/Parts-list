@@ -262,7 +262,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
 
         }
         if (necessary == "false") {
-            
+
             console.log(" necessary 0 ", vm.necessary);
 
             if (vm.necessary == "true" || vm.necessary == "undefined") {
@@ -563,8 +563,9 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
 
                     console.log(" grid before ", grid);
                     console.log(" vm.necessary ", vm.necessary);
+                    console.log(" row.entity.necessary ", row.entity.necessary);
 
-                    if (vm.necessary == undefined || vm.necessary == row.entity.necessary) {
+                    if (vm.necessary == "undefined" || vm.necessary == row.entity.necessary) {
                         grid.data[grid.data.indexOf(row.entity)] = angular.copy(row.entity);
                         console.log("  stay in grid ", grid);
 
@@ -572,6 +573,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
 
                         var index = grid.data.indexOf(row.entity);
                         grid.data.splice(index, 1);
+                        grid.totalItems -= 1;
                         console.log(" delete from grid ", grid);
 
                     }
