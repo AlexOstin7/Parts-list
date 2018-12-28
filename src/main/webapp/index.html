@@ -43,9 +43,12 @@
 <div ng-controller="MainCtrl as vm" align="center">
 
     <p>Необходимые для сборки детали</p>
+    <div ng-if="filterTerm === true">
+        необходимы для сборки
+    </div>
     <select ng-model="filterTerm">
-        <option value=true>Да</option>
-        <option value=false>Нет</option>
+        <option value="true">Да</option>
+        <option value="false">Нет</option>
     </select>
 
     <input type="button" value="Применить фильтр" ng-click="getCurrentPageFilterNecessary()" >

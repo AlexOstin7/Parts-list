@@ -292,11 +292,13 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             // }
         }
         dataFilterNecessary = $scope.filterTerm;
-       /* if ($scope.filterTerm == "true") {
+        /*if ($scope.filterTerm == "true") {
             dataFilterNecessary = true;
         } else if ($scope.filterTerm == "false") {
             dataFilterNecessary = false;
-        } else dataFilterNecessary = "undefined";*/
+        } else if ($scope.filterTerm == "undefined") {
+            dataFilterNecessary = "undefined";
+        }*/
 
         /*if (necessary == "false") {
 
