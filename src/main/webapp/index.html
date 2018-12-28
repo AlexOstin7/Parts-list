@@ -2,20 +2,36 @@
 <html>
 
 <head>
-    <link rel="styleSheet" href="http://ui-grid.info/release/ui-grid.min.css"/>
+    <meta charset="utf-8">
+    <!--<link rel="styleSheet" href="http://ui-grid.info/release/ui-grid.min.css"/>-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/main.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular-touch.min.js"></script>
-    <!--<script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.6.6/ui-grid.pinning.min.js"></script>-->
-    <script src="http://ui-grid.info/release/ui-grid.js"></script>
-    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.4.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.6.6/ui-grid.pinning.min.js"></script>
+    <!--<script src="http://ui-grid.info/release/ui-grid.js"></script>
+    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.4.js"></script>-->
 
-    <script src="https://cdn.rawgit.com/mike-marcacci/objectpath/v1.1.0/lib/ObjectPath.js"></script>
+   <!-- <script src="https://cdn.rawgit.com/mike-marcacci/objectpath/v1.1.0/lib/ObjectPath.js"></script>
     <script src="https://cdn.rawgit.com/geraintluff/tv4/v1.1.9/tv4.min.js"></script>
     <script src="https://cdn.rawgit.com/Textalk/angular-schema-form/0.8.0/dist/schema-form.js"></script>
     <script src="https://cdn.rawgit.com/Textalk/angular-schema-form/0.8.0/dist/bootstrap-decorator.js"></script>
+-->
+    <link rel="styleSheet" href="/css/ui-grid.min.css"/>
+    <!--<link rel="stylesheet" href="/css/bootstrap.min.css">-->
+    <link rel="stylesheet" href="/css/main.css">
+
+   <!-- <script src="/js/angularjs/1.4.6/angular.min.js"></script>
+    <script src="/js/angularjs/1.4.6/angular-animate.min.js"></script>
+    <script src="/js/angularjs/1.4.6/angular-touch.min.js"></script>
+-->
+    <script src="/js/grid/ui-grid.js"></script>
+    <script src="/js/grid/ui-bootstrap-tpls-0.13.4.js"></script>
+    <script src="/js/grid/ObjectPath.js"></script>
+    <script src="/js/grid/tv4.min.js"></script>
+    <script src="/js/grid/schema-form.js"></script>
+    <script src="/js/grid/bootstrap-decorator.js"></script>
+
 
     <script src="/js/script.js"></script>
     <meta charset="utf-8">
@@ -25,23 +41,33 @@
 <body ng-app="influx">
 
 <div ng-controller="MainCtrl as vm" align="center">
+
     <p>Необходимые для сборки детали</p>
     <select ng-model="filterTerm">
         <option value=true>Да</option>
         <option value=false>Нет</option>
     </select>
 
-    <input type="button" value="Filter Grid Content" ng-click="getCurrentPageFilterNecessary(filterTerm)" >
+    <input type="button" value="Применить фильтр" ng-click="getCurrentPageFilterNecessary(filterTerm)" >
+    <br>
+    <button ng-click="getCurrentPage()">Reset</button>
+    </br>
+    <br>
+    Фильтр {{filterTerm}}
+    </br>
+
+
     <h3>Custom Filter Example</h3>
     <div>Custom Component Filter: <input type="text" >
         <button ng-click="filterComponent()">Filter By Component</button>
+
     </div>
 
     <div>Custom necessary Filter: <input type="text" ng-model="searchTerm">
         <button ng-click="getCurrentPageFilterNecessary(searchTerm)" >Filter By Necessary</button>
         <!--<button ng-click="searchGrid(searchTerm)" ng-model="searchTerm">Filter By Necessary</button>-->
         <br>
-        term {{searchTerm}}
+        term {{filterTerm}}
         </br>
         <button ng-click="filterReset()">Reset</button>
     </div>

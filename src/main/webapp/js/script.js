@@ -90,9 +90,9 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         console.log(" gridApi ", gridApi);
         console.log(" gridApi current page ", gridApi.pagination.getPage());
 
-        gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT) ;
+        /*gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT) ;
 
-        $scope.gridApi.core.on.rowsRendered( $scope, myFunction );
+        $scope.gridApi.core.on.rowsRendered( $scope, myFunction );*/
         /*{
             console.log(" gridApi.selection.on.rowSelectionChanged($scope,function(row)" );
             alert(' !');
@@ -224,9 +224,18 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
     }
     // $scope.filterterm = true;
 
+    $scope.filterTerm = "undefined";
+
+    $scope.filterReset = function() {
+    $scope.filterTerm = "undefined";
+    vm.necessary = "undefined";
+    }
+
     // $scope.getCurrentPage = function (newPage, pageSize) {
     $scope.getCurrentPage = function () {
         // var url = '/api/part/get?page=' + newPage + '&size=' + pageSize;
+        $scope.filterTerm = "undefined";
+        vm.necessary = "undefined";
         var url = '/api/part/get?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
         $http.get(url, config)
             .then(function (response) {
@@ -501,29 +510,25 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
             };
             $http.post(urlAdd, data, config).then(function (response) {
                 if (response.data.result == "success") {
+                    console.log("----------- add >>>>>>>>>>>> ");
                     vm.resultMessage = response.data.result;
                     vm.totalItems = 1;
                     $modalInstance.close(row.entity);
-                    //console.log("Mainctrel" , MainCtrl);
-                    // grid.vm.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
-                    grid.totalItems += 1;
+                    grid.paginationCurrentPage = Math.ceil(grid.totalItems / grid.paginationPageSize);
+
                     console.log("response.data.data.id ", response.data);
                     row.entity.id = response.data.data;
 
-                    grid.paginationCurrentPage = Math.ceil(grid.totalItems / grid.paginationPageSize);
-                    grid.data.push(row.entity);
-                    /*console.log("rpaginationLastPage ", paginationLastPage, "grid.paginationCurrentPage ", grid.paginationCurrentPage);
-                    if (grid.paginationCurrentPage < paginationLastPage) {
-                        grid.paginationCurrentPage = paginationLastPage;
-                        //grid.data.push(row.entity);
+                   console.log(" vm.necessary ", vm.necessary);
 
-                    } else {
-                        console.log("data.push row ", row.entity);
-                    }*/
+                    if (vm.necessary == "undefined" || vm.necessary == row.entity.necessary) {
+                        grid.data.push(row.entity);
+                        grid.totalItems += 1;
+                        console.log("  add in grid ", grid);
+                    }
 
+                    console.log("----------- add <<<<<<<<<<<<<<<<");
 
-                    // grid.gridApi.core.refresh();
-                    // grid.refresh();
                 } else {
                     vm.resultMessage = response.data.error;
                 }
