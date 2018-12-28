@@ -48,16 +48,22 @@
         <option value=false>Нет</option>
     </select>
 
-    <input type="button" value="Применить фильтр" ng-click="getCurrentPageFilterNecessary(filterTerm)" >
+    <input type="button" value="Применить фильтр" ng-click="getCurrentPageFilterNecessary()" >
     <br>
     <button ng-click="getCurrentPage()">Reset</button>
     </br>
     <br>
     Фильтр {{filterTerm}}
     </br>
+    <br>
+    flagFilterNecessary {{scopeFlagFilterNecessary}}
+    </br>
+    <br>
+    dataFilterNecessary {{scopeDataFilterNecessary}}
+    </br>
 
 
-    <h3>Custom Filter Example</h3>
+  <!--  <h3>Custom Filter Example</h3>
     <div>Custom Component Filter: <input type="text" >
         <button ng-click="filterComponent()">Filter By Component</button>
 
@@ -65,7 +71,7 @@
 
     <div>Custom necessary Filter: <input type="text" ng-model="searchTerm">
         <button ng-click="getCurrentPageFilterNecessary(searchTerm)" >Filter By Necessary</button>
-        <!--<button ng-click="searchGrid(searchTerm)" ng-model="searchTerm">Filter By Necessary</button>-->
+        &lt;!&ndash;<button ng-click="searchGrid(searchTerm)" ng-model="searchTerm">Filter By Necessary</button>&ndash;&gt;
         <br>
         term {{filterTerm}}
         </br>
@@ -76,7 +82,7 @@
 
     <div style="padding-left: 10px;">
         <button type="button" id="addRow" class="btn btn-success" ng-click="addRow()">Add Row</button>
-    </div>
+    </div>-->
     <br/>
     <!--ui-grid-move-columns
 		ui-grid-resize-columns

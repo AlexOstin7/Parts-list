@@ -36,19 +36,24 @@ var config = {
     }
 }
 
+var flagFilterNecessary = false;
+
+var dataFilterNecessary = "undefined";
+
 MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants', '$interval'];
 
 function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
     var vm = this;
     vm.resultMessage;
-    vm.filterNecessary = false;
+    // flagFilterNecessary = false;
+
     vm.editRow = RowEditor.editRow;
     vm.numberOfItemsOnPage = 10;
     vm.size = 10;
     var urlGetNumberOfParts = '/api/part/number';
     // var totalItems = 0;
     vm.currentPageNumber = 1;
-    vm.necessary ='undefined';
+    dataFilterNecessary = 'undefined';
     // var totalPage = Math.ceil(vm.serviceGrid.totalItems / numberOfItemsOnPage);
     vm.serviceGrid = {
         paginationPageSizes: [vm.numberOfItemsOnPage, vm.numberOfItemsOnPage * 2, vm.numberOfItemsOnPage * 3],
@@ -103,16 +108,17 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             // alert("Hello! I am an alert box!");
             vm.currentPageNumber = newPage;
             vm.numberOfItemsOnPage = pageSize;
-            console.log("vm.filterNecessary ", vm.filterNecessary);
-            console.log("vm.necessary ", vm.necessary);
-            if (vm.filterNecessary == true) {
-                console.log(" getCurrentPage Filter nec");
-
-                $scope.getCurrentPageFilterNecessary(vm.necessary);
-            } else {
-                // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
+            console.log("flagFilterNecessary ", flagFilterNecessary);
+            console.log("dataFilterNecessary ", dataFilterNecessary);
+            if ($scope.filterTerm == 'undefined') {
                 console.log(" getCurrentPage ");
                 $scope.getCurrentPage();
+
+
+            } else {
+                // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
+                console.log(" getCurrentPage Filter nec");
+                $scope.getCurrentPageFilterNecessary(dataFilterNecessary);
             }
 
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.pageSize ", pageSize);
@@ -166,7 +172,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             type: 'boolean',
             enableFiltering: false,
             cellTemplate: "<div class='ui-grid-cell-contents'>{{row.entity.necessary ? 'Да' : 'Нет'}}</div>",
-             cellFilter: true,
+            cellFilter: true,
             filter: {
                 /*noTerm: true,*/
                 term: $scope.filterTerm
@@ -206,7 +212,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         console.log("searchTerm ", searchTerm);
         console.log("$scope.gridApi.grid.columns[3].filters[0] ", $scope.gridApi.grid.columns[3].filters[0])
     }*/
-    var myFunction = function() {
+    var myFunction = function () {
         // alert("!!")
     };
     var getNubmberOfElements = function () {
@@ -226,16 +232,21 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
 
     $scope.filterTerm = "undefined";
 
-    $scope.filterReset = function() {
-    $scope.filterTerm = "undefined";
-    vm.necessary = "undefined";
+    $scope.scopeFlagFilterNecessary = flagFilterNecessary;
+    $scope.scopeDataFilterNecessary = dataFilterNecessary;
+
+    $scope.filterReset = function () {
+        $scope.filterTerm = "undefined";
+        dataFilterNecessary = "undefined";
     }
 
     // $scope.getCurrentPage = function (newPage, pageSize) {
     $scope.getCurrentPage = function () {
         // var url = '/api/part/get?page=' + newPage + '&size=' + pageSize;
+        flagFilterNecessary = false;
         $scope.filterTerm = "undefined";
-        vm.necessary = "undefined";
+        dataFilterNecessary = "undefined";
+
         var url = '/api/part/get?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
         $http.get(url, config)
             .then(function (response) {
@@ -252,167 +263,177 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
 
     };
 
-    $scope.getCurrentPageFilterNecessary = function (necessary) {
+    $scope.getCurrentPageFilterNecessary = function () {
         // vm.currentPageNumber - 1, vm.numberOfItemsOnPage
+        flagFilterNecessary = true;
+         if ($scope.filterTerm == "true") {
+             $scope.filterTerm = true;
+        } else if ($scope.filterTerm == "false") {
+             $scope.filterTerm = false;
+         }
+        // } else dataFilterNecessary = "undefined";
+        // dataFilterNecessary = $scope.filterTerm;
+        // $scope.filterTerm = "undefined";
+        $scope.dataFilterNecessary = dataFilterNecessary;
+
         console.log("-------- getCurrentPageFilterNecessary >>>>>>>>>>>");
-        console.log(" necessary ", necessary);
-        console.log(" vm.necessary ", vm.necessary);
-        if (necessary == "true") {
+        console.log(" dataFilterNecessary ", dataFilterNecessary);
+        console.log(" flagFilterNecessary ", flagFilterNecessary);
+        console.log(" $scope.filterTerm ", $scope.filterTerm);
+        if (dataFilterNecessary != $scope.filterTerm) {
 
-            console.log(" necessary 1 ", vm.necessary);
+            console.log(" necessary 1 ", dataFilterNecessary);
 
-            if (vm.necessary == "false" || vm.necessary == "undefined") {
+            // if (dataFilterNecessary == "false" || dataFilterNecessary == "undefined") {
+
+            vm.currentPageNumber = 1;
+
+            // console.log(" necessary 1  dataFilterNecessary=undefined ", dataFilterNecessary);
+            // }
+        }
+        dataFilterNecessary = $scope.filterTerm;
+       /* if ($scope.filterTerm == "true") {
+            dataFilterNecessary = true;
+        } else if ($scope.filterTerm == "false") {
+            dataFilterNecessary = false;
+        } else dataFilterNecessary = "undefined";*/
+
+        /*if (necessary == "false") {
+
+            console.log(" necessary 0 ", dataFilterNecessary);
+
+            if (dataFilterNecessary == "true" || dataFilterNecessary == "undefined") {
 
                 vm.currentPageNumber = 1;
-
-                console.log(" necessary 1  vm.necessary=undefined ", vm.necessary);
+                console.log(" necessary 0  dataFilterNecessary= undefinded ", dataFilterNecessary);
             }
-            vm.necessary = true;
+            dataFilterNecessary = false;
 
-        }
-        if (necessary == "false") {
+            console.log(" necessary 0  dataFilterNecessary after ", dataFilterNecessary);
 
-            console.log(" necessary 0 ", vm.necessary);
-
-            if (vm.necessary == "true" || vm.necessary == "undefined") {
-
-                vm.currentPageNumber = 1;
-                console.log(" necessary 0  vm.necessary= undefinded ", vm.necessary);
-            }
-            vm.necessary = false;
-
-            console.log(" necessary 0  vm.necessary after ", vm.necessary);
-
-        }
-        console.log(" necessary after ", necessary);
-        console.log(" vm.necessary after ", vm.necessary);
+        }*/
+        console.log(" dataFilterNecessary after ", dataFilterNecessary);
         console.log(" vm.currentPageNumber after ", vm.currentPageNumber);
 
 
-    var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + necessary;
+        var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + dataFilterNecessary;
 
-    $http.get(url, config)
-        .then(function (response) {
-            console.log("getCurrentPageFilterPage then  ", response.data);
-            console.log("vm.serviceGrid ", vm.serviceGrid);
+        $http.get(url, config)
+            .then(function (response) {
+                console.log("getCurrentPageFilterPage then  ", response.data);
+                console.log("-------- getCurrentPageFilterNecessary get >>>>>>>>>>>");
+                if (response.data.result == "success") {
+                    vm.serviceGrid.totalItems = response.data.data.totalElements;
+                    vm.currentPageNumber = response.data.data.number + 1;
+                    console.log("response.data.data.number ", response.data.data.number);
+                    vm.serviceGrid.paginationCurrentPage = vm.currentPageNumber;
+                    // vm.serviceGrid.paginationCurrentPage = response.data.data.number;
+                    console.log("getPage filter necessary success ", response.data.data.content);
+                    vm.serviceGrid.data = response.data.data.content;
 
-            if (response.data.result == "success") {
-                vm.serviceGrid.totalItems = response.data.data.totalElements;
-                 vm.currentPageNumber = response.data.data.number + 1;
-                 console.log("response.data.data.number ", response.data.data.number);
-                 vm.serviceGrid.paginationCurrentPage = vm.currentPageNumber ;
-               // vm.serviceGrid.paginationCurrentPage = response.data.data.number;
-                console.log("getPage filter necessary success ", response.data.data.content);
-                vm.serviceGrid.data = response.data.data.content;
+                    console.log("vm.serviceGrid.data necessary after ", vm.serviceGrid.data);
+                    console.log("flagFilterNecessary before ", flagFilterNecessary);
+                    console.log("flagFilterNecessary after ", flagFilterNecessary);
 
-                console.log("vm.serviceGrid.data necessary after ", vm.serviceGrid.data);
-                console.log("vm.filterNecessary before ", vm.filterNecessary);
-
-                if (vm.filterNecessary == false) {
-                    vm.filterNecessary = true;
                 }
-                console.log("vm.filterNecessary after ", vm.filterNecessary);
-                console.log("necessary ", necessary);
+                console.log("dataFilterNecessary  ", dataFilterNecessary);
+                // console.log("vm.serviceGrid  ", vm.serviceGrid);
+                console.log("vm.serviceGrid paginationCurrentPage ", vm.serviceGrid.paginationCurrentPage);
 
-            }
-            console.log("vm.necessary  ", vm.necessary);
-            console.log("vm.serviceGrid  ", vm.serviceGrid);
-            console.log("vm.serviceGrid paginationCurrentPage ", vm.serviceGrid.paginationCurrentPage);
-
-
-        });
+                console.log("=========== getCurrentPageFilterNecessary get<<<<<<<<<");
+            });
         console.log("=========== getCurrentPageFilterNecessary <<<<<<<<<");
 
-};
-/*$scope.filterGrid = function (value) {
-    console.log(value);
-    $scope.gridApi.grid.columns[3].filters[0].term = value;
-};*/
-$scope.getDeletePart = function (row, newPage, pageSize) {
-    var url = '/api/part/delete/' + row.entity.id;
-    console.log("delete id", row.entity.id);
-    console.log("newPage ", newPage, " pageSize ", pageSize);
-    $http.get(url, config)
-        .then(function (response) {
-            // handleResult(result.value);
-            console.log("delete then ", response.data);
-
-            if (response.data.result == "success") {
-                console.log("delete success ", response.data);
-                var index = vm.serviceGrid.data.indexOf(row.entity);
-                console.log("delete catch  gridOptionsNumber ", vm.currentPageNumber, " index ", index);
-                // $scope.gridOptions.data.splice(index, 1);
-                console.log("cur page", vm.currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
-                console.log("newPage ", newPage, " pageSize ", pageSize);
-                $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
-                //  getCurrentPage(newPage, pageSize);
-                // getNubmberOfElements();
-                console.log("vm.serviceGrid.totalItems", vm.serviceGrid.totalItems);
-                vm.serviceGrid.totalItems -= 1;
-                console.log("(row.entity) ", row.entity);
-
-                // $scope.gridOptions.data = response.data.data.content;
-            }
-        }).catch(function () {
-        console.log("catch data ", vm.serviceGrid.data);
-    });
-};
-// $http.get('/js/dataPartJson').success(function(response) {
-/*$http.get('/api/parts').success(function(response) {
-    console.log(" get all parts", response.data)
-     vm.serviceGrid.data = response.data;
-    getNubmberOfElements();
-});*/
-
-$scope.addRow = function () {
-    var newService = {
-        "id": "0"
-        /* "component": "publicФЫЙЦУЯ",
-         "quantity": 2000,
-         "necessary": 'true'*/
     };
-    var rowTmp = {};
-    rowTmp.entity = newService;
-    vm.editRow(vm.serviceGrid, rowTmp);
-    console.log("add row ", newService, " service ", vm.serviceGrid);
-    // getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
-};
-
-$scope.updateRow = function (row) {
-    /*var newService = {
-        "id": row.entity.id,
-        "component": row.entity.component,
-        "quantity": row.entity.quantity,
-        "necessary": row.entity.necessary
+    /*$scope.filterGrid = function (value) {
+        console.log(value);
+        $scope.gridApi.grid.columns[3].filters[0].term = value;
     };*/
-    var newService = row.entity;
-    console.log("--------- updaterow >>>>>>>>>>>>>");
-    console.log("add row row.entity ++++++++++++", row.entity);
-    console.log("newService ++++++++++++", newService);
+    $scope.getDeletePart = function (row, newPage, pageSize) {
+        var url = '/api/part/delete/' + row.entity.id;
+        console.log("delete id", row.entity.id);
+        console.log("newPage ", newPage, " pageSize ", pageSize);
+        $http.get(url, config)
+            .then(function (response) {
+                // handleResult(result.value);
+                console.log("delete then ", response.data);
 
-    var rowTmp = {};
-    rowTmp.entity = newService;
-    vm.editRow(vm.serviceGrid, rowTmp);
-    console.log("add row !!!!! ", newService, " service !!!!!!!!!!", vm.serviceGrid);
-    console.log(" service !!!!!!!!!! vm ", vm);
-    console.log("$scope.gridApi.core.getVisibleRows($scope.gridApi.grid) ", $scope.gridApi.core.getVisibleRows($scope.gridApi.grid));
-    console.log(" dataFilter ",  $scope.gridApi);
+                if (response.data.result == "success") {
+                    console.log("delete success ", response.data);
+                    var index = vm.serviceGrid.data.indexOf(row.entity);
+                    console.log("delete catch  gridOptionsNumber ", vm.currentPageNumber, " index ", index);
+                    // $scope.gridOptions.data.splice(index, 1);
+                    console.log("cur page", vm.currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
+                    console.log("newPage ", newPage, " pageSize ", pageSize);
+                    $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
+                    //  getCurrentPage(newPage, pageSize);
+                    // getNubmberOfElements();
+                    console.log("vm.serviceGrid.totalItems", vm.serviceGrid.totalItems);
+                    vm.serviceGrid.totalItems -= 1;
+                    console.log("(row.entity) ", row.entity);
 
-    /*$scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.ALL)  ;
-    $scope.gridApi.core.refresh();*/
-   /* if (vm.filterNecessary == true) {
-        console.log(" getCurrentPage Filter nec");
+                    // $scope.gridOptions.data = response.data.data.content;
+                }
+            }).catch(function () {
+            console.log("catch data ", vm.serviceGrid.data);
+        });
+    };
+// $http.get('/js/dataPartJson').success(function(response) {
+    /*$http.get('/api/parts').success(function(response) {
+        console.log(" get all parts", response.data)
+         vm.serviceGrid.data = response.data;
+        getNubmberOfElements();
+    });*/
 
-        $scope.getCurrentPageFilterNecessary(vm.necessary);
-    } else {
-        // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
-        console.log(" getCurrentPage ");
-        $scope.getCurrentPage();
-    }*/
-    console.log("============ updaterow <<<<<<<<<<<<<<");
+    $scope.addRow = function () {
+        var newService = {
+            "id": "0"
+            /* "component": "publicФЫЙЦУЯ",
+             "quantity": 2000,
+             "necessary": 'true'*/
+        };
+        var rowTmp = {};
+        rowTmp.entity = newService;
+        vm.editRow(vm.serviceGrid, rowTmp);
+        console.log("add row ", newService, " service ", vm.serviceGrid);
+        // getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
+    };
 
-    // $scope.getCurrentPage();
-};
+    $scope.updateRow = function (row) {
+        /*var newService = {
+            "id": row.entity.id,
+            "component": row.entity.component,
+            "quantity": row.entity.quantity,
+            "necessary": row.entity.necessary
+        };*/
+        var newService = row.entity;
+        console.log("--------- updaterow >>>>>>>>>>>>>");
+        console.log("add row row.entity ++++++++++++", row.entity);
+        console.log("newService ++++++++++++", newService);
+
+        var rowTmp = {};
+        rowTmp.entity = newService;
+        vm.editRow(vm.serviceGrid, rowTmp);
+        console.log("add row !!!!! ", newService, " service !!!!!!!!!!", vm.serviceGrid);
+        // console.log(" service !!!!!!!!!! vm ", vm);
+        // console.log("$scope.gridApi.core.getVisibleRows($scope.gridApi.grid) ", $scope.gridApi.core.getVisibleRows($scope.gridApi.grid));
+        // console.log(" dataFilter ", $scope.gridApi);
+
+        /*$scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.ALL)  ;
+        $scope.gridApi.core.refresh();*/
+        /* if (vm.flagFilterNecessary == true) {
+             console.log(" getCurrentPage Filter nec");
+
+             $scope.getCurrentPageFilterNecessary(dataFilterNecessary);
+         } else {
+             // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
+             console.log(" getCurrentPage ");
+             $scope.getCurrentPage();
+         }*/
+        console.log("============ updaterow <<<<<<<<<<<<<<");
+
+        // $scope.getCurrentPage();
+    };
 
 }
 
@@ -519,20 +540,25 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
                     console.log("response.data.data.id ", response.data);
                     row.entity.id = response.data.data;
 
-                   console.log(" vm.necessary ", vm.necessary);
+                    console.log(" dataFilterNecessary ", dataFilterNecessary);
+                    console.log(" row.entity.necessary ", row.entity.necessary);
+                    // if (dataFilterNecessary == 'undefined') {
+                    //     console.log(" flagFilterNecessary == true");
+                    //
 
-                    if (vm.necessary == "undefined" || vm.necessary == row.entity.necessary) {
+                    if (dataFilterNecessary == "undefined" || dataFilterNecessary == row.entity.necessary) {
                         grid.data.push(row.entity);
                         grid.totalItems += 1;
                         console.log("  add in grid ", grid);
                     }
+                    // }
 
-                    console.log("----------- add <<<<<<<<<<<<<<<<");
 
                 } else {
                     vm.resultMessage = response.data.error;
                 }
 
+                console.log("----------- add <<<<<<<<<<<<<<<<");
             }, function (response) {
                 vm.resultMessage = response.data.error;
             });
@@ -565,12 +591,13 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
                     vm.resultMessage = response.data.result;
                     vm.totalItems = 1;
                     $modalInstance.close(row.entity);
-
-                    console.log(" grid before ", grid);
-                    console.log(" vm.necessary ", vm.necessary);
+                    console.log("----------- update >>>>>>>>>>>>>>>>>>>>>>>");
+                    // console.log(" grid before ", grid);
+                    console.log(" dataFilterNecessary ", dataFilterNecessary);
+                    console.log(" flagFilterNecessary ", flagFilterNecessary);
                     console.log(" row.entity.necessary ", row.entity.necessary);
 
-                    if (vm.necessary == "undefined" || vm.necessary == row.entity.necessary) {
+                    if (dataFilterNecessary == 'undefined' || dataFilterNecessary == row.entity.necessary) {
                         grid.data[grid.data.indexOf(row.entity)] = angular.copy(row.entity);
                         console.log("  stay in grid ", grid);
 
@@ -582,12 +609,13 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
                         console.log(" delete from grid ", grid);
 
                     }
-                    console.log(" grid after ", grid);
+                    // console.log(" grid after ", grid);
                     // gridApi.core.refresh();
 
                 } else {
                     vm.resultMessage = response.data.error;
                 }
+                console.log("----------- update <<<<<<<<<<<<<<<<<<<<<<<<< ");
 
             }, function (response) {
                 vm.resultMessage = response.data.error;
