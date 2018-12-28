@@ -169,10 +169,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
              cellFilter: true,
             filter: {
                 /*noTerm: true,*/
-                // term: true,
-                condition: function (searchTerm, cellValue) {
+                term: $scope.filterTerm
+                /*condition: function (searchTerm, cellValue) {
                     return cellValue.match(filterTerm);
-                }
+                }*/
             }
         },
         {
@@ -222,6 +222,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
                 }
             });
     }
+    // $scope.filterterm = true;
 
     // $scope.getCurrentPage = function (newPage, pageSize) {
     $scope.getCurrentPage = function () {
@@ -245,32 +246,38 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
     $scope.getCurrentPageFilterNecessary = function (necessary) {
         // vm.currentPageNumber - 1, vm.numberOfItemsOnPage
         console.log("-------- getCurrentPageFilterNecessary >>>>>>>>>>>");
-        if (necessary == 1) {
+        console.log(" necessary ", necessary);
+        console.log(" vm.necessary ", vm.necessary);
+        if (necessary == "true") {
 
-            if (vm.necessary == 0 || vm.necessary == 'undefined') {
+            console.log(" necessary 1 ", vm.necessary);
+
+            if (vm.necessary == "false" || vm.necessary == "undefined") {
 
                 vm.currentPageNumber = 1;
 
-                console.log(" necessary 1  vm.necessary ", vm.necessary);
+                console.log(" necessary 1  vm.necessary=undefined ", vm.necessary);
             }
-            vm.necessary = 1;
+            vm.necessary = true;
 
         }
-        if (necessary == 0) {
+        if (necessary == "false") {
+            
             console.log(" necessary 0 ", vm.necessary);
 
-            if (vm.necessary == 1 || vm.necessary == 'undefined') {
+            if (vm.necessary == "true" || vm.necessary == "undefined") {
 
                 vm.currentPageNumber = 1;
-                console.log(" necessary 0  vm.necessary ", vm.necessary);
+                console.log(" necessary 0  vm.necessary= undefinded ", vm.necessary);
             }
-            vm.necessary = 0;
+            vm.necessary = false;
+
             console.log(" necessary 0  vm.necessary after ", vm.necessary);
 
         }
-        console.log(" necessary ", necessary);
-        console.log(" vm.necessary ", vm.necessary);
-        console.log(" vm.currentPageNumber ", vm.currentPageNumber);
+        console.log(" necessary after ", necessary);
+        console.log(" vm.necessary after ", vm.necessary);
+        console.log(" vm.currentPageNumber after ", vm.currentPageNumber);
 
 
     var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + necessary;
@@ -554,9 +561,21 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
                     vm.totalItems = 1;
                     $modalInstance.close(row.entity);
 
-                    // grid.data[grid.data.indexOf(row.entity)] = row.entity;
-                    grid.data[grid.data.indexOf(row.entity)] = angular.copy(row.entity);
-                    console.log(" grid ", grid);
+                    console.log(" grid before ", grid);
+                    console.log(" vm.necessary ", vm.necessary);
+
+                    if (vm.necessary == undefined || vm.necessary == row.entity.necessary) {
+                        grid.data[grid.data.indexOf(row.entity)] = angular.copy(row.entity);
+                        console.log("  stay in grid ", grid);
+
+                    } else {
+
+                        var index = grid.data.indexOf(row.entity);
+                        grid.data.splice(index, 1);
+                        console.log(" delete from grid ", grid);
+
+                    }
+                    console.log(" grid after ", grid);
                     // gridApi.core.refresh();
 
                 } else {

@@ -27,8 +27,8 @@
 <div ng-controller="MainCtrl as vm" align="center">
     <p>Необходимые для сборки детали</p>
     <select ng-model="filterTerm">
-        <option value="1">Да</option>
-        <option value="0">Нет</option>
+        <option value=true>Да</option>
+        <option value=false>Нет</option>
     </select>
 
     <input type="button" value="Filter Grid Content" ng-click="getCurrentPageFilterNecessary(filterTerm)" >
