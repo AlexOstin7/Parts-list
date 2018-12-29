@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:left="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="utf-8">
@@ -40,20 +40,34 @@
 
 <body ng-app="influx">
 
-<div ng-controller="MainCtrl as vm" align="center">
+<div ng-controller="MainCtrl as vm"  align="center">
 
-    <p>Необходимые для сборки детали</p>
-    <div ng-if="filterTerm === true">
+    <table style="width:50%" align="center" border="1">
+        <p>Фильтр</p>
+        <tr>
+            <th align="center" width="20%"> Детали в списке: </th>
+            <th align="left">
+                <ng-if ng-if="filterTerm === true">необходимые для сборки</ng-if>
+                <ng-if ng-if="filterTerm === false">опциональные</ng-if>
+                <ng-if ng-if="filterTerm == 'undefined'">ВСЕ</ng-if>
+            </th>
+
+        </tr>
+    </table>
+
+    <!--<div ng-if="filterTerm === true">
         необходимы для сборки
-    </div>
+    </div>-->
+    <p>Необходимость
     <select ng-model="filterTerm">
         <option value="true">Да</option>
         <option value="false">Нет</option>
     </select>
-
+    </p>
     <input type="button" value="Применить фильтр" ng-click="getCurrentPageFilterNecessary()" >
+    <button ng-click="getCurrentPage()">Сброс фильтра</button>
     <br>
-    <button ng-click="getCurrentPage()">Reset</button>
+
     </br>
     <br>
     Фильтр {{filterTerm}}
