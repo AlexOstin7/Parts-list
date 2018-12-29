@@ -95,8 +95,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         console.log(" gridApi ", gridApi);
         console.log(" gridApi current page ", gridApi.pagination.getPage());
 
+        $scope.gridApi.core.on.rowsVisibleChanged(null,  myFunction2);
         /*gridApi.core.notifyDataChange(uiGridConstants.dataChange.EDIT) ;
-
         $scope.gridApi.core.on.rowsRendered( $scope, myFunction );*/
         /*{
             console.log(" gridApi.selection.on.rowSelectionChanged($scope,function(row)" );
@@ -113,7 +113,6 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             if ($scope.filterTerm == 'undefined') {
                 console.log(" getCurrentPage ");
                 $scope.getCurrentPage();
-
 
             } else {
                 // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
@@ -229,6 +228,28 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             });
     }
     // $scope.filterterm = true;
+    var myFunction2 = function( grid) {
+        console.log(" ALERT 2", grid);
+        console.log(" ALERT 2 core ", grid.core);
+        // console.log(" ALERT 2", grid.core.refreshRows());
+        console.log(" ALERT 2", grid.core.getVisibleRows());
+        console.log(" ALERT 2", grid.core.getVisibleRows().length);
+        console.log(" ALERT 2 pagination ", grid.pagination);
+        console.log(" ALERT 2 pagination total page ", grid.pagination.getTotalPages());
+        console.log(" ALERT 2 pagination getPage", grid.pagination.getPage());
+        // console.log(" ALERT 2 pagination ", grid.pagination.nextPage());
+        console.log(" ALERT 2 pagination first row ", grid.pagination.getFirstRowIndex());
+        console.log(" ALERT 2 pagination last row ", grid.pagination.getLastRowIndex());
+        console.log(" call  ", (grid.pagination.getPage() < grid.pagination.getTotalPages() &&  grid.core.getVisibleRows().length < 10));
+        console.log(" vm.numberOfItemsOnPage  ", vm.numberOfItemsOnPage);
+        if(grid.pagination.getPage() < grid.pagination.getTotalPages() &&  grid.core.getVisibleRows().length < vm.numberOfItemsOnPage) {
+            $scope.getCurrentPageFilterNecessary();
+}
+        // console.log(" ALERT 2 length ", grid.core.grid.rows.length);
+        // var rows = grid.api.core.on.rowsVisibleChanged($scope.grid.api.grid);
+        // console.log(" ALERT 2 rows ", rows );
+
+    }
 
     $scope.filterTerm = "undefined";
 
