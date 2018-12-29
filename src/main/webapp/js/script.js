@@ -40,6 +40,8 @@ var flagFilterNecessary = false;
 
 var dataFilterNecessary = "undefined";
 
+var flagSearchComponent = false;
+
 MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants', '$interval'];
 
 function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
@@ -299,7 +301,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
     $scope.getCurrentPageFilterNecessary = function () {
         // vm.currentPageNumber - 1, vm.numberOfItemsOnPage
         flagFilterNecessary = true;
+
+        flagSearchComponent = false;
         $scope.searchTerm = "";
+
          if ($scope.filterTerm == "true") {
              $scope.filterTerm = true;
         } else if ($scope.filterTerm == "false") {
@@ -401,13 +406,18 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
                     // $scope.gridOptions.data.splice(index, 1);
                     console.log("cur page", vm.currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
                     console.log("newPage ", newPage, " pageSize ", pageSize);
-                    if (dataFilterNecessary == "undefined") {
-                        console.log("delete $scope.getCurrentPage(); ")
-                        $scope.getCurrentPage();
+                    if (flagSearchComponent) {
+                        console.log("delete  $scope.getCurrentPageFilterComponent; ")
+                        $scope.getCurrentPageFilterComponent();
                     } else {
-                        console.log("delete  $scope.getCurrentPageFilterNecessary; ")
+                        if (dataFilterNecessary == "undefined") {
+                            console.log("delete $scope.getCurrentPage(); ")
+                            $scope.getCurrentPage();
+                        } else {
+                            console.log("delete  $scope.getCurrentPageFilterNecessary; ")
 
-                        $scope.getCurrentPageFilterNecessary();
+                            $scope.getCurrentPageFilterNecessary();
+                        }
                     }
                     // $scope.getCurrentPage();
                     //  getCurrentPage(newPage, pageSize);
@@ -436,6 +446,9 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         // $scope.filterTerm = "undefined";
         // $scope.dataFilterNecessary = dataFilterNecessary;
         $scope.filterTerm = "undefined";
+
+
+
         console.log("-------- getCurrentPageFilterComponent >>>>>>>>>>>");
         console.log(" dataFilterNecessary ", dataFilterNecessary);
         console.log(" flagFilterNecessary ", flagFilterNecessary);
@@ -697,18 +710,21 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
                     console.log(" dataFilterNecessary ", dataFilterNecessary);
                     console.log(" flagFilterNecessary ", flagFilterNecessary);
                     console.log(" row.entity.necessary ", row.entity.necessary);
-
-                    if (dataFilterNecessary == 'undefined' || dataFilterNecessary == row.entity.necessary) {
-                        grid.data[grid.data.indexOf(row.entity)] = angular.copy(row.entity);
-                        console.log("  stay in grid ", grid);
+                    if (flagSearchComponent) {
 
                     } else {
+                        if (dataFilterNecessary == 'undefined' || dataFilterNecessary == row.entity.necessary) {
+                            grid.data[grid.data.indexOf(row.entity)] = angular.copy(row.entity);
+                            console.log("  stay in grid ", grid);
 
-                        var index = grid.data.indexOf(row.entity);
-                        grid.data.splice(index, 1);
-                        grid.totalItems -= 1;
-                        console.log(" delete from grid ", grid);
+                        } else {
 
+                            var index = grid.data.indexOf(row.entity);
+                            grid.data.splice(index, 1);
+                            grid.totalItems -= 1;
+                            console.log(" delete from grid ", grid);
+
+                        }
                     }
                     // console.log(" grid after ", grid);
                     // gridApi.core.refresh();
