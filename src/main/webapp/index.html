@@ -55,9 +55,7 @@
         </tr>
     </table>
 
-    <!--<div ng-if="filterTerm === true">
-        необходимы для сборки
-    </div>-->
+
     <p>Необходимость
     <select ng-model="filterTerm">
         <option value="true">Да</option>
@@ -71,13 +69,15 @@
     <p>Поиск по наименованию детали
 
     </p>
-    <input type="button" value="Применить фильтр" ng-click="getCurrentPageFilterNecessary()" >
-    <button ng-click="getCurrentPage()">Поиск</button>
+    <input type="text" ng-model="searchTerm" >
+    <button ng-click="getCurrentPageFilterComponent()">Поиск</button>
+    <button ng-click="searchGrid()">Поиск2</button>
     <br>
 
     </br>
     <br>
     Фильтр {{filterTerm}}
+    Поиск {{searchTerm}}
     </br>
     <br>
     flagFilterNecessary {{scopeFlagFilterNecessary}}

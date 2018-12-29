@@ -113,15 +113,21 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             vm.numberOfItemsOnPage = pageSize;
             console.log("flagFilterNecessary ", flagFilterNecessary);
             console.log("dataFilterNecessary ", dataFilterNecessary);
-            if ($scope.filterTerm == 'undefined') {
-                console.log(" getCurrentPage ");
-                $scope.getCurrentPage();
-
+            if($scope.searchTerm != "") {
+                console.log("Pagination changed getCurrentPageFilterComponent ");
+                $scope.getCurrentPageFilterComponent();
             } else {
-                // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
-                console.log(" getCurrentPage Filter nec");
-                $scope.getCurrentPageFilterNecessary(dataFilterNecessary);
+                if ($scope.filterTerm == 'undefined') {
+                    console.log("Pagination changed getCurrentPage ");
+                    $scope.getCurrentPage();
+
+                } else {
+                    // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
+                    console.log("Pagination changed getCurrentPage Filter nec");
+                    $scope.getCurrentPageFilterNecessary(dataFilterNecessary);
+                }
             }
+
 
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.pageSize ", pageSize);
             // console.log("getNumberOfParts paginationChanged vm.serviceGrid.totalItems ", vm.serviceGrid.totalItems);
@@ -155,7 +161,14 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             cellTooltip: function (row) {
                 return row.entity.title;
             },
-            cellTemplate: '<div  style="text-align:left" white-space: normal title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>'
+            cellTemplate: '<div  style="text-align:left" white-space: normal title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>',
+            filter: {
+                /*noTerm: true,*/
+                // term: $scope.filterTerm
+                condition: function (searchTerm, cellValue) {
+                    return cellValue.match(serchTerm);
+                }
+            }
         },
         /*{name: 'quantity', displayName: "Количество", width: '10%', enableCellEdit: true, type: 'number'},*/
         {
@@ -209,11 +222,11 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         }
     ];
 
-    /*$scope.searchGrid = function(searchTerm){
-        $scope.gridApi.grid.columns[3].filters[0] = { term: searchTerm };
-        console.log("searchTerm ", searchTerm);
-        console.log("$scope.gridApi.grid.columns[3].filters[0] ", $scope.gridApi.grid.columns[3].filters[0])
-    }*/
+    $scope.searchGrid = function(searchTerm){
+        $scope.gridApi.grid.columns[1].filters[0] = { term: $scope.searchTerm };
+        console.log("searchTerm ", $scope.searchTerm);
+        console.log("$scope.gridApi.grid.columns[1].filters[0] ", $scope.gridApi.grid.columns[1].filters[0])
+    }
     var myFunction = function () {
         // alert("!!")
     };
@@ -249,7 +262,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             $scope.getCurrentPageFilterNecessary();
 }
     }
-
+    $scope.searchTerm = "";
     $scope.filterTerm = "undefined";
 
     $scope.scopeFlagFilterNecessary = flagFilterNecessary;
@@ -260,12 +273,12 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         dataFilterNecessary = "undefined";
     }
 
-    // $scope.getCurrentPage = function (newPage, pageSize) {
     $scope.getCurrentPage = function () {
         // var url = '/api/part/get?page=' + newPage + '&size=' + pageSize;
         flagFilterNecessary = false;
         $scope.filterTerm = "undefined";
         dataFilterNecessary = "undefined";
+        $scope.searchTerm = "";
 
         var url = '/api/part/get?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
         $http.get(url, config)
@@ -286,6 +299,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
     $scope.getCurrentPageFilterNecessary = function () {
         // vm.currentPageNumber - 1, vm.numberOfItemsOnPage
         flagFilterNecessary = true;
+        $scope.searchTerm = "";
          if ($scope.filterTerm == "true") {
              $scope.filterTerm = true;
         } else if ($scope.filterTerm == "false") {
@@ -408,12 +422,69 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             console.log("catch data ", vm.serviceGrid.data);
         });
     };
-// $http.get('/js/dataPartJson').success(function(response) {
-    /*$http.get('/api/parts').success(function(response) {
-        console.log(" get all parts", response.data)
-         vm.serviceGrid.data = response.data;
-        getNubmberOfElements();
-    });*/
+
+    $scope.getCurrentPageFilterComponent = function () {
+
+        // flagFilterNecessary = true;
+        // if ($scope.filterTerm == "true") {
+        //     $scope.filterTerm = true;
+        // } else if ($scope.filterTerm == "false") {
+        //     $scope.filterTerm = false;
+        // }
+        // } else dataFilterNecessary = "undefined";
+        // dataFilterNecessary = $scope.filterTerm;
+        // $scope.filterTerm = "undefined";
+        // $scope.dataFilterNecessary = dataFilterNecessary;
+        $scope.filterTerm = "undefined";
+        console.log("-------- getCurrentPageFilterComponent >>>>>>>>>>>");
+        console.log(" dataFilterNecessary ", dataFilterNecessary);
+        console.log(" flagFilterNecessary ", flagFilterNecessary);
+        console.log(" $scope.filterTerm ", $scope.searchTerm);
+        // if (dataFilterNecessary != $scope.filterTerm) {
+        //
+        //     console.log(" necessary 1 ", dataFilterNecessary);
+        //
+        //     // if (dataFilterNecessary == "false" || dataFilterNecessary == "undefined") {
+        //
+        //     vm.currentPageNumber = 1;
+        //
+        //     // console.log(" necessary 1  dataFilterNecessary=undefined ", dataFilterNecessary);
+        //     // }
+        // }
+        // dataFilterNecessary = $scope.filterTerm;
+        // console.log(" dataFilterNecessary after ", dataFilterNecessary);
+        // console.log(" vm.currentPageNumber after ", vm.currentPageNumber);
+
+
+        var url = '/api/part/getcomponent?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&component=' + $scope.searchTerm;
+
+        $http.get(url, config)
+            .then(function (response) {
+                console.log("getCurrentPageFilterPage then  ", response.data);
+                console.log("-------- getCurrentPageFilterNecessary get >>>>>>>>>>>");
+                if (response.data.result == "success") {
+                    vm.serviceGrid.totalItems = response.data.data.totalElements;
+                    vm.currentPageNumber = response.data.data.number + 1;
+                    console.log("response.data.data.number ", response.data.data.number);
+                    vm.serviceGrid.paginationCurrentPage = vm.currentPageNumber;
+                    // vm.serviceGrid.paginationCurrentPage = response.data.data.number;
+                    console.log("getPage filter necessary success ", response.data.data.content);
+                    vm.serviceGrid.data = response.data.data.content;
+
+                    console.log("vm.serviceGrid.data necessary after ", vm.serviceGrid.data);
+                    // console.log("flagFilterNecessary before ", flagFilterNecessary);
+                    // console.log("flagFilterNecessary after ", flagFilterNecessary);
+
+                }
+                // console.log("dataFilterNecessary  ", dataFilterNecessary);
+                // console.log("vm.serviceGrid  ", vm.serviceGrid);
+                console.log("vm.serviceGrid paginationCurrentPage ", vm.serviceGrid.paginationCurrentPage);
+
+                console.log("=========== getCurrentPageFilterComponent get<<<<<<<<<");
+            });
+        console.log("=========== getCurrentPageFilterComponent <<<<<<<<<");
+
+    };
 
     $scope.addRow = function () {
         var newService = {
