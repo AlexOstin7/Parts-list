@@ -55,4 +55,7 @@ public interface PartDAO {
     Page<Part> findPaginated(Pageable pageable, boolean necessary);
 
 
+    @Query("SELECT n FROM Network n")
+    Page<Part> findPaginated(Pageable pageable, String component);
+
 }

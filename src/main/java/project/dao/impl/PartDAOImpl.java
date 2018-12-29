@@ -160,4 +160,49 @@ public class PartDAOImpl implements PartDAO {
     }
 
 
+    @Override
+    public Page<Part> findPaginated(Pageable pageable, String component) {
+//        new PageRequest(pageable.getPageNumber(),pageable.getPageSize());
+//        log.info("org serv before update " + part.toString());
+//        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+/*
+        CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+        countQuery.select(criteriaBuilder.count(countQuery.from(Part.class)));
+        Long count = em.createQuery(countQuery).getSingleResult();
+        */
+        CriteriaQuery<Part> criteriaQuery = criteriaBuilder.createQuery(Part.class);
+        Root<Part> from = criteriaQuery.from(Part.class);
+        CriteriaQuery<Part> select = criteriaQuery.select(from);
+
+//        select.where(criteriaBuilder.equal(from.get("component"), component));
+        select.where(criteriaBuilder.like(from.get("component"),  "%" + component + "%"));
+        /*CriteriaQuery<Part> select = criteriaQuery.select(from);
+
+        Root<Office> Office = criteria.from(Office.class);
+        criteria.where(crbuilder.equal(Office.get("name"), name));*/
+
+//        TypedQuery<Part> typedQuery = em.createQuery(select);
+        TypedQuery<Part> typedQuery = em.createQuery(select);
+        List<Part> list = Collections.emptyList();
+        int count = typedQuery.getResultList().size();
+//        Long count = getNubmerOfParts();
+        int pageNumber = (int) ((count / pageSize) + 1);
+        if (pageable.getPageNumber() < pageNumber) {
+            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize );
+            typedQuery.setMaxResults(pageSize);
+//            System.out.println("Current page: " + typedQuery.getResultList());
+            list = typedQuery.getResultList();
+        }
+        /*TypedQuery<Part> query = em.createQuery("SELECT p FROM Part p", Part.class);
+        List<Part> list = loadAll();*/
+        log.info("findPaginatedFilter component dao before " + "size List " + list.size() + " count " + count + "page Number " + pageNumber + " list.toString " + list.toString());
+//        Page<Part> page = new PageImpl<>(list, pageable, count.intValue());
+        Page<Part> page = new PageImpl<>(list, pageable, count);
+        log.info("findPaginatedFilter component dao after " + "page elements " + page.getTotalElements() + " page.toString " + page.toString() + " page content " + page.getContent().toString());
+        return page;
+
+    }
 }

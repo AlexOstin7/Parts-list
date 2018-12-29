@@ -130,8 +130,21 @@ public class PartControllerImpl implements PartController {
     @ApiOperation(value = "findPaginatedFilterNecessary", nickname = "findPaginatedFilterNecessary", httpMethod = "GET")
     @RequestMapping(value = "/part/getnecessary", params = {"page", "size", "necessary"}, method = {GET})
     public Response findPaginatedFilterNecessary(int page, int size, boolean necessary) {
-        log.info("/parts/getnecessary contr before findPaginated ");
+        log.info("/part/getnecessary contr before findPaginated ");
         Page<Part> resultPage = partService.findPaginated(page, size, necessary);
+        if (page > resultPage.getTotalPages()) {
+            throw new CustomErrorException("Page number error");
+        }
+
+        return new ResponseSuccess("success", resultPage);
+    }
+
+    @Override
+    @ApiOperation(value = "findPaginatedFilterComponent", nickname = "findPaginatedFilterComponent", httpMethod = "GET")
+    @RequestMapping(value = "/part/getcomponent", params = {"page", "size", "component"}, method = {GET})
+    public Response findPaginatedFilterComponent(int page, int size, String component) {
+        log.info("/part/getnecessary contr before findPaginated ");
+        Page<Part> resultPage = partService.findPaginated(page, size, component);
         if (page > resultPage.getTotalPages()) {
             throw new CustomErrorException("Page number error");
         }

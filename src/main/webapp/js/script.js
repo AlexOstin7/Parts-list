@@ -248,10 +248,6 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         if(grid.pagination.getPage() < grid.pagination.getTotalPages() &&  grid.core.getVisibleRows().length < vm.numberOfItemsOnPage) {
             $scope.getCurrentPageFilterNecessary();
 }
-        // console.log(" ALERT 2 length ", grid.core.grid.rows.length);
-        // var rows = grid.api.core.on.rowsVisibleChanged($scope.grid.api.grid);
-        // console.log(" ALERT 2 rows ", rows );
-
     }
 
     $scope.filterTerm = "undefined";

@@ -30,6 +30,8 @@ public interface PartService {
 
     Page<Part> findPaginated(int page, int size, boolean necessary);
 
+    Page<Part> findPaginated(int page, int size, String component);
+
 /*
     Page<Part> findAllPartsByPage(Pageable pageable);
 

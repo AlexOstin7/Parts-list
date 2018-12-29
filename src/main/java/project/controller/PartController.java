@@ -24,6 +24,8 @@ public interface PartController {
 
     Response findPaginatedFilterNecessary(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("term") boolean necessary);
 
+    Response findPaginatedFilterComponent(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("term") String component);
+
  /*   Response filterParts(@RequestBody PartFilterView part);*/
 
 }
