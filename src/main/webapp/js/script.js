@@ -264,21 +264,20 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             vm.currentPageNumber += 1;
             $scope.getCurrentPage();
         }
-        if ((grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length > vm.numberOfItemsOnPage && $scope.filterTerm != 'undefined'))
+        if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length > vm.numberOfItemsOnPage && $scope.filterTerm != 'undefined')
         {
             console.log("call 1 next page (add > size)");
             // vm.currentPageNumber = grid.pagination.getTotalPages();
             vm.currentPageNumber += 1;
             $scope.getCurrentPageFilterNecessary();
 
-        }
-/*
+        }console.log("call 1 not a last", (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage && $scope.filterTerm == 'undefined'))
         if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage && $scope.filterTerm == 'undefined') {
-            console.log("call 1 next page necessary delete");
+            console.log("call 1 next page necessary delete (not a last page)");
             // vm.currentPageNumber = grid.pagination.getTotalPages();
             // vm.currentPageNumber += 1;
             $scope.getCurrentPage();
-        }*/
+        }
 
         /*console.log(" call 2 next page", grid.core.getVisibleRows().length > vm.numberOfItemsOnPage);
         if (grid.core.getVisibleRows().length > vm.numberOfItemsOnPage) {
@@ -327,8 +326,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
                     vm.serviceGrid.data = response.data.data.content;
                     console.log("vm.serviceGrid.data  ", vm.serviceGrid);
                     // console.log(" value ", vm.serviceGrid.columnDefs[3].cellValue);
-                    vm.currentPageNumber = response.data.data.number + 1;
-                    vm.serviceGrid.paginationCurrentPage = vm.currentPageNumber;
+                     vm.currentPageNumber = response.data.data.number + 1;
+                   vm.serviceGrid.paginationCurrentPage = vm.currentPageNumber;
                 }
             });
 
