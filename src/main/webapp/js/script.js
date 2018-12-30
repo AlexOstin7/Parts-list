@@ -101,8 +101,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         console.log(" gridApi current page ", gridApi.pagination.getPage());
 
         $scope.gridApi.core.on.rowsVisibleChanged(null, myFunction2);
-        gridApi.core.notifyDataChange(uiGridConstants.dataChange.ROW) ;
-        $scope.gridApi.core.on.rowsRendered( $scope, myFunction );
+       /* gridApi.core.notifyDataChange(uiGridConstants.dataChange.ROW) ;
+        $scope.gridApi.core.on.rowsRendered( $scope, myFunction );*/
         /*{
             console.log(" gridApi.selection.on.rowSelectionChanged($scope,function(row)" );
             alert(' !');
@@ -120,11 +120,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
                 $scope.getCurrentPageFilterComponent();
             } else {
                 if ($scope.filterTerm == 'undefined') {
+                // if ($scope.flagFilterNecessary) {
                     console.log("Pagination changed getCurrentPage ");
                     $scope.getCurrentPage();
-
                 } else {
-                    // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
                     console.log("Pagination changed getCurrentPage Filter nec");
                     $scope.getCurrentPageFilterNecessary(dataFilterNecessary);
                 }
@@ -256,19 +255,45 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         console.log(" ALERT 2 pagination getPage", grid.pagination.getPage());
         console.log(" ALERT 2 pagination first row ", grid.pagination.getFirstRowIndex());
         console.log(" ALERT 2 pagination last row ", grid.pagination.getLastRowIndex());
-        console.log(" call  getCurrentPageNecessary", (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < 10));
+        console.log(" call  getCurrentPageNecessary", (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage && $scope.filterTerm == 'undefined'));
         console.log(" vm.numberOfItemsOnPage  ", vm.numberOfItemsOnPage);
-        if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage) {
-            $scope.getCurrentPageFilterNecessary();
+
+        if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length > vm.numberOfItemsOnPage && $scope.filterTerm == 'undefined') {
+            console.log("call 1 next page necessary (aadd > size)");
+            // vm.currentPageNumber = grid.pagination.getTotalPages();
+            vm.currentPageNumber += 1;
+            $scope.getCurrentPage();
         }
-        console.log(" call 2 next page", grid.core.getVisibleRows().length > vm.numberOfItemsOnPage);
+        if ((grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length > vm.numberOfItemsOnPage && $scope.filterTerm != 'undefined'))
+        {
+            console.log("call 1 next page (add > size)");
+            // vm.currentPageNumber = grid.pagination.getTotalPages();
+            vm.currentPageNumber += 1;
+            $scope.getCurrentPageFilterNecessary();
+
+        }
+
+        if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage && $scope.filterTerm == 'undefined') {
+            console.log("call 1 next page necessary delete");
+            // vm.currentPageNumber = grid.pagination.getTotalPages();
+            // vm.currentPageNumber += 1;
+            $scope.getCurrentPage();
+        }
+
+        /*console.log(" call 2 next page", grid.core.getVisibleRows().length > vm.numberOfItemsOnPage);
         if (grid.core.getVisibleRows().length > vm.numberOfItemsOnPage) {
             console.log(" next page >>> ");
             // grid.core.nextPage;
-            grid.core.previousPage;
-            grid.core.previousPage;
+            // grid.core.previousPage;
+            if (flagFilterNecessary) {
+                vm.currentPageNumber+=1;
+                $scope.getCurrentPageFilterNecessary();
+            } else {
+                vm.currentPageNumber+=1;
+                $scope.getCurrentPage();
+            }
 
-        }
+        }*/
     }
     var myFunction = function (grid) {
         console.log(" ALERT 1", grid);
@@ -413,13 +438,21 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
                     var index = vm.serviceGrid.data.indexOf(row.entity);
                     console.log("delete catch  gridOptionsNumber ", vm.currentPageNumber, " index ", index);
                     // $scope.gridOptions.data.splice(index, 1);
+                    vm.serviceGrid.data.splice(index, 1);
                     console.log("cur page", vm.currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
                     console.log("newPage ", newPage, " pageSize ", pageSize);
+                    console.log("vm.serviceGrid.totalItems", vm.serviceGrid.totalItems);
+                    vm.serviceGrid.totalItems -= 1;
+                    /*console.log("(row.entity) ", row.entity);
+                    if (vm.serviceGrid.totalItems == 0) {
+                        vm.currentPageNumber -=1;
+                    }
                     if (flagSearchComponent) {
                         console.log("delete  $scope.getCurrentPageFilterComponent; ")
                         $scope.getCurrentPageFilterComponent();
                     } else {
-                        if (dataFilterNecessary == "undefined") {
+                        // if (dataFilterNecessary == "undefined") {
+                        if ($scope.searchTerm == "undefined") {
                             console.log("delete $scope.getCurrentPage(); ")
                             $scope.getCurrentPage();
                         } else {
@@ -427,13 +460,11 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
 
                             $scope.getCurrentPageFilterNecessary();
                         }
-                    }
+                    }*/
                     // $scope.getCurrentPage();
                     //  getCurrentPage(newPage, pageSize);
                     // getNubmberOfElements();
-                    console.log("vm.serviceGrid.totalItems", vm.serviceGrid.totalItems);
-                    vm.serviceGrid.totalItems -= 1;
-                    console.log("(row.entity) ", row.entity);
+
 
                     // $scope.gridOptions.data = response.data.data.content;
                 }
