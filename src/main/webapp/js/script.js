@@ -272,13 +272,13 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             $scope.getCurrentPageFilterNecessary();
 
         }
-
+/*
         if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage && $scope.filterTerm == 'undefined') {
             console.log("call 1 next page necessary delete");
             // vm.currentPageNumber = grid.pagination.getTotalPages();
             // vm.currentPageNumber += 1;
             $scope.getCurrentPage();
-        }
+        }*/
 
         /*console.log(" call 2 next page", grid.core.getVisibleRows().length > vm.numberOfItemsOnPage);
         if (grid.core.getVisibleRows().length > vm.numberOfItemsOnPage) {
@@ -327,6 +327,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
                     vm.serviceGrid.data = response.data.data.content;
                     console.log("vm.serviceGrid.data  ", vm.serviceGrid);
                     // console.log(" value ", vm.serviceGrid.columnDefs[3].cellValue);
+                    vm.currentPageNumber = response.data.data.number + 1;
+                    vm.serviceGrid.paginationCurrentPage = vm.currentPageNumber;
                 }
             });
 
@@ -391,7 +393,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         console.log(" vm.currentPageNumber after ", vm.currentPageNumber);
 
 
-        var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + dataFilterNecessary;
+        var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
 
         $http.get(url, config)
             .then(function (response) {
