@@ -299,10 +299,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
 
         }
 
-        console.log("call 1 not a last", (grid.pagination.getPage() < grid.pagination.getTotalPages() && (grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1) < vm.numberOfItemsOnPage));
+        console.log("call 1 not a last", (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage));
 
         // if (grid.pagination.getPage() < grid.pagination.getTotalPages() && (grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1) < vm.numberOfItemsOnPage && $scope.filterTerm == 'undefined') {
-        if (grid.pagination.getPage() < grid.pagination.getTotalPages() && (grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1) < vm.numberOfItemsOnPage) {
+        if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage) {
             console.log("call 1 next page necessary delete (not a last page) >>>>>");
             // vm.currentPageNumber = grid.pagination.getTotalPages();
             // vm.currentPageNumber += 1;
@@ -813,7 +813,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
                     }
                     // console.log(" grid after ", grid);
                     // gridApi.core.refresh();
-
+                    grid.paginationCurrentPage = Math.ceil(grid.totalItems / grid.paginationPageSize);
                 } else {
                     vm.resultMessage = response.data.error;
                 }
@@ -822,7 +822,6 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
             }, function (response) {
                 vm.resultMessage = response.data.error;
             });
-            $scope.$apply();
             $modalInstance.close(row.entity);
         }
 
