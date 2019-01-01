@@ -478,7 +478,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
                     var index = vm.serviceGrid.data.indexOf(row.entity);
                     vm.serviceGrid.data.splice(index, 1);
                     vm.serviceGrid.totalItems -= 1;
-
+                    vm.serviceGrid.paginationCurrentPage = Math.ceil(vm.serviceGrid.totalItems / vm.serviceGrid.paginationPageSize);
                     console.log("delete catch  gridOptionsNumber ", vm.currentPageNumber, " index ", index);
                     console.log("cur page", vm.currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
                     console.log("newPage ", newPage, " pageSize ", pageSize);
