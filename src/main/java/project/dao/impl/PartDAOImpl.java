@@ -115,6 +115,47 @@ public class PartDAOImpl implements PartDAO {
     }
 
     @Override
+    public Part findPaginatedOffset(Pageable pageable, int offset) {
+//        new PageRequest(pageable.getPageNumber(),pageable.getPageSize());
+//        log.info("org serv before update " + part.toString());
+//        int pageNumber = pageable.getPageNumber();
+        int pageSize = pageable.getPageSize();
+
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+/*
+        CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
+        countQuery.select(criteriaBuilder.count(countQuery.from(Part.class)));
+        Long count = em.createQuery(countQuery).getSingleResult();
+        */
+        CriteriaQuery<Part> criteriaQuery = criteriaBuilder.createQuery(Part.class);
+        Root<Part> from = criteriaQuery.from(Part.class);
+        CriteriaQuery<Part> select = criteriaQuery.select(from);
+
+        TypedQuery<Part> typedQuery = em.createQuery(select);
+        List<Part> list = Collections.emptyList();
+
+//        Long count = getNubmerOfParts();
+        int count = typedQuery.getResultList().size();
+        int pageNumber = (int) ((count / pageSize) + 1);
+        if (pageable.getPageNumber() < pageNumber) {
+            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize + offset );
+            typedQuery.setMaxResults(1);
+//            System.out.println("Current page: " + typedQuery.getResultList());
+//            list = typedQuery.getResultList();
+
+        }
+        Part part = typedQuery.getSingleResult();
+        /*TypedQuery<Part> query = em.createQuery("SELECT p FROM Part p", Part.class);
+        List<Part> list = loadAll();*/
+        log.info("findPaginated dao  " + "size List " + list.size() + " count " + count + "page Number " + pageNumber + " list.toString " + list.toString());
+        log.info("findPaginated dao  part " + part.toString());
+//        Page<Part> page = new PageImpl<>(list, pageable, count);
+//        log.info("findPaginated dao before " + "page elements " + page.getTotalElements() + " page.toString " + page.toString() + " page content " + page.getContent().toString());
+        return part;
+
+    }
+
+    @Override
     public Page<Part> findPaginated(Pageable pageable, boolean necessary) {
 //        new PageRequest(pageable.getPageNumber(),pageable.getPageSize());
 //        log.info("org serv before update " + part.toString());
@@ -168,11 +209,6 @@ public class PartDAOImpl implements PartDAO {
         int pageSize = pageable.getPageSize();
 
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
-/*
-        CriteriaQuery<Long> countQuery = criteriaBuilder.createQuery(Long.class);
-        countQuery.select(criteriaBuilder.count(countQuery.from(Part.class)));
-        Long count = em.createQuery(countQuery).getSingleResult();
-        */
         CriteriaQuery<Part> criteriaQuery = criteriaBuilder.createQuery(Part.class);
         Root<Part> from = criteriaQuery.from(Part.class);
         CriteriaQuery<Part> select = criteriaQuery.select(from);

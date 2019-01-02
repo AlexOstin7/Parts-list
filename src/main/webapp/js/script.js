@@ -479,12 +479,15 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
                     var index = vm.serviceGrid.data.indexOf(row.entity);
                     vm.serviceGrid.data.splice(index, 1);
                     vm.serviceGrid.totalItems -= 1;
+<<<<<<< HEAD
                     var lastPage = Math.ceil(vm.serviceGrid.totalItems / vm.serviceGrid.paginationPageSize);
                     console.log("lastPage ", lastPage);
                     console.log("lvm.serviceGrid.paginationCurrentPage ", vm.serviceGrid.paginationCurrentPage);
                      if (vm.serviceGrid.paginationCurrentPage > lastPage) {
                          vm.serviceGrid.paginationCurrentPage = lastPage;
                      }
+=======
+>>>>>>> e8449cc
                     // vm.serviceGrid.paginationCurrentPage = Math.ceil(vm.serviceGrid.totalItems / vm.serviceGrid.paginationPageSize);
                     console.log("delete catch  gridOptionsNumber ", vm.currentPageNumber, " index ", index);
                     console.log("cur page", vm.currentPageNumber, " item on page ", vm.numberOfItemsOnPage);

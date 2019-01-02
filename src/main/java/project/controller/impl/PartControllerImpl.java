@@ -126,6 +126,19 @@ public class PartControllerImpl implements PartController {
         return new ResponseSuccess("success", resultPage);
     }
 
+
+
+    @Override
+    @ApiOperation(value = "findPaginatedOffset", nickname = "findPaginatedOffset", httpMethod = "GET")
+    @RequestMapping(value = "/part/getoffset", params = {"page", "size", "offset"}, method = {GET})
+    public Response findPaginatedByOffset(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("offset") int offset) {
+        log.info("/part/get contr before findPaginated ");
+        if (offset < 0 || offset > 9) {
+            throw new CustomErrorException("Offset number error");
+        }
+        return new ResponseSuccess("success", partService.findPaginatedOffset(page, size,offset));
+    }
+
     @Override
     @ApiOperation(value = "findPaginatedFilterNecessary", nickname = "findPaginatedFilterNecessary", httpMethod = "GET")
     @RequestMapping(value = "/part/getnecessary", params = {"page", "size", "necessary"}, method = {GET})
