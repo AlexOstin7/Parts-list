@@ -52,7 +52,6 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     vm.last;
     vm.rowOffset = {};
     vm.editRow = RowEditor.editRow;
-    vm.necessary = RowEditor.necessary;
     vm.numberOfItemsOnPage = 5;
     vm.size = 10;
     var urlGetNumberOfParts = '/api/part/number';
@@ -640,12 +639,13 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         };*/
         var newService = row.entity;
         console.log("--------- updaterow >>>>>>>>>>>>>");
-        console.log("add row row.entity ++++++++++++", row.entity);
+        console.log("updateRow row.entity ++++++++++++", row.entity);
         console.log("newService ++++++++++++", newService);
 
         var rowTmp = {};
         rowTmp.entity = newService;
-        vm.editRow(vm.serviceGrid, rowTmp);
+        // vm.editRow(vm.serviceGrid, rowTmp, $scope.filterTerm, $scope.getOnePartFromNextPage());
+        vm.editRow(vm.serviceGrid, rowTmp, $scope.filterTerm);
         console.log("add row !!!!! ", newService, " service !!!!!!!!!!", vm.serviceGrid);
         // console.log(" service !!!!!!!!!! vm ", vm);
         // console.log("$scope.gridApi.core.getVisibleRows($scope.gridApi.grid) ", $scope.gridApi.core.getVisibleRows($scope.gridApi.grid));
@@ -674,26 +674,6 @@ RowEditor.$inject = ['$http', '$rootScope', '$modal'];
 function RowEditor($http, $rootScope, $modal) {
     var service = {};
     service.editRow = editRow;
-    var necessary;
-
-// console.log("editRow  ", editRow)
-    /*function editRow(grid, row) {
-        console.log("ediRow row.entity ", row.entity);
-        console.log("grid ", grid);
-        $modal.open({
-            templateUrl: '/js/service-edit.html',
-            controller: ['$http', '$modalInstance', 'grid', 'row', RowEditCtrl],
-            controllerAs: 'vm',
-            resolve: {
-                grid: function () {
-                    return grid;
-                },
-                row: function () {
-                    return row;
-                }
-            }
-        });
-    }*/
 
     function editRow(grid, row, filterTerm) {
         $modal.open({
@@ -709,7 +689,10 @@ function RowEditor($http, $rootScope, $modal) {
                 },
                 filterTerm: function () {
                     return filterTerm;
-                }
+                }/*,
+                getOnePartFromNextPage: function () {
+                  return $scope.getOnePartFromNextPage();
+                }*/
 
             }
         });
@@ -726,7 +709,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm)
     // console.log("grid.data.indexOf(row.entity) ", grid.data.indexOf(row.entity));
     vm.entity = angular.copy(row.entity);
     console.log("vm.entity before", vm.entity);
-    console.log("vm.entity after", vm.entity);
+    console.log("RowEditCtrl vm.currentPageNumber", vm.currentPageNumber);
 
     vm.schema = PersonSchema;
     vm.entity = angular.copy(row.entity);
@@ -753,11 +736,13 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm)
     function save() {
         var urlAdd = "/api/part/add";
         var urlUpDate = "/api/part/update";
+        console.log("rowEditCtrel add row.entity", row.entity);
+        console.log("rowEditCtrel add vm.entity", vm.entity);
+        console.log("rowEditCtrel add vm.rowOffset", vm.rowOffset);
+        console.log("rowEditCtrel add vm.currentPageNumber ", vm.currentPageNumber);
+        console.log("rowEditCtrel add filterTerm", filterTerm);
         if (row.entity.id == '0') {
-            console.log("rowEditCtrel add row.entity", row.entity);
-            console.log("rowEditCtrel add vm.entity", vm.entity);
-            console.log("rowEditCtrel add vm.necessary", vm.necessary);
-            console.log("rowEditCtrel add filterTerm", filterTerm);
+
             row.entity = angular.extend(row.entity, vm.entity);
             // grid.data.push(row.entity);
             console.log("rowEditCtrel row.entity after", row.entity);
@@ -849,13 +834,16 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm)
                     $modalInstance.close(row.entity);
                     console.log("----------- update >>>>>>>>>>>>>>>>>>>>>>>");
                     // console.log(" grid before ", grid);
-                    console.log(" dataFilterNecessary ", dataFilterNecessary);
-                    console.log(" flagFilterNecessary ", flagFilterNecessary);
-                    console.log(" row.entity.necessary ", row.entity.necessary);
-                    if (flagSearchComponent) {
+                    // console.log(" dataFilterNecessary ", dataFilterNecessary);
+                    // console.log(" flagFilterNecessary ", flagFilterNecessary);
+                    // console.log(" row.entity.necessary ", row.entity.necessary);
+                    /*if (flagSearchComponent) {
 
-                    } else {
-                        if (dataFilterNecessary == 'undefined' || dataFilterNecessary == row.entity.necessary) {
+                    } else {*/
+                    console.log(" row.entity.necessary ", row.entity.necessary);
+                    console.log(" edit filterTerm ", filterTerm);
+                    console.log(" (filterTerm == row.entity.necessary || filterTerm == 'undefined')", (filterTerm == row.entity.necessary || filterTerm == 'undefined'));
+                        if (filterTerm == row.entity.necessary || filterTerm == 'undefined') {
                             grid.data[grid.data.indexOf(row.entity)] = angular.copy(row.entity);
                             console.log("  stay in grid ", grid);
 
@@ -867,10 +855,6 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm)
                             console.log(" delete from grid ", grid);
 
                         }
-                    }
-                    // console.log(" grid after ", grid);
-                    // gridApi.core.refresh();
-                    grid.paginationCurrentPage = Math.ceil(grid.totalItems / grid.paginationPageSize);
                 } else {
                     vm.resultMessage = response.data.error;
                 }
