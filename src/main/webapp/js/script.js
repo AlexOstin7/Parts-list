@@ -45,13 +45,14 @@ var flagSearchComponent = false;
 
 MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants', '$interval'];
 
-function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
+function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     var vm = this;
     vm.resultMessage;
     // flagFilterNecessary = false;
     vm.last;
     vm.rowOffset = {};
     vm.editRow = RowEditor.editRow;
+    vm.necessary = RowEditor.necessary;
     vm.numberOfItemsOnPage = 5;
     vm.size = 10;
     var urlGetNumberOfParts = '/api/part/number';
@@ -350,6 +351,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
         }
         console.log(" url ", url);
+        vm.necessary = $scope.filterTerm;
         $http.get(url, config)
             .then(function (response) {
                 console.log("getCurrentPage then  ", response.data);
@@ -624,7 +626,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         };
         var rowTmp = {};
         rowTmp.entity = newService;
-        vm.editRow(vm.serviceGrid, rowTmp);
+        vm.editRow(vm.serviceGrid, rowTmp, $scope.filterTerm);
         console.log("add row ", newService, " service ", vm.serviceGrid);
         // getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
     };
@@ -672,6 +674,7 @@ RowEditor.$inject = ['$http', '$rootScope', '$modal'];
 function RowEditor($http, $rootScope, $modal) {
     var service = {};
     service.editRow = editRow;
+    var necessary;
 
 // console.log("editRow  ", editRow)
     /*function editRow(grid, row) {
@@ -692,10 +695,10 @@ function RowEditor($http, $rootScope, $modal) {
         });
     }*/
 
-    function editRow(grid, row) {
+    function editRow(grid, row, filterTerm) {
         $modal.open({
             templateUrl: '/js/edit-modal.html',
-            controller: ['$http', '$modalInstance', 'PersonSchema', 'grid', 'row', RowEditCtrl],
+            controller: ['$http', '$modalInstance', 'PersonSchema', 'grid', 'row', 'filterTerm', RowEditCtrl],
             controllerAs: 'vm',
             resolve: {
                 grid: function () {
@@ -703,7 +706,11 @@ function RowEditor($http, $rootScope, $modal) {
                 },
                 row: function () {
                     return row;
+                },
+                filterTerm: function () {
+                    return filterTerm;
                 }
+
             }
         });
     }
@@ -712,7 +719,7 @@ function RowEditor($http, $rootScope, $modal) {
 }
 
 
-function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
+function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm) {
     var vm = this;
     console.log("row.ENtity ", row.entity);
     console.log("grid ", grid);
@@ -749,6 +756,8 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
         if (row.entity.id == '0') {
             console.log("rowEditCtrel add row.entity", row.entity);
             console.log("rowEditCtrel add vm.entity", vm.entity);
+            console.log("rowEditCtrel add vm.necessary", vm.necessary);
+            console.log("rowEditCtrel add filterTerm", filterTerm);
             row.entity = angular.extend(row.entity, vm.entity);
             // grid.data.push(row.entity);
             console.log("rowEditCtrel row.entity after", row.entity);
@@ -772,11 +781,19 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
 
                     console.log(" dataFilterNecessary ", dataFilterNecessary);
                     console.log(" row.entity.necessary ", row.entity.necessary);
+                    console.log(" edit filterTerm ", filterTerm);
+                    console.log(" (filterTerm == row.entity.necessary || filterTerm == 'undefined')", (filterTerm == row.entity.necessary || filterTerm == 'undefined'));
+                    // console.log(" filterTerm ", filterTerm, "--- ",filterTerm);
                     // if (dataFilterNecessary == 'undefined') {
                     //     console.log(" flagFilterNecessary == true");
                     //
-
-                    if (dataFilterNecessary == "undefined" || dataFilterNecessary == row.entity.necessary) {
+                    if (filterTerm == "true") {
+                        filterTerm = true;
+                    } else if (filterTerm == "false") {
+                        filterTerm = false;
+                    } /*else if ($scope.filterTerm == "undefined") {
+                        dataFilterNecessary = "undefined";*/
+                    if (filterTerm == row.entity.necessary || filterTerm == 'undefined') {
 
                         var dataTemp ={};
                         dataTemp = angular.copy(grid.data);
@@ -805,7 +822,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row) {
             /*
              * $http.post('http://localhost:8080/service/save', row.entity).success(function(response) { $modalInstance.close(row.entity); }).error(function(response) { alert('Cannot edit row (error in console)'); console.dir(response); });
              */
-            console.log("rowEditCtrel row.entity push ", row.entity);
+            console.log("rowEditCtrel row.entity ", row.entity);
             // grid.data.push(row.entity);
 
         } else {
