@@ -52,7 +52,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
     vm.last;
     vm.rowOffset = {};
     vm.editRow = RowEditor.editRow;
-    vm.numberOfItemsOnPage = 10;
+    vm.numberOfItemsOnPage = 5;
     vm.size = 10;
     var urlGetNumberOfParts = '/api/part/number';
     // var totalItems = 0;
@@ -530,46 +530,30 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
 
                     vm.serviceGrid.totalItems -= 1;
                     var index = vm.serviceGrid.data.indexOf(row.entity);
+                    console.log("index ", index);
+                    console.log(" vm.serviceGrid.data.length 1", vm.serviceGrid.data.length );
                     vm.serviceGrid.data.splice(index, 1);
+                    console.log(" vm.serviceGrid.data.length 2", vm.serviceGrid.data.length );
                     var lastPage = Math.ceil(vm.serviceGrid.totalItems / vm.serviceGrid.paginationPageSize);
                     console.log("lastPage ", lastPage);
-                    console.log("lvm.serviceGrid.paginationCurrentPage ", vm.serviceGrid.paginationCurrentPage);
+                    console.log("lvm.serviceGrid.paginationCurrentPage before ", vm.serviceGrid.paginationCurrentPage);
                     if (!vm.last) {
                         vm.serviceGrid.data[vm.numberOfItemsOnPage] = vm.rowOffset;
                     }
                      if (vm.serviceGrid.paginationCurrentPage == lastPage) {
-                         // vm.serviceGrid.paginationCurrentPage = lastPage;
                          vm.last = true;
                      }
+                    if (vm.serviceGrid.paginationCurrentPage > lastPage) {
+                        vm.serviceGrid.paginationCurrentPage --;
+                    }
                     console.log("vm.last 2", vm.last );
-
+                    console.log("lvm.serviceGrid.paginationCurrentPage after ", vm.serviceGrid.paginationCurrentPage);
                     console.log("lastPage after", lastPage);
                     // vm.serviceGrid.paginationCurrentPage = Math.ceil(vm.serviceGrid.totalItems / vm.serviceGrid.paginationPageSize);
                     console.log("delete catch  gridOptionsNumber ", vm.currentPageNumber, " index ", index);
                     console.log("cur page", vm.currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
                     console.log("vm.serviceGrid after ", vm.serviceGrid );
                     console.log("vm.serviceGrid.totalItems", vm.serviceGrid.totalItems);
-                    /*console.log("(row.entity) ", row.entity);
-                    if (vm.serviceGrid.totalItems == 0) {
-                        vm.currentPageNumber -=1;
-                    }
-                    if (flagSearchComponent) {
-                        console.log("delete  $scope.getCurrentPageFilterComponent; ")
-                        $scope.getCurrentPageFilterComponent();
-                    } else {
-                        // if (dataFilterNecessary == "undefined") {
-                        if ($scope.searchTerm == "undefined") {
-                            console.log("delete $scope.getCurrentPage(); ")
-                            $scope.getCurrentPage();
-                        } else {
-                            console.log("delete  $scope.getCurrentPageFilterNecessary; ")
-
-                            $scope.getCurrentPageFilterNecessary();
-                        }
-                    }*/
-                    // $scope.getCurrentPage();
-                    //  getCurrentPage(newPage, pageSize);
-                    // getNubmberOfElements();
                 }
             }).catch(function () {
             console.log("catch data ", vm.serviceGrid.data);
