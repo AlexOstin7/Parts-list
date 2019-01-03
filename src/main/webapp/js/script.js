@@ -149,11 +149,11 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
     };
 
     vm.serviceGrid.columnDefs = [
-        {name: 'id', displayName: "ID", width: '10%', enableCellEdit: false, enableFiltering: false},
+        {name: 'id', displayName: "ID", width: '15%', enableCellEdit: false, enableFiltering: false},
         {
             name: 'component',
             displayName: "Наименование",
-            width: '50%',
+            width: '45%',
             enableCellEdit: false,
             type: 'string',
             enableFiltering: false,
@@ -340,27 +340,14 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         dataFilterNecessary = "undefined";
     }
 
-    $scope.getCurrentPage = function (filterTerm) {
+    $scope.getCurrentPage = function () {
+        console.log("filterTerm 1", $scope.filterTerm);
 
-        /*if ($scope.filterTerm == "true") {
-            $scope.filterTerm = true;
-        } else if ($scope.filterTerm == "false") {
-            $scope.filterTerm = false;
-        }*/
-        console.log("filterTerm 1", filterTerm);
-        if (filterTerm == "true") {
-            filterTerm = true;
-        } else if (filterTerm == "false") {
-            filterTerm = false;
-        } else {
-            $scope.filterTerm = "undefined";
-        }
-        console.log("filterTerm 2", filterTerm);
-
-        if (filterTerm == "undefined") {
+        if ($scope.filterTerm == "undefined") {
             var url = '/api/part/get?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
         } else {
-            var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + filterTerm;
+
+            var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
         }
         console.log(" url ", url);
         $http.get(url, config)
@@ -391,16 +378,15 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
     };
 
     $scope.getOnePartFromNextPage = function () {
-        // var url = '/api/part/get?page=' + newPage + '&size=' + pageSize;
-        flagFilterNecessary = false;
-        $scope.filterTerm = "undefined";
-        dataFilterNecessary = "undefined";
-        $scope.searchTerm = "";
-
-        var url = '/api/part/getoffset?page=' + vm.currentPageNumber  + '&size=' + vm.numberOfItemsOnPage;
+        console.log("filterTerm 1", $scope.filterTerm);
+        if ($scope.filterTerm == "undefined") {
+            var url = '/api/part/getoffset?page=' + vm.currentPageNumber + '&size=' + vm.numberOfItemsOnPage;
+        } else {
+            var url = '/api/part/getoffset?page=' + vm.currentPageNumber + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
+        }
         $http.get(url, config)
             .then(function (response) {
-                console.log("getPageOffset then  ", response.data);
+                console.log("getPartOffset then  ", response.data);
 
                 if (response.data.result == "success") {
                     // vm.serviceGrid.totalItems = response.data.data.totalElements;

@@ -145,7 +145,7 @@ public class PartDAOImpl implements PartDAO {
 
         }
 //        Part part = typedQuery.getSingleResult();
-        Part part = typedQuery.getResultList().stream().findFirst().orElse(null);;
+        Part part = typedQuery.getResultList().stream().findFirst().orElse(null);
         /*TypedQuery<Part> query = em.createQuery("SELECT p FROM Part p", Part.class);
         List<Part> list = loadAll();*/
         log.info("findPaginated offset dao  " + "size List " + list.size() + " count " + count + "page Number " + pageNumber + " list.toString " + list.toString());
@@ -153,6 +153,36 @@ public class PartDAOImpl implements PartDAO {
 //        Page<Part> page = new PageImpl<>(list, pageable, count);
 //        log.info("findPaginated dao before " + "page elements " + page.getTotalElements() + " page.toString " + page.toString() + " page content " + page.getContent().toString());
         return part;
+    }
+
+    @Override
+    public Part findPaginatedOffset(Pageable pageable, boolean necessary) {
+        int pageSize = pageable.getPageSize();
+
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+        CriteriaQuery<Part> criteriaQuery = criteriaBuilder.createQuery(Part.class);
+        Root<Part> from = criteriaQuery.from(Part.class);
+        CriteriaQuery<Part> select = criteriaQuery.select(from);
+
+        select.where(criteriaBuilder.equal(from.get("isNecessary"), necessary));
+        TypedQuery<Part> typedQuery = em.createQuery(select);
+        List<Part> list = Collections.emptyList();
+        int count = typedQuery.getResultList().size();
+//        Long count = getNubmerOfParts();
+        int pageNumber = (int) ((count / pageSize) + 1);
+        if (pageable.getPageNumber() < pageNumber) {
+            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize );
+            typedQuery.setMaxResults(1);
+//            System.out.println("Current page: " + typedQuery.getResultList());
+            list = typedQuery.getResultList();
+        }
+        Part part = typedQuery.getResultList().stream().findFirst().orElse(null);
+        log.info("findPaginatedFilterOffset +necessare dao before " + "size List " + list.size() + " count " + count + "page Number " + pageNumber + " list.toString " + list.toString());
+//        Page<Part> page = new PageImpl<>(list, pageable, count.intValue());
+        Page<Part> page = new PageImpl<>(list, pageable, count);
+        log.info("findPaginatedFilterOffset+ necessare dao after " + "page elements " + page.getTotalElements() + " page.toString " + page.toString() + " page content " + page.getContent().toString());
+        return part;
+
     }
 
     @Override

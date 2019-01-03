@@ -61,9 +61,9 @@
         <option value="false">Нет</option>
     </select>
     </p>
-    <input type="button" value="Применить фильтр" ng-click="getCurrentPage(filterTerm)" >
     <!--<button ng-click="filterTerm ='undefined'">Сбросить фильтр</button>-->
-    <button ng-click="getCurrentPage('undefined')">Сбросить фильтр</button>
+    <button ng-click="filterTerm = 'undefined';  vm.currentPageNumber=1; getCurrentPage() ">Сбросить фильтр</button>
+    <input type="button" value="Применить фильтр" ng-click=" vm.currentPageNumber=1; getCurrentPage()" >
     <!--<button ng-click="getCurrentPage()">Сбросить фильтр</button>-->
     <br>
 

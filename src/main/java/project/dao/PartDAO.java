@@ -54,6 +54,9 @@ public interface PartDAO {
     Part findPaginatedOffset(Pageable pageable);
 
     @Query("SELECT n FROM Network n")
+    Part findPaginatedOffset(Pageable pageable, boolean necessary);
+
+    @Query("SELECT n FROM Network n")
     Page<Part> findPaginated(Pageable pageable, boolean necessary);
 
 
