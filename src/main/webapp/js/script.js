@@ -94,7 +94,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         console.log("onRegisterApi  ", vm.serviceGrid.totalItems);
         getNubmberOfElements();
 
-        $scope.getCurrentPage();
+        $scope.getCurrentPage($scope.filterTerm);
 
         // getNubmberOfElements();
 
@@ -121,19 +121,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
             console.log("dataFilterNecessary ", dataFilterNecessary);
             console.log("vm.serviceGrid.totalItems ", vm.serviceGrid.totalItems);
             console.log("vm.serviceGrid ", vm.serviceGrid);
-            if ($scope.searchTerm != "") {
-                console.log("Pagination changed getCurrentPageFilterComponent ");
-                $scope.getCurrentPageFilterComponent();
-            } else {
-                if ($scope.filterTerm == 'undefined') {
-                // if ($scope.flagFilterNecessary) {
-                    console.log("Pagination changed getCurrentPage ");
-                    $scope.getCurrentPage();
-                } else {
-                    console.log("Pagination changed getCurrentPage Filter necessary");
-                    $scope.getCurrentPageFilterNecessary(dataFilterNecessary);
-                }
-            }
+            $scope.getCurrentPage($scope.filterTerm);
 
 
             console.log("getNumberOfParts paginationChanged vm.serviceGrid.pageSize ", pageSize);
@@ -352,20 +340,39 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
         dataFilterNecessary = "undefined";
     }
 
-    $scope.getCurrentPage = function () {
-        // var url = '/api/part/get?page=' + newPage + '&size=' + pageSize;
-        flagFilterNecessary = false;
-        $scope.filterTerm = "undefined";
-        dataFilterNecessary = "undefined";
-        $scope.searchTerm = "";
+    $scope.getCurrentPage = function (filterTerm) {
 
-        var url = '/api/part/get?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
+        /*if ($scope.filterTerm == "true") {
+            $scope.filterTerm = true;
+        } else if ($scope.filterTerm == "false") {
+            $scope.filterTerm = false;
+        }*/
+        console.log("filterTerm 1", filterTerm);
+        if (filterTerm == "true") {
+            filterTerm = true;
+        } else if (filterTerm == "false") {
+            filterTerm = false;
+        } else {
+            $scope.filterTerm = "undefined";
+        }
+        console.log("filterTerm 2", filterTerm);
+
+        if (filterTerm == "undefined") {
+            var url = '/api/part/get?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
+        } else {
+            var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + filterTerm;
+        }
+        console.log(" url ", url);
         $http.get(url, config)
             .then(function (response) {
                 console.log("getCurrentPage then  ", response.data);
 
                 if (response.data.result == "success") {
+                    vm.serviceGrid.data = response.data.data.content;
                     vm.serviceGrid.totalItems = response.data.data.totalElements;
+                    vm.currentPageNumber = response.data.data.number + 1;
+                    vm.serviceGrid.paginationCurrentPage = vm.currentPageNumber;
+
                     if(response.data.data.last) {
                         console.log(" first page ",response.data.data.first);
                         console.log(" last page ",response.data.data.last);
@@ -376,11 +383,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $log) {
                     }
                     console.log(" vm.serviceGrid", vm.serviceGrid);
                     console.log("response.data.data ", response.data.data);
-                    vm.serviceGrid.data = response.data.data.content;
-                    console.log("vm.serviceGrid.data  ", vm.serviceGrid);
-                    // console.log(" value ", vm.serviceGrid.columnDefs[3].cellValue);
-                     vm.currentPageNumber = response.data.data.number + 1;
-                   vm.serviceGrid.paginationCurrentPage = vm.currentPageNumber;
+                    // console.log("vm.serviceGrid.data  ", vm.serviceGrid);
+
                 }
             });
 

@@ -46,8 +46,8 @@
         <tr>
             <th align="center" width="20%"> Детали в списке: </th>
             <th align="left">
-                <ng-if ng-if="filterTerm === true">необходимые для сборки</ng-if>
-                <ng-if ng-if="filterTerm === false">опциональные</ng-if>
+                <ng-if ng-if="filterTerm === 'true'">необходимые для сборки</ng-if>
+                <ng-if ng-if="filterTerm === 'false'">опциональные</ng-if>
                 <ng-if ng-if="filterTerm == 'undefined'">ВСЕ</ng-if>
             </th>
 
@@ -61,8 +61,10 @@
         <option value="false">Нет</option>
     </select>
     </p>
-    <input type="button" value="Применить фильтр" ng-click="getCurrentPageFilterNecessary()" >
-    <button ng-click="getCurrentPage()">Сбросить фильтр</button>
+    <input type="button" value="Применить фильтр" ng-click="getCurrentPage(filterTerm)" >
+    <!--<button ng-click="filterTerm ='undefined'">Сбросить фильтр</button>-->
+    <button ng-click="getCurrentPage('undefined')">Сбросить фильтр</button>
+    <!--<button ng-click="getCurrentPage()">Сбросить фильтр</button>-->
     <br>
 
     <p>Поиск по наименованию детали
@@ -84,9 +86,6 @@
     <br>
     dataFilterNecessary {{scopeDataFilterNecessary}}
     </br>
-    <div style="padding-left: 10px;">
-        <button type="button" id="addRow" class="btn btn-success" ng-click="myFunction(grid)">Delete</button>
-    </div>-->
 
   <!--  <h3>Custom Filter Example</h3>
     <div>Custom Component Filter: <input type="text" >
