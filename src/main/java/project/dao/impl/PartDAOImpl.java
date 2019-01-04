@@ -138,7 +138,7 @@ public class PartDAOImpl implements PartDAO {
         int count = typedQuery.getResultList().size();
         int pageNumber = (int) ((count / pageSize) + 1);
         if (pageable.getPageNumber() < pageNumber) {
-            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize );
+            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize + pageSize -1 );
             typedQuery.setMaxResults(1);
 //            System.out.println("Current page: " + typedQuery.getResultList());
 //            list = typedQuery.getResultList();
@@ -171,7 +171,7 @@ public class PartDAOImpl implements PartDAO {
 //        Long count = getNubmerOfParts();
         int pageNumber = (int) ((count / pageSize) + 1);
         if (pageable.getPageNumber() < pageNumber) {
-            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize );
+            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize + pageSize -1);
             typedQuery.setMaxResults(1);
 //            System.out.println("Current page: " + typedQuery.getResultList());
             list = typedQuery.getResultList();

@@ -96,13 +96,13 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
 
         $scope.getCurrentPage($scope.filterTerm);
 
-        // getNubmberOfElements();
+        getNubmberOfElements();
 
         // gridApi.core.refresh();
         console.log(" gridApi ", gridApi);
         console.log(" gridApi current page ", gridApi.pagination.getPage());
 
-        // $scope.gridApi.core.on.rowsVisibleChanged(null, catchRowVisibleChanged);
+        $scope.gridApi.core.on.rowsVisibleChanged(null, catchRowVisibleChanged);
        /* gridApi.core.notifyDataChange(uiGridConstants.dataChange.ROW) ;
         $scope.gridApi.core.on.rowsRendered( $scope, myFunction );*/
         /*{
@@ -244,6 +244,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     }
     // $scope.filterterm = true;
     var catchRowVisibleChanged = function (grid) {
+        console.log("call 1 next page necessary delete (not a last page) >>>>>");
         console.log(" ALERT 2 grid", grid);
         console.log(" ALERT 2 grid.core ", grid.core);
         console.log(" ALERT 2 rid.core.getVisibleRows()", grid.core.getVisibleRows());
@@ -254,7 +255,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         console.log(" ALERT 2 pagination first row ", grid.pagination.getFirstRowIndex());
         console.log(" ALERT 2 pagination last row ", grid.pagination.getLastRowIndex());
         console.log(" vm.numberOfItemsOnPage  ", vm.numberOfItemsOnPage);
-        console.log(" call  getCurrentPageNecessary", (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length > vm.numberOfItemsOnPage));
+        console.log(" vm.serviceGrid.data  ", vm.serviceGrid.data);
+        console.log(" vm.serviceGrid.data[vm.numberOfItemsOnPage]  ", vm.serviceGrid.data[vm.numberOfItemsOnPage]);
+
+       /* console.log(" call  getCurrentPageNecessary", (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length > vm.numberOfItemsOnPage));
         // (grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1)
         if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length > vm.numberOfItemsOnPage) {
             console.log(" (after add > size) >>>>>");
@@ -289,15 +293,26 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
             $scope.getCurrentPageFilterNecessary();
 
         }
-
+*/
         console.log("call 1 not a last", (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage));
-
         // if (grid.pagination.getPage() < grid.pagination.getTotalPages() && (grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1) < vm.numberOfItemsOnPage && $scope.filterTerm == 'undefined') {
         if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage) {
-            console.log("call 1 next page necessary delete (not a last page) >>>>>");
+            console.log("$scope.getOnePartFromNextPage();---+++---+++");
+
+            console.log("vm.serviceGrid.data ", vm.serviceGrid.data);
+            console.log(" vm.rowOffset ",  vm.rowOffset);
+
+            $scope.getOnePartFromNextPage();
+            // alert("change", vm.rowOffset.id);
+            // vm.serviceGrid.data[vm.numberOfItemsOnPage]= vm.rowOffset;
+            console.log(" vm.rowOffset after ",  vm.rowOffset);
+            console.log("vm.serviceGrid.data after ", vm.serviceGrid.data);
+
+
+// grid.data[vm.numberOfItemsOnPage] = vm.rowOffset;
             // vm.currentPageNumber = grid.pagination.getTotalPages();
             // vm.currentPageNumber += 1;
-            if($scope.filterTerm == 'undefined') {
+          /*  if($scope.filterTerm == 'undefined') {
                 console.log("undefined");
                 // $scope.getCurrentPage();
                 $scope.getOnePartFromNextPage();
@@ -305,10 +320,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
                 console.log("not undefined");
 
                 $scope.getCurrentPageFilterNecessary();
-            }
-            console.log("call 1 next page necessary delete (not a last page) <<<<<<<");
+            }*/
 
         }
+        console.log("call 1 next page necessary delete (not a last page) <<<<<<<");
 
         /*console.log(" call 2 next page", (grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1) > vm.numberOfItemsOnPage);
         if ((grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1) > vm.numberOfItemsOnPage) {
@@ -379,12 +394,15 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     };
 
     $scope.getOnePartFromNextPage = function () {
+        console.log("<<<<<<< $scope.getOnePartFromNextPage");
+
         console.log("filterTerm 1", $scope.filterTerm);
         if ($scope.filterTerm == "undefined") {
-            var url = '/api/part/getoffset?page=' + vm.currentPageNumber + '&size=' + vm.numberOfItemsOnPage;
+            var url = '/api/part/getoffset?page=' + (vm.currentPageNumber -1)+ '&size=' + vm.numberOfItemsOnPage;
         } else {
-            var url = '/api/part/getoffset?page=' + vm.currentPageNumber + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
+            var url = '/api/part/getoffset?page=' + (vm.currentPageNumber -1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
         }
+        console.log(" url ", url);
         $http.get(url, config)
             .then(function (response) {
                 console.log("getPartOffset then  ", response.data);
@@ -398,13 +416,19 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
                     // vm.serviceGrid.data = angular.(vm.serviceGrid.data, response.data.data);
                     // vm.serviceGrid.data[vm.serviceGrid.data.length] = response.data.data;
                     vm.rowOffset = response.data.data;
+                    // alert(vm.rowOffset.id);
+                    vm.serviceGrid.data[vm.numberOfItemsOnPage]= vm.rowOffset;
+
                     console.log("vm.rowOffset after ", vm.rowOffset);
                     console.log("vm.serviceGrid.data after ", vm.serviceGrid.data);
                     // console.log(" value ", vm.serviceGrid.columnDefs[3].cellValue);
                     // vm.currentPageNumber = response.data.data.number + 1;
                     // vm.serviceGrid.paginationCurrentPage = vm.currentPageNumber;
+                    console.log(">>>>>> $scope.getOnePartFromNextPage");
                 }
             });
+
+
 
     };
 
@@ -504,11 +528,11 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         var url = '/api/part/delete/' + row.entity.id;
         console.log("delete id", row.entity.id);
         console.log("vm.last 1", vm.last );
-
+/*
         if (!vm.last) {
             $scope.getOnePartFromNextPage();
             console.log("offsetRow ", vm.rowOffset);
-        }
+        }*/
 
         $http.get(url, config)
             .then(function (response) {
@@ -529,6 +553,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
                     console.log("lastPage ", lastPage);
                     console.log("lvm.serviceGrid.paginationCurrentPage before ", vm.serviceGrid.paginationCurrentPage);
                     if (!vm.last) {
+                        $scope.getOnePartFromNextPage();
+                        console.log("vm.rowOffset",vm.rowOffset);
                         vm.serviceGrid.data[vm.numberOfItemsOnPage] = vm.rowOffset;
                     }
                      if (vm.serviceGrid.paginationCurrentPage == lastPage) {
@@ -738,7 +764,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm)
         var urlUpDate = "/api/part/update";
         console.log("rowEditCtrel add row.entity", row.entity);
         console.log("rowEditCtrel add vm.entity", vm.entity);
-        console.log("rowEditCtrel add vm.rowOffset", vm.rowOffset);
+        // console.log("rowEditCtrel add vm.rowOffset", vm.rowOffset);
         console.log("rowEditCtrel add vm.currentPageNumber ", vm.currentPageNumber);
         console.log("rowEditCtrel add filterTerm", filterTerm);
         if (row.entity.id == '0') {
