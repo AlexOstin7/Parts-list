@@ -357,13 +357,16 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
 
     $scope.getCurrentPage = function () {
         console.log("filterTerm 1", $scope.filterTerm);
+if ($scope.searchTerm == "") {
+    if ($scope.filterTerm == "undefined") {
+        var url = '/api/part/get?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
+    } else {
 
-        if ($scope.filterTerm == "undefined") {
-            var url = '/api/part/get?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
-        } else {
-
-            var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
-        }
+        var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
+    }
+} else {
+    var url = '/api/part/getcomponent?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&component=' + $scope.searchTerm;
+}
         console.log(" url ", url);
         vm.necessary = $scope.filterTerm;
         $http.get(url, config)

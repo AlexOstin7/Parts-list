@@ -63,7 +63,7 @@
     </p>
     <!--<button ng-click="filterTerm ='undefined'">Сбросить фильтр</button>-->
     <button ng-click="filterTerm = 'undefined';  vm.currentPageNumber=1; getCurrentPage() ">Сбросить фильтр</button>
-    <input type="button" value="Применить фильтр" ng-click=" vm.currentPageNumber=1; getCurrentPage()" >
+    <input type="button" value="Применить фильтр" ng-click=" searchTerm=''; vm.currentPageNumber=1; getCurrentPage()" >
     <!--<button ng-click="getCurrentPage()">Сбросить фильтр</button>-->
     <br>
 
@@ -71,7 +71,7 @@
 
     </p>
     <input type="text" ng-model="searchTerm" >
-    <button ng-click="getCurrentPageFilterComponent()">Поиск</button>
+    <button ng-click="filterTerm = 'undefined'; vm.currentPageNumber=1; getCurrentPage()">Поиск</button>
     <button ng-click="searchGrid()">Поиск2</button>
     <br>
 
