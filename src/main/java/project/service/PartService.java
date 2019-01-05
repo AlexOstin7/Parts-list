@@ -32,6 +32,8 @@ public interface PartService {
 
     Part findPaginatedOffset(int page, int size, boolean necessary);
 
+    Part findPaginatedOffset(int page, int size, String component);
+
     Page<Part> findPaginated(int page, int size, boolean necessary);
 
     Page<Part> findPaginated(int page, int size, String component);

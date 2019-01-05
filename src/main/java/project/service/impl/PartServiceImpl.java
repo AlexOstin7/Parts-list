@@ -103,8 +103,15 @@ public class PartServiceImpl implements PartService {
     @Override
     @Transactional(readOnly=true)
     public Part findPaginatedOffset(int page, int size, boolean necessary) {
-        log.info("findPaginatedOffset serv before run " );
+        log.info("findPaginated serv getoffset necessary  " );
         return dao.findPaginatedOffset(new PageRequest(page, size), necessary);
+    }
+
+    @Override
+    @Transactional(readOnly=true)
+    public Part findPaginatedOffset(int page, int size, String component) {
+        log.info("findPaginated serv getoffset component  " );
+        return dao.findPaginatedOffset(new PageRequest(page, size), component);
     }
 
     @Override
@@ -118,7 +125,7 @@ public class PartServiceImpl implements PartService {
     @Override
     @Transactional(readOnly=true)
     public Page<Part> findPaginated(int page, int size, String component) {
-        log.info("findPaginated serv before run " );
+        log.info("findPaginated serv getoffset component  " );
 //            return dao.loadAllPaging(new PageRequest(page, size));
         return dao.findPaginated(new PageRequest(page, size), component);
     }

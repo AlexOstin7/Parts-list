@@ -26,6 +26,8 @@ public interface PartController {
 
     Response findPaginatedByOffset(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("necessary") boolean necessary);
 
+    Response findPaginatedByOffset(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("component") String component);
+
     Response findPaginatedFilterNecessary(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("term") boolean necessary);
 
     Response findPaginatedFilterComponent(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("term") String component);

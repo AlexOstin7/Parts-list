@@ -399,12 +399,20 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         console.log("<<<<<<< $scope.getOnePartFromNextPage");
 
         console.log("filterTerm 1", $scope.filterTerm);
-
-        if ($scope.filterTerm == "undefined") {
-            var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
+        if ($scope.searchTerm == "") {
+            if ($scope.filterTerm == "undefined") {
+                var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
+            } else {
+                var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
+            }
         } else {
-            var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
+            var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&component=' + $scope.searchTerm;
         }
+        // if ($scope.filterTerm == "undefined") {
+        //     var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
+        // } else {
+        //     var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
+        // }
         console.log(" url ", url);
         $http.get(url, config)
             .then(function (response) {
