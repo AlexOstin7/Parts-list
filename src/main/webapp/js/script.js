@@ -47,7 +47,7 @@ MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants',
 
 function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     var vm = this;
-    vm.resultMessage;
+    $scope.resultMessage = vm.resultMessage;
     // flagFilterNecessary = false;
     vm.last;
     vm.rowOffset = {};
@@ -84,9 +84,9 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         // gridFooterTemplate: "<button ng-click='edit-button.html'> Add Part </button>",
         /*gridFooterTemplate:'<div  style="text-align:left" ><button ng-click=\'addRow()\' > Add Part </button></div>',*/
         gridFooterTemplate: /* "<button ng-click='alert()'> Add Book </button>",*/
-            "<button ng-click='grid.appScope.addRow()' > Add Part </button>"
+            "<button ng-click='grid.appScope.addRow()' > Add Part </button> <span  class=\"ui-grid-cell-contents\">{{grid.appScope.filterTerm}} {{grid.appScope.vm.resultMessage}}</span>",
         /*rowTemplate : "<div ng-dblclick=\"grid.appScope.vm.editRow(grid, row)\" ng-repeat=\"(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name\" class=\"ui-grid-cell\" ng-class=\"{ 'ui-grid-row-header-cell': col.isRowHeader }\" ui-grid-cell></div>"*/
-        /*rowTemlate : "ng-class='ui-grid-row-header-cell'"*/
+        rowTemlate : "ng-class='ui-grid-row-header-cell' "
     };
 
     vm.serviceGrid.onRegisterApi = function (gridApi) {
@@ -390,6 +390,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
                 console.log("getCurrentPage then  ", response.data);
 
                 if (response.data.result == "success") {
+                    vm.resultMessage = response.data.result;
                     vm.serviceGrid.data = response.data.data.content;
                     vm.serviceGrid.totalItems = response.data.data.totalElements;
                     vm.currentPageNumber = response.data.data.number + 1;
