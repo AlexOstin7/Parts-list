@@ -85,6 +85,12 @@ public class PartServiceImpl implements PartService {
 
     @Override
     @Transactional(readOnly=true)
+    public int getMinQuantityWithNecessaryParts() {
+        return dao.getMinQuantityWithNecessaryParts();
+    }
+
+    @Override
+    @Transactional(readOnly=true)
     public Page<Part> findPaginated(int page, int size) {
         log.info("findPaginated serv before run " );
 //            return dao.loadAllPaging(new PageRequest(page, size));

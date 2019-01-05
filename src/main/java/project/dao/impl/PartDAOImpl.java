@@ -1,5 +1,10 @@
 package project.dao.impl;
 
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+import org.hibernate.criterion.ProjectionList;
+import org.hibernate.criterion.Projections;
+import org.hibernate.criterion.Restrictions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +23,9 @@ import javax.persistence.*;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
+import java.lang.reflect.Type;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 @Service
@@ -74,6 +81,76 @@ public class PartDAOImpl implements PartDAO {
         Long count = em.createQuery(countQuery)
                 .getSingleResult();
         return count;
+    }
+
+
+    @Override
+    public int getMinQuantityWithNecessaryParts() {
+        CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
+
+        Session session = em.unwrap(Session.class);
+        session.beginTransaction();
+
+        Criteria criteria = session.createCriteria(Part.class);
+        criteria.add(Restrictions.eq("isNecessary", true));
+        ProjectionList projList = Projections.projectionList();
+        projList.add(Projections.min("quantity"));
+        criteria.setProjection(projList);
+        int min = (Integer)criteria.uniqueResult();
+//        List<String> results = criteria.list();
+        List<Integer> results = criteria.list();
+//        List results = criteria.list();
+
+        log.info(" min list " + results);
+//        projList.add(Projections.rowCount());
+
+//        projList.add(Projections.property("component"));
+//        projList.add(Projections.property("isNecessary"));
+   //     projList.add(Projections.property("quantity"));
+//        projList.add(Projections.max("quantity"));
+//        projList.add(Projections.max("isNecessary"));
+
+//        projList.add( Projections.property("isNecessary"), "Necessary");
+//        projList.add( Restrictions.eq(Part.isNecessary(), "true"));
+//        projList.add(Projections.countDistinct("isNecessary"));
+//        projList.add(Projections.countDistinct("component"));
+//        projList.add( Projections.groupProperty("quantity"));
+//        projList.add( Restrictions.eq("isNecessary", true) );
+//        projList.add( Projections.groupProperty("isNecessary"));
+
+
+//        criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
+
+//
+        /*List<Object> rows = criteria.list();
+        for(Object r: rows){
+            Object[] row = (Object[]) r;
+            Type t = ((<String>) row[0]);
+        }*/
+        for(int i=0;i<results.size();i++){
+log.info(" result " + i + " " + results.get(i));
+            //            System.out.println(list.get(i));
+        }
+        /*Iterator iter = results.iterator();
+        Object[] obj = (Object[]) iter.next();
+        for (int i=0;i<obj.length;i++)
+        {
+//            System.out.println(obj[i]);
+            log.info(" obj " + obj[i]);
+        }*/
+
+        int count = results.size();
+
+        /*CriteriaQuery<Long> countQuery = criteriaBuilder
+                .createQuery(Long.class);
+
+        countQuery.select(criteriaBuilder
+                .count(countQuery.from(Part.class)));
+
+        Long count = em.createQuery(countQuery)
+                .getSingleResult();*/
+//        session.close();
+        return min;
     }
 
     @Override

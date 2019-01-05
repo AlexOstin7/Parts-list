@@ -97,7 +97,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         $scope.getCurrentPage($scope.filterTerm);
 
         getNubmberOfElements();
-
+        getMinQuantityWithNecessaryParts();
         // gridApi.core.refresh();
         console.log(" gridApi ", gridApi);
         console.log(" gridApi current page ", gridApi.pagination.getPage());
@@ -244,7 +244,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     }
     // $scope.filterterm = true;
     var catchRowVisibleChanged = function (grid) {
-        console.log("call 1 next page necessary delete (not a last page) >>>>>");
+      /*  console.log("call 1 next page necessary delete (not a last page) >>>>>");
         console.log(" ALERT 2 grid", grid);
         console.log(" ALERT 2 grid.core ", grid.core);
         console.log(" ALERT 2 rid.core.getVisibleRows()", grid.core.getVisibleRows());
@@ -257,7 +257,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         console.log(" vm.numberOfItemsOnPage  ", vm.numberOfItemsOnPage);
         console.log(" vm.serviceGrid.data  ", vm.serviceGrid.data);
         console.log(" vm.serviceGrid  ", vm.serviceGrid);
-        console.log(" vm.serviceGrid.data[vm.numberOfItemsOnPage]  ", vm.serviceGrid.data[vm.numberOfItemsOnPage]);
+        console.log(" vm.serviceGrid.data[vm.numberOfItemsOnPage]  ", vm.serviceGrid.data[vm.numberOfItemsOnPage]);*/
          /* console.log(" call  getCurrentPageNecessary", (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length > vm.numberOfItemsOnPage));
          // (grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1)
          if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length > vm.numberOfItemsOnPage) {
@@ -294,6 +294,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
 
          }
  */
+        getMinQuantityWithNecessaryParts();
         console.log("call 1 not a last", (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage));
         // if (grid.pagination.getPage() < grid.pagination.getTotalPages() && (grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1) < vm.numberOfItemsOnPage && $scope.filterTerm == 'undefined') {
         if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage) {
@@ -308,7 +309,6 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
             // vm.serviceGrid.data[vm.numberOfItemsOnPage]= vm.rowOffset;
             console.log(" vm.rowOffset after ", vm.rowOffset);
             console.log("vm.serviceGrid.data after ", vm.serviceGrid.data);
-
 
 // grid.data[vm.numberOfItemsOnPage] = vm.rowOffset;
             // vm.currentPageNumber = grid.pagination.getTotalPages();
@@ -341,6 +341,22 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
 
         }*/
     }
+    var getMinQuantityWithNecessaryParts = function () {
+        var url = "http://localhost:8887/api/parts/min";
+        $http.get(url, config, $scope)
+            .then(function (response) {
+                console.log("getMinNumberOfSet ", response.data);
+                if (response.data.result == "success") {
+                    console.log("getMinNumberOfSet success ", response.data.data);
+                    console.log("getMinNumberOfSet success numberOfItemsOnPage ", vm.numberOfItemsOnPage);
+                    // console.log("getNumberOfParts success totalItems ", vm.totalItems);
+                    // vm.totalItems = response.data.data;
+                    $scope.min = response.data.data;
+                }
+            });
+    }
+
+
     $scope.myFunction = function (grid) {
         console.log(" ALERT 1", grid);
         // if (grid)

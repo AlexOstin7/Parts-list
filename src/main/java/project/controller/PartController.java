@@ -16,6 +16,8 @@ public interface PartController {
 
     Response parts();
 
+    Response getMinQuantityWithNecessaryParts();
+
     Response getNumberOfParts();
 
     Response getPartById(@PathVariable("id") Long id) ;
