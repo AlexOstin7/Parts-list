@@ -245,7 +245,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
     // $scope.filterterm = true;
     var catchRowVisibleChanged = function (grid) {
         console.log("call 1 next page necessary delete (not a last page) >>>>>");
-        /*console.log(" ALERT 2 grid", grid);
+        console.log(" ALERT 2 grid", grid);
         console.log(" ALERT 2 grid.core ", grid.core);
         console.log(" ALERT 2 rid.core.getVisibleRows()", grid.core.getVisibleRows());
         console.log(" ALERT 2 grid.core.getVisibleRows().length", grid.core.getVisibleRows().length);
@@ -256,8 +256,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         console.log(" ALERT 2 pagination last row ", grid.pagination.getLastRowIndex());
         console.log(" vm.numberOfItemsOnPage  ", vm.numberOfItemsOnPage);
         console.log(" vm.serviceGrid.data  ", vm.serviceGrid.data);
+        console.log(" vm.serviceGrid  ", vm.serviceGrid);
         console.log(" vm.serviceGrid.data[vm.numberOfItemsOnPage]  ", vm.serviceGrid.data[vm.numberOfItemsOnPage]);
-        */
          /* console.log(" call  getCurrentPageNecessary", (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length > vm.numberOfItemsOnPage));
          // (grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1)
          if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length > vm.numberOfItemsOnPage) {
@@ -303,6 +303,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
             console.log(" vm.rowOffset ", vm.rowOffset);
 
             $scope.getOnePartFromNextPage();
+            vm.serviceGrid.totalItems --;
             // alert("change", vm.rowOffset.id);
             // vm.serviceGrid.data[vm.numberOfItemsOnPage]= vm.rowOffset;
             console.log(" vm.rowOffset after ", vm.rowOffset);
@@ -399,6 +400,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         console.log("<<<<<<< $scope.getOnePartFromNextPage");
 
         console.log("filterTerm 1", $scope.filterTerm);
+        console.log("$scope.searchTerm 1", $scope.searchTerm);
         if ($scope.searchTerm == "") {
             if ($scope.filterTerm == "undefined") {
                 var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
@@ -593,23 +595,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
         var rowTmp = {};
         rowTmp.entity = newService;
         // vm.editRow(vm.serviceGrid, rowTmp, $scope.filterTerm, $scope.getOnePartFromNextPage());
-        vm.editRow(vm.serviceGrid, rowTmp, $scope.filterTerm);
+        vm.editRow(vm.serviceGrid, rowTmp, $scope.filterTerm, $scope.searchTerm);
         console.log("add row !!!!! ", newService, " service !!!!!!!!!!", vm.serviceGrid);
-        // console.log(" service !!!!!!!!!! vm ", vm);
-        // console.log("$scope.gridApi.core.getVisibleRows($scope.gridApi.grid) ", $scope.gridApi.core.getVisibleRows($scope.gridApi.grid));
-        // console.log(" dataFilter ", $scope.gridApi);
-
-        /*$scope.gridApi.core.notifyDataChange( uiGridConstants.dataChange.ALL)  ;
-        $scope.gridApi.core.refresh();*/
-        /* if (vm.flagFilterNecessary == true) {
-             console.log(" getCurrentPage Filter nec");
-
-             $scope.getCurrentPageFilterNecessary(dataFilterNecessary);
-         } else {
-             // $scope.getCurrentPage(vm.currentPageNumber - 1, vm.numberOfItemsOnPage);
-             console.log(" getCurrentPage ");
-             $scope.getCurrentPage();
-         }*/
         console.log("============ updaterow <<<<<<<<<<<<<<");
 
         // $scope.getCurrentPage();
@@ -689,6 +676,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
         // console.log("rowEditCtrel add vm.rowOffset", vm.rowOffset);
         console.log("rowEditCtrel add vm.currentPageNumber ", vm.currentPageNumber);
         console.log("rowEditCtrel add filterTerm", filterTerm);
+        console.log("rowEditCtrel add searchTerm", searchTerm);
         if (row.entity.id == '0') {
 
             row.entity = angular.extend(row.entity, vm.entity);
@@ -717,8 +705,11 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
                     console.log(" edit filterTerm ", filterTerm);
                     console.log(" edit searchTerm ", searchTerm);
                     console.log(" edit searchTerm == row.entity.component ", searchTerm == row.entity.component);
-                    console.log(" (filterTerm == row.entity.necessary || filterTerm == 'undefined || searchTerm == row.entity.component')", (filterTerm == row.entity.necessary || filterTerm == 'undefined'|| searchTerm == row.entity.component));
-                    // console.log(" filterTerm ", filterTerm, "--- ",filterTerm);
+                    console.log(" ((((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == \"\" ) ||\n" +
+                        "                        (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase())))",
+                        (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
+                            (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase())))
+                    );                 // console.log(" filterTerm ", filterTerm, "--- ",filterTerm);
                     // if (dataFilterNecessary == 'undefined') {
                     //     console.log(" flagFilterNecessary == true");
                     //
@@ -727,8 +718,6 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
                     } else if (filterTerm == "false") {
                         filterTerm = false;
                     }
-                    /*else if ($scope.filterTerm == "undefined") {
-                                           dataFilterNecessary = "undefined";*/
                     if (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
                         (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase())))
                     {
@@ -792,8 +781,12 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
                     } else {*/
                     console.log(" row.entity.necessary ", row.entity.necessary);
                     console.log(" edit filterTerm ", filterTerm);
-                    console.log(" (filterTerm == row.entity.necessary || filterTerm == 'undefined')", (filterTerm == row.entity.necessary || filterTerm == 'undefined'));
-                    if (filterTerm == row.entity.necessary || filterTerm == 'undefined') {
+                    console.log(" if update ", (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
+                        (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase()))));
+                    // if (filterTerm == row.entity.necessary || filterTerm == 'undefined') {
+                    if (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
+                        (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase())))
+                    {
                         grid.data[grid.data.indexOf(row.entity)] = angular.copy(row.entity);
                         console.log("  stay in grid ", grid);
 
@@ -801,7 +794,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
 
                         var index = grid.data.indexOf(row.entity);
                         grid.data.splice(index, 1);
-                        grid.totalItems -= 1;
+                        // grid.totalItems -= 1;
                         console.log(" delete from grid ", grid);
 
                     }
