@@ -45,7 +45,7 @@ var flagSearchComponent = false;
 
 MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants', '$rootScope'];
 
-function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope) {
+function MainCtrl($scope,  $http, $modal, RowEditor, uiGridConstants, $rootScope) {
     var vm = this;
     // $scope.resultMessage = vm.resultMessage;
     // $rootScope.resultMessage = vm.resultMessage;
@@ -96,10 +96,9 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         console.log("onRegisterApi  ", vm.serviceGrid.totalItems);
         getNubmberOfElements();
 
-        $scope.getCurrentPage($scope.filterTerm);
+        $scope.getCurrentPage();
 
-        getNubmberOfElements();
-        getMinQuantityWithNecessaryParts();
+        $scope.getMinQuantityWithNecessaryParts();
         // gridApi.core.refresh();
         console.log(" gridApi ", gridApi);
         console.log(" gridApi current page ", gridApi.pagination.getPage());
@@ -296,7 +295,6 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
 
          }
  */
-        getMinQuantityWithNecessaryParts();
         console.log("call 1 not a last", (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage));
         // if (grid.pagination.getPage() < grid.pagination.getTotalPages() && (grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1) < vm.numberOfItemsOnPage && $scope.filterTerm == 'undefined') {
         if (grid.pagination.getPage() < grid.pagination.getTotalPages() && grid.core.getVisibleRows().length < vm.numberOfItemsOnPage) {
@@ -312,55 +310,90 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
             console.log(" vm.rowOffset after ", vm.rowOffset);
             console.log("vm.serviceGrid.data after ", vm.serviceGrid.data);
 
-// grid.data[vm.numberOfItemsOnPage] = vm.rowOffset;
-            // vm.currentPageNumber = grid.pagination.getTotalPages();
-            // vm.currentPageNumber += 1;
-            /*  if($scope.filterTerm == 'undefined') {
-                  console.log("undefined");
-                  // $scope.getCurrentPage();
-                  $scope.getOnePartFromNextPage();
-              } else {
-                  console.log("not undefined");
-
-                  $scope.getCurrentPageFilterNecessary();
-              }*/
-
         }
         console.log("call 1 next page necessary delete (not a last page) <<<<<<<");
-
-        /*console.log(" call 2 next page", (grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1) > vm.numberOfItemsOnPage);
-        if ((grid.pagination.getLastRowIndex() - grid.pagination.getFirstRowIndex() +1) > vm.numberOfItemsOnPage) {
-            console.log(" next page >>> ");
-            // grid.core.nextPage;
-            // grid.core.previousPage;
-            if (flagFilterNecessary) {
-                vm.currentPageNumber+=1;
-                $scope.getCurrentPageFilterNecessary();
-            } else {
-                vm.currentPageNumber+=1;
-                $scope.getCurrentPage();
-            }
-
-        }*/
     }
-    var getMinQuantityWithNecessaryParts = function () {
+
+    $scope.getMinQuantityWithNecessaryParts = function () {
         var url = "http://localhost:8887/api/parts/min";
-        $http.get(url, config, $scope)
-            .then(function (response) {
-                console.log("getMinNumberOfSet ", response.data);
-                if (response.data.result == "success") {
-                    console.log("getMinNumberOfSet success ", response.data.data);
-                    console.log("getMinNumberOfSet success numberOfItemsOnPage ", vm.numberOfItemsOnPage);
-                    // console.log("getNumberOfParts success totalItems ", vm.totalItems);
-                    // vm.totalItems = response.data.data;
-                    $scope.min = response.data.data;
-                }
-            });
+        console.log("<<<<<<<<<< getMinQuantityWithNecessaryParts");
+        console.log("$rootScope.resultMessage 1", $rootScope.resultMessage);
+        if ($rootScope.resultMessage == 'success') {
+            $http.get(url, config, $scope)
+                .then(function (response) {
+                    console.log("$rootScope.resultMessage  ", $rootScope.resultMessage );
+                    console.log("getMinNumberOfSet ", response.data);
+                    if (response.data.result == "success") {
+                        console.log("$rootScope.resultMessage  ", $rootScope.resultMessage );
+                        console.log("getMinNumberOfSet success numberOfItemsOnPage ", vm.numberOfItemsOnPage);
+                        // console.log("getNumberOfParts success totalItems ", vm.totalItems);
+                        // vm.totalItems = response.data.data;
+                        $scope.min = response.data.data;
+                        $rootScope.resultMessage = " 2 sec "
+                        // setResult("2 sec");
+                    }
+                });
+
+            // console.log("getMinQuantityWithNecessaryParts timer tik ");
+            console.log("$rootScope.resultMessage 2", $rootScope.resultMessage);
+            /*setTimeout(myTimeout1, 2000);
+            function myTimeout1() {
+
+                $rootScope.resultMessage = "2 seconds";
+                console.log("$rootScope.resultMessage 2", $rootScope.resultMessage);
+                console.log("timer tak  ");
+            }*/
+             // $scope.clearResult();
+            console.log("$rootScope.resultMessage 3", $rootScope.resultMessage);
+        }
+
+        /*$rootScope.resultMessage = "2 seconds";
+        console.log("$rootScope.resultMessage 2", $rootScope.resultMessage);
+        console.log("timer tak  ");*/
+        console.log("$rootScope.resultMessage 4", $rootScope.resultMessage);
+
+        console.log(">>>>>>>>> getMinQuantityWithNecessaryParts");
+        // var myVar = setInterval(myTimer ,1000);
     }
 
+    var sleep = function (milliseconds) {
+        var start = new Date().getTime();
+        for (var i = 0; i < 1e7; i++) {
+            if ((new Date().getTime() - start) > milliseconds){
+                break;
+            }
+        }
+    }
 
-    $scope.myFunction = function (grid) {
-        console.log(" ALERT 1", grid);
+    $scope.clearResult = function () {
+        console.log("<<<<<<< clearResult tik");
+        setTimeout(myTimeout1, 2000);
+        function myTimeout1() {
+            sleep(2000);
+            $rootScope.resultMessage = "2 seconds";
+            console.log("clearResult$rootScope.resultMessage 2", $rootScope.resultMessage);
+            console.log("clearResult myTimeout timer tak  ");
+        }
+        // setTimeout( $rootScope.resultMessage = "2 seconds", 2000);
+        console.log(">>>>>>> clearResult tak");
+
+        // if (grid)
+    }
+
+    var setResult = function (result) {
+        console.log("<<<<<<< clearResult tik");
+        setTimeout(myTimeout1, 1000);
+        function myTimeout1() {
+             sleep(3000);
+            // $rootScope.resultMessage = "2 seconds";
+            console.log("setResult$rootScope.resultMessage 1", $rootScope.resultMessage);
+            $rootScope.resultMessage = result;
+            console.log("setResult$rootScope.resultMessage 2", $rootScope.resultMessage);
+            console.log("setResult myTimeout timer tak  ");
+        }
+        // setTimeout( $rootScope.resultMessage = "2 seconds", 2000);
+        console.log(">>>>>>> clearResult tak");
+
         // if (grid)
     }
     $scope.searchTerm = "";
@@ -375,6 +408,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
     }
 
     $scope.getCurrentPage = function () {
+        console.log("<<<<< getCurrentPage");
         console.log("filterTerm 1", $scope.filterTerm);
         if ($scope.searchTerm == "") {
             if ($scope.filterTerm == "undefined") {
@@ -389,29 +423,33 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         vm.necessary = $scope.filterTerm;
         $http.get(url, config)
             .then(function (response) {
-                console.log("getCurrentPage then  ", response.data);
+                console.log("<<<<<< getCurrentPage then  ", response.data);
 
                 if (response.data.result == "success") {
-                    vm.resultMessage = response.data.result;
+
+                     // $rootScope.resultMessage = response.data.result;
+                    console.log("$rootScope.resultMessage ", $rootScope.resultMessage);
                     vm.serviceGrid.data = response.data.data.content;
                     vm.serviceGrid.totalItems = response.data.data.totalElements;
                     vm.currentPageNumber = response.data.data.number + 1;
                     vm.serviceGrid.paginationCurrentPage = vm.currentPageNumber;
-
                     if (response.data.data.last) {
-                        console.log(" first page ", response.data.data.first);
                         console.log(" last page ", response.data.data.last);
                         vm.last = true;
-
                     } else {
                         vm.last = false;
                     }
                     console.log(" vm.serviceGrid", vm.serviceGrid);
                     console.log("response.data.data ", response.data.data);
                     // console.log("vm.serviceGrid.data  ", vm.serviceGrid);
-
+                    setResult("success");
+                    $scope.getMinQuantityWithNecessaryParts();
+                    // setResult("success2");
                 }
+                console.log(">>>>>> getCurrentPage then  ", response.data);
+
             });
+        console.log(">>>>>>> getCurrentPage");
 
     };
 
@@ -459,7 +497,6 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                     console.log(">>>>>> $scope.getOnePartFromNextPage");
                 }
             });
-
 
     };
 
@@ -514,6 +551,9 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                     console.log("cur page", vm.currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
                     console.log("vm.serviceGrid after ", vm.serviceGrid);
                     console.log("vm.serviceGrid.totalItems", vm.serviceGrid.totalItems);
+                    setResult("success");
+                    $scope.getMinQuantityWithNecessaryParts();
+
                 }
             }).catch(function () {
             console.log("catch data ", vm.serviceGrid.data);
