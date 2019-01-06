@@ -43,9 +43,14 @@ var dataFilterNecessary = "undefined";
 
 var flagSearchComponent = false;
 
+$scope.child = {};
+
+$scope.operation ={};
 MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants', '$rootScope'];
 
 function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope) {
+    var parentScope = $scope.$parent;
+    parentScope.child = $scope;
     var vm = this;
     // $scope.resultMessage = vm.resultMessage;
     // $rootScope.resultMessage = vm.resultMessage;
@@ -87,7 +92,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         // gridFooterTemplate: "<button ng-click='edit-button.html'> Add Part </button>",
         /*gridFooterTemplate:'<div  style="text-align:left" ><button ng-click=\'addRow()\' > Add Part </button></div>',*/
         gridFooterTemplate: /* "<button ng-click='alert()'> Add Book </button>",*/
-            "<button ng-click='grid.appScope.addRow()' > Add Part </button> <span  class=\"ui-grid-cell-contents\">{{grid.appScope.filterTerm}} {{grid.appScope.vm.resultMessage}}</span>",
+            "<button ng-click='grid.appScope.addRow();' > Add Part </button> <span  class=\"ui-grid-cell-contents\">{{grid.appScope.filterTerm}} {{grid.appScope.vm.resultMessage}}</span>",
         /*rowTemplate : "<div ng-dblclick=\"grid.appScope.vm.editRow(grid, row)\" ng-repeat=\"(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name\" class=\"ui-grid-cell\" ng-class=\"{ 'ui-grid-row-header-cell': col.isRowHeader }\" ui-grid-cell></div>"*/
         // rowTemlate : "ng-class='ui-grid-row-header-cell' "
     };
@@ -480,11 +485,6 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         } else {
             var url = '/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&component=' + $scope.searchTerm;
         }
-        // if ($scope.filterTerm == "undefined") {
-        //     var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
-        // } else {
-        //     var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
-        // }
         console.log(" url ", url);
         $http.get(url, config)
             .then(function (response) {
@@ -522,7 +522,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         $scope.gridApi.grid.columns[3].filters[0].term = value;
     };*/
     $scope.getDeletePart = function (row) {
-        var url = '/part/delete1/' + row.entity.id;
+        var url = '/part/delete/' + row.entity.id;
         console.log("delete id", row.entity.id);
         console.log("vm.last 1", vm.last);
         /*
@@ -781,10 +781,13 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
                 quantity: row.entity.quantity,
                 necessary: row.entity.necessary
             };
+
             $http.post(urlAdd, data, config).then(function (response) {
+                $rootScope.resultMessage = response.data.result;
+                $rootScope.operation = "Добавление "
                 if (response.data.result == "success") {
+                    $rootScope.child.getMinQuantityWithNecessaryParts();
                     console.log("----------- add >>>>>>>>>>>> ");
-                    $rootScope.resultMessage = response.data.result;
                     vm.totalItems = 1;
                     $modalInstance.close(row.entity);
                     // grid.paginationCurrentPage = Math.ceil(grid.totalItems / grid.paginationPageSize);
@@ -818,8 +821,6 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
                         if (grid.data.length > grid.paginationPageSize) {
                             grid.paginationCurrentPage = Math.ceil(grid.totalItems / grid.paginationPageSize);
                         }
-
-                        // grid.modifyRows(dataTemp);
                         console.log("  add in grid ", grid);
                     }
                     // }
@@ -857,11 +858,18 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
              * $http.post('http://localhost:8080/service/save', row.entity).success(function(response) { $modalInstance.close(row.entity); }).error(function(response) { alert('Cannot edit row (error in console)'); console.dir(response); });
              */
             $http.post(urlUpDate, data, config).then(function (response) {
+
+                $rootScope.resultMessage = response.data.result;
+                $rootScope.operation = "Обновление ";
                 if (response.data.result == "success") {
-                    $rootScope.resultMessage = response.data.result;
                     vm.totalItems = 1;
                     $modalInstance.close(row.entity);
                     console.log("----------- update >>>>>>>>>>>>>>>>>>>>>>>");
+                    console.log("$rootScope", $rootScope);
+                    console.log("$rootScope $$ChildScope", $rootScope.$$ChildScope);
+                    console.log("$rootScope $$scope ", $rootScope.child);
+                    $rootScope.child.getMinQuantityWithNecessaryParts();
+                    // $rootScope.getNubmberOfElements();
                     // console.log(" grid before ", grid);
                     // console.log(" dataFilterNecessary ", dataFilterNecessary);
                     // console.log(" flagFilterNecessary ", flagFilterNecessary);
