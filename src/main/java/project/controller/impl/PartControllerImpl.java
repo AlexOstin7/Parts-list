@@ -22,7 +22,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
-@RequestMapping(value = "/api", produces = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/part", produces = APPLICATION_JSON_VALUE)
 public class PartControllerImpl implements PartController {
 
     private final PartService partService;
@@ -53,7 +53,7 @@ public class PartControllerImpl implements PartController {
             @ApiResponse(code = 404, message = "Not Found"),
             @ApiResponse(code = 405, message = "I don't know"),
             @ApiResponse(code = 500, message = "Failure")})
-    @RequestMapping(value = "/part/add", method = {POST})
+    @RequestMapping(value = "/add", method = {POST})
     public Response addPart(@RequestBody PartView part) {
         log.info("part contr add befor " + part.toString());
 //        partService.addPart(part);
@@ -68,7 +68,7 @@ public class PartControllerImpl implements PartController {
             @ApiResponse(code = 404, message = "Not Found"),
             @ApiResponse(code = 405, message = "I don't know"),
             @ApiResponse(code = 500, message = "Failure")})
-    @RequestMapping(value = "/part/delete/{id}", method = {GET})
+    @RequestMapping(value = "/delete/{id}", method = {GET})
     public Response deletePart(@PathVariable(value = "id") Long id) {
         partService.deletePart(id);
         return new ResponseSuccess("success");
@@ -77,7 +77,7 @@ public class PartControllerImpl implements PartController {
     @Override
     @ApiOperation(value = "getPartById", nickname = "getPartById", httpMethod = "GET")
     //@RequestMapping(value = "/part/{id}", method = RequestMethod.GET, headers = "Accept=application/json")
-    @RequestMapping(value = "/part/{id}", method = {GET})
+    @RequestMapping(value = "/{id}", method = {GET})
     public Response getPartById(@PathVariable(value = "id") Long id) {
         return new ResponseSuccess("success", partService.getPartById(id));
     }
@@ -93,7 +93,7 @@ public class PartControllerImpl implements PartController {
 
     @Override
     @ApiOperation(value = "getNuberOfParts", nickname = "getNuberOfParts", httpMethod = "GET")
-    @RequestMapping(value = "/part/number", method = {GET})
+    @RequestMapping(value = "/number", method = {GET})
     public Response getNumberOfParts() {
         return new ResponseSuccess("success", partService.getNubmerOfParts());
     }
@@ -105,7 +105,7 @@ public class PartControllerImpl implements PartController {
             @ApiResponse(code = 404, message = "Not Found"),
             @ApiResponse(code = 405, message = "I don't know"),
             @ApiResponse(code = 500, message = "Failure")})
-    @RequestMapping(value = "/part/update", method = {POST})
+    @RequestMapping(value = "/update", method = {POST})
     public Response updatePart(@RequestBody PartView part) {
         log.info("part serv before update " + part.toString());
         partService.updatePart(part);
@@ -115,9 +115,9 @@ public class PartControllerImpl implements PartController {
 
     @Override
     @ApiOperation(value = "findPaginated", nickname = "findPaginated", httpMethod = "GET")
-    @RequestMapping(value = "/part/get", params = {"page", "size"}, method = {GET})
+    @RequestMapping(value = "/get", params = {"page", "size"}, method = {GET})
     public Response findPaginated(@RequestParam("page") int page, @RequestParam("size") int size) {
-        log.info("/part/get contr before findPaginated ");
+        log.info("/get contr before findPaginated ");
         Page<Part> resultPage = partService.findPaginated(page, size);
         if (page > resultPage.getTotalPages()) {
             throw new CustomErrorException("Page number error");
@@ -130,9 +130,9 @@ public class PartControllerImpl implements PartController {
 
     @Override
     @ApiOperation(value = "findPaginatedOffset", nickname = "findPaginatedOffset", httpMethod = "GET")
-    @RequestMapping(value = "/part/getoffset", params = {"page", "size"}, method = {GET})
+    @RequestMapping(value = "/getoffset", params = {"page", "size"}, method = {GET})
     public Response findPaginatedByOffset(@RequestParam("page") int page, @RequestParam("size") int size) {
-        log.info("/part/getOffset contr  ");
+        log.info("/getOffset contr  ");
         Part part = partService.findPaginatedOffset(page, size);
         if (part == null) {
             throw new CustomErrorException("next Page number error");
@@ -142,9 +142,9 @@ public class PartControllerImpl implements PartController {
 
     @Override
     @ApiOperation(value = "findPaginatedOffset", nickname = "findPaginatedOffset", httpMethod = "GET")
-    @RequestMapping(value = "/part/getoffset", params = {"page", "size", "necessary"}, method = {GET})
+    @RequestMapping(value = "/getoffset", params = {"page", "size", "necessary"}, method = {GET})
     public Response findPaginatedByOffset(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("necessary") boolean necessary) {
-        log.info("/part/getoffset necessary contr ");
+        log.info("/getoffset necessary contr ");
         Part part = partService.findPaginatedOffset(page, size, necessary);
         if (part == null) {
             throw new CustomErrorException("next Page number error");
@@ -154,9 +154,9 @@ public class PartControllerImpl implements PartController {
 
     @Override
     @ApiOperation(value = "findPaginatedOffset", nickname = "findPaginatedOffset", httpMethod = "GET")
-    @RequestMapping(value = "/part/getoffset", params = {"page", "size", "component"}, method = {GET})
+    @RequestMapping(value = "/getoffset", params = {"page", "size", "component"}, method = {GET})
     public Response findPaginatedByOffset(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("component") String component) {
-        log.info("/part/getoffset necessary contr ");
+        log.info("/getoffset necessary contr ");
         Part part = partService.findPaginatedOffset(page, size, component);
         if (part == null) {
             throw new CustomErrorException("next Page number error");
@@ -166,9 +166,9 @@ public class PartControllerImpl implements PartController {
 
     @Override
     @ApiOperation(value = "findPaginatedFilterNecessary", nickname = "findPaginatedFilterNecessary", httpMethod = "GET")
-    @RequestMapping(value = "/part/getnecessary", params = {"page", "size", "necessary"}, method = {GET})
+    @RequestMapping(value = "/getnecessary", params = {"page", "size", "necessary"}, method = {GET})
     public Response findPaginatedFilterNecessary(int page, int size, boolean necessary) {
-        log.info("/part/getnecessary contr before findPaginated ");
+        log.info("/getnecessary contr before findPaginated ");
         Page<Part> resultPage = partService.findPaginated(page, size, necessary);
         if (page > resultPage.getTotalPages()) {
             throw new CustomErrorException("Page number error");
@@ -179,9 +179,9 @@ public class PartControllerImpl implements PartController {
 
     @Override
     @ApiOperation(value = "findPaginatedFilterComponent", nickname = "findPaginatedFilterComponent", httpMethod = "GET")
-    @RequestMapping(value = "/part/getcomponent", params = {"page", "size", "component"}, method = {GET})
+    @RequestMapping(value = "/getcomponent", params = {"page", "size", "component"}, method = {GET})
     public Response findPaginatedFilterComponent(int page, int size, String component) {
-        log.info("/part/getnecessary contr before findPaginated ");
+        log.info("/getnecessary contr before findPaginated ");
         Page<Part> resultPage = partService.findPaginated(page, size, component);
         if (page > resultPage.getTotalPages()) {
             throw new CustomErrorException("Page number error");
@@ -197,7 +197,7 @@ public class PartControllerImpl implements PartController {
 
     @Override
     @ApiOperation(value = "getMinQuantityWithNecessaryParts", nickname = "getMinQuantityWithNecessaryParts", httpMethod = "GET")
-    @RequestMapping(value = "/parts/min", method = {GET})
+    @RequestMapping(value = "/min", method = {GET})
     public Response getMinQuantityWithNecessaryParts() {
         return new ResponseSuccess("success", partService.getMinQuantityWithNecessaryParts());
     }

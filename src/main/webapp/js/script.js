@@ -57,7 +57,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
     vm.editRow = RowEditor.editRow;
     vm.numberOfItemsOnPage = 5;
     vm.size = 10;
-    var urlGetNumberOfParts = '/api/part/number';
+    var urlGetNumberOfParts = '/part/number';
     // var totalItems = 0;
     vm.currentPageNumber = 1;
     dataFilterNecessary = 'undefined';
@@ -320,7 +320,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
     }
 
     $scope.getMinQuantityWithNecessaryParts = function () {
-        var url = "http://localhost:8887/api/parts/min";
+        // var url = "http://localhost:8887/api/part/min";
+        var url = "/part/min";
         console.log("<<<<<<<<<< getMinQuantityWithNecessaryParts");
         console.log("$rootScope.resultMessage 1", $rootScope.resultMessage);
         // $rootScope.resultMessage = "";
@@ -421,12 +422,12 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         console.log("filterTerm 1", $scope.filterTerm);
         if ($scope.searchTerm == "") {
             if ($scope.filterTerm == "undefined") {
-                var url = '/api/part/get?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
+                var url = '/part/get?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
             } else {
-                var url = '/api/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
+                var url = '/part/getnecessary?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
             }
         } else {
-            var url = '/api/part/getcomponent?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&component=' + $scope.searchTerm;
+            var url = '/part/getcomponent?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&component=' + $scope.searchTerm;
         }
         console.log(" url ", url);
         vm.necessary = $scope.filterTerm;
@@ -472,12 +473,12 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         console.log("$scope.searchTerm 1", $scope.searchTerm);
         if ($scope.searchTerm == "") {
             if ($scope.filterTerm == "undefined") {
-                var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
+                var url = '/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
             } else {
-                var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
+                var url = '/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&necessary=' + $scope.filterTerm;
             }
         } else {
-            var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&component=' + $scope.searchTerm;
+            var url = '/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&component=' + $scope.searchTerm;
         }
         // if ($scope.filterTerm == "undefined") {
         //     var url = '/api/part/getoffset?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage;
@@ -521,7 +522,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         $scope.gridApi.grid.columns[3].filters[0].term = value;
     };*/
     $scope.getDeletePart = function (row) {
-        var url = '/api/part/delete1/' + row.entity.id;
+        var url = '/part/delete1/' + row.entity.id;
         console.log("delete id", row.entity.id);
         console.log("vm.last 1", vm.last);
         /*
@@ -620,7 +621,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         // console.log(" vm.currentPageNumber after ", vm.currentPageNumber);
 
 
-        var url = '/api/part/getcomponent?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&component=' + $scope.searchTerm;
+        var url = '/part/getcomponent?page=' + (vm.currentPageNumber - 1) + '&size=' + vm.numberOfItemsOnPage + '&component=' + $scope.searchTerm;
 
         $http.get(url, config)
             .then(function (response) {
@@ -663,7 +664,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         };
         var rowTmp = {};
         rowTmp.entity = newService;
-        vm.editRow(vm.serviceGrid, rowTmp, $scope.filterTerm, $scope.searchTerm);
+        vm.editRow(vm.serviceGrid, rowTmp, $scope.filterTerm, $scope.searchTerm, $rootScope);
         console.log("add row ", newService, " service ", vm.serviceGrid);
         // getCurrentPage(currentPageNumber - 1, vm.numberOfItemsOnPage);
     };
@@ -683,7 +684,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         var rowTmp = {};
         rowTmp.entity = newService;
         // vm.editRow(vm.serviceGrid, rowTmp, $scope.filterTerm, $scope.getOnePartFromNextPage());
-        vm.editRow(vm.serviceGrid, rowTmp, $scope.filterTerm, $scope.searchTerm);
+        vm.editRow(vm.serviceGrid, rowTmp, $scope.filterTerm, $scope.searchTerm, $rootScope);
         console.log("add row !!!!! ", newService, " service !!!!!!!!!!", vm.serviceGrid);
         console.log("============ updaterow <<<<<<<<<<<<<<");
 
@@ -698,10 +699,10 @@ function RowEditor($http, $rootScope, $modal) {
     var service = {};
     service.editRow = editRow;
 
-    function editRow(grid, row, filterTerm, searchTerm) {
+    function editRow(grid, row, filterTerm, searchTerm, rootScope) {
         $modal.open({
             templateUrl: '/js/edit-modal.html',
-            controller: ['$http', '$modalInstance', 'PersonSchema', 'grid', 'row', 'filterTerm', 'searchTerm', RowEditCtrl],
+            controller: ['$http', '$modalInstance', 'PersonSchema', 'grid', 'row', 'filterTerm', 'searchTerm', 'rootScope', RowEditCtrl],
             controllerAs: 'vm',
             resolve: {
                 grid: function () {
@@ -715,6 +716,9 @@ function RowEditor($http, $rootScope, $modal) {
                 },
                 searchTerm: function () {
                     return searchTerm;
+                },
+                rootScope: function () {
+                    return rootScope;
                 }
 
             }
@@ -725,7 +729,7 @@ function RowEditor($http, $rootScope, $modal) {
 }
 
 
-function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm, searchTerm) {
+function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm, searchTerm, $rootScope) {
     var vm = this;
     console.log("row.ENtity ", row.entity);
     console.log("grid ", grid);
@@ -757,8 +761,8 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
     vm.save = save;
 
     function save() {
-        var urlAdd = "/api/part/add";
-        var urlUpDate = "/api/part/update";
+        var urlAdd = "/part/add";
+        var urlUpDate = "/part/update";
         console.log("rowEditCtrel add row.entity", row.entity);
         console.log("rowEditCtrel add vm.entity", vm.entity);
         // console.log("rowEditCtrel add vm.rowOffset", vm.rowOffset);
