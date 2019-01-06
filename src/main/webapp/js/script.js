@@ -43,11 +43,13 @@ var dataFilterNecessary = "undefined";
 
 var flagSearchComponent = false;
 
-MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants', '$interval'];
+MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants', '$rootScope'];
 
-function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants) {
+function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope) {
     var vm = this;
-    $scope.resultMessage = vm.resultMessage;
+    // $scope.resultMessage = vm.resultMessage;
+    // $rootScope.resultMessage = vm.resultMessage;
+    $rootScope.resultMessage = "!!";
     // flagFilterNecessary = false;
     vm.last;
     vm.rowOffset = {};
