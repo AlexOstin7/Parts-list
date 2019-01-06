@@ -81,10 +81,21 @@
     Поиск {{searchTerm}}
     </br>
     <br>
-    <p> Результат {{resultMessage}}</p>
+    <table style="width:50%" align="center" border="1">
+        <p>Результат операции</p>
+        <tr>
+            <th align="center" width="20%"> {{operation}} </th>
+            <th align="left">
+                <ng-if ng-if="resultMessage == 'success'">УСПЕШНО</ng-if>
+                <ng-if ng-if="resultMessage != 'success'">ОШИБКА {{resultMessage}}</ng-if>
+            </th>
+
+        </tr>
+    </table>
+    <!--<p> Результат {{operation}}<ng-if ng-if="resultMessage == ''">УСПЕШНО</ng-if>{{resultMessage}}</p>
     <ng-if ng-if="filterTerm == 'undefined'">ВСЕ</ng-if>
     </br>
-
+-->
   <!--  <h3>Custom Filter Example</h3>
     <div>Custom Component Filter: <input type="text" >
         <button ng-click="filterComponent()">Filter By Component</button>
