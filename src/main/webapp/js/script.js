@@ -43,12 +43,15 @@ var dataFilterNecessary = "undefined";
 
 var flagSearchComponent = false;
 
+
 MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants', '$rootScope'];
 child = {};
+
 
 function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope) {
     var parentScope = $scope.$parent;
     parentScope.child = $scope;
+    $scope.alerts = [];
     var vm = this;
     // $scope.resultMessage = vm.resultMessage;
     // $rootScope.resultMessage = vm.resultMessage;
@@ -231,6 +234,27 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         console.log("searchTerm ", $scope.searchTerm);
         console.log("$scope.gridApi.grid.columns[1].filters[0] ", $scope.gridApi.grid.columns[1].filters[0])
     }
+    $scope.show = true;
+/*
+    $scope.closeAlert = function(index) {
+        // $scope.show = false;
+        $rootScope.operation = "";
+    };*/
+
+    $scope.addAlert = function(type, message) {
+
+        $scope.alerts.push({type: type, msg: message});
+    };
+
+    $scope.closeAlert = function(index) {
+
+        $scope.alerts.splice(0);
+    };
+
+    var popup = function () {
+        var popup = document.getElementById("myPopup");
+        popup.classList.toggle("show");
+    }
     var myFunction = function () {
         // alert("!!")
     };
@@ -331,8 +355,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         if ($rootScope.resultMessage == 'success') {
             $http.get(url, config, $scope)
                 .then(function (response) {
-                    $rootScope.operation = "Вычисление ";
+                    $rootScope.operation = "Вычисление";
                     $rootScope.resultMessage = response.data.result;
+                    $scope.addAlert(response.data.result, $rootScope.operation);
+
                     console.log("response  ", response.data);
                     console.log("$rootScope.resultMessage  ", $rootScope.resultMessage);
                     console.log("getMinNumberOfSet ", response.data);
@@ -435,12 +461,14 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         console.log(" url ", url);
         vm.necessary = $scope.filterTerm;
         // $rootScope.resultMessage = "";
-        $rootScope.operation = "Чтение страницы" + vm.currentPageNumber;
 
         $http.get(url, config)
             .then(function (response) {
                 console.log("<<<<<< getCurrentPage then  ", response.data);
+                $rootScope.operation = "Чтение" ;
                 $rootScope.resultMessage = response.data.result;
+                $scope.addAlert(response.data.result, $rootScope.operation);
+                // popup();
                 if (response.data.result == "success") {
                     console.log("$rootScope.resultMessage ", $rootScope.resultMessage);
                     vm.serviceGrid.data = response.data.data.content;
@@ -533,7 +561,9 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         $http.get(url, config)
             .then(function (response) {
                 // handleResult(result.value);
-                $rootScope.operation = "Удаление ";
+                $rootScope.operation = "Удаление";
+                $rootScope.resultMessage = response.data.result;
+                $scope.addAlert(response.data.result, $rootScope.operation);
                 console.log("delete then response.data", response.data);
                 console.log("delete then  response.data.resultMessage", response.data.resultMessage);
                 $rootScope.resultMessage = response.data.result;

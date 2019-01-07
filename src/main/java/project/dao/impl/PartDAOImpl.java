@@ -85,7 +85,7 @@ public class PartDAOImpl implements PartDAO {
 
 
     @Override
-    public int getMinQuantityWithNecessaryParts() {
+    public Integer getMinQuantityWithNecessaryParts() {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
         Session session = em.unwrap(Session.class);
@@ -96,17 +96,24 @@ public class PartDAOImpl implements PartDAO {
         ProjectionList projList = Projections.projectionList();
         projList.add(Projections.min("quantity"));
         criteria.setProjection(projList);
-        int min = (Integer)criteria.uniqueResult();
+//        if (criteria.list().get(0) == null)
+//       log.info("criteria.list().get(0) ", criteria.list().get(0));
+//        int min = (Integer)criteria.uniqueResult();
+        int min = 0;
+        if (!criteria.list().contains(null)) {
+            min = (Integer) criteria.uniqueResult();
+        }
+
 //        List<String> results = criteria.list();
-        List<Integer> results = criteria.list();
+//        List<Integer> results = criteria.list();
 //        List results = criteria.list();
 
-        log.info(" min list " + results);
+//        log.info(" min list " + results);
 //        projList.add(Projections.rowCount());
 
 //        projList.add(Projections.property("component"));
 //        projList.add(Projections.property("isNecessary"));
-   //     projList.add(Projections.property("quantity"));
+        //     projList.add(Projections.property("quantity"));
 //        projList.add(Projections.max("quantity"));
 //        projList.add(Projections.max("isNecessary"));
 
@@ -127,10 +134,10 @@ public class PartDAOImpl implements PartDAO {
             Object[] row = (Object[]) r;
             Type t = ((<String>) row[0]);
         }*/
-        for(int i=0;i<results.size();i++){
+        /*for(int i=0;i<results.size();i++){
 log.info(" result " + i + " " + results.get(i));
             //            System.out.println(list.get(i));
-        }
+        }*/
         /*Iterator iter = results.iterator();
         Object[] obj = (Object[]) iter.next();
         for (int i=0;i<obj.length;i++)
@@ -139,7 +146,6 @@ log.info(" result " + i + " " + results.get(i));
             log.info(" obj " + obj[i]);
         }*/
 
-        int count = results.size();
 
         /*CriteriaQuery<Long> countQuery = criteriaBuilder
                 .createQuery(Long.class);
@@ -177,7 +183,7 @@ log.info(" result " + i + " " + results.get(i));
         int count = typedQuery.getResultList().size();
         int pageNumber = (int) ((count / pageSize) + 1);
         if (pageable.getPageNumber() < pageNumber) {
-            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize );
+            typedQuery.setFirstResult(pageable.getPageNumber() * pageSize);
             typedQuery.setMaxResults(pageSize);
 //            System.out.println("Current page: " + typedQuery.getResultList());
             list = typedQuery.getResultList();
@@ -215,7 +221,7 @@ log.info(" result " + i + " " + results.get(i));
         int count = typedQuery.getResultList().size();
         int pageNumber = (int) ((count / pageSize) + 1);
         if (pageable.getPageNumber() < pageNumber) {
-            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize + pageSize -1 );
+            typedQuery.setFirstResult(pageable.getPageNumber() * pageSize + pageSize - 1);
             typedQuery.setMaxResults(1);
 //            System.out.println("Current page: " + typedQuery.getResultList());
 //            list = typedQuery.getResultList();
@@ -225,8 +231,10 @@ log.info(" result " + i + " " + results.get(i));
         Part part = typedQuery.getResultList().stream().findFirst().orElse(null);
         /*TypedQuery<Part> query = em.createQuery("SELECT p FROM Part p", Part.class);
         List<Part> list = loadAll();*/
-        log.info("findPaginated offset dao  " + "size List " + list.size() + " count " + count + "page Number " + pageNumber + "pageable.getPageNumber() " + pageable.getPageNumber() +" list.toString " + list.toString());
-        if( part != null) {log.info("findPaginated dao  part " + part.toString());}
+        log.info("findPaginated offset dao  " + "size List " + list.size() + " count " + count + "page Number " + pageNumber + "pageable.getPageNumber() " + pageable.getPageNumber() + " list.toString " + list.toString());
+        if (part != null) {
+            log.info("findPaginated dao  part " + part.toString());
+        }
 //        Page<Part> page = new PageImpl<>(list, pageable, count);
 //        log.info("findPaginated dao before " + "page elements " + page.getTotalElements() + " page.toString " + page.toString() + " page content " + page.getContent().toString());
         return part;
@@ -248,13 +256,13 @@ log.info(" result " + i + " " + results.get(i));
 //        Long count = getNubmerOfParts();
         int pageNumber = (int) ((count / pageSize) + 1);
         if (pageable.getPageNumber() < pageNumber) {
-            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize + pageSize -1);
+            typedQuery.setFirstResult(pageable.getPageNumber() * pageSize + pageSize - 1);
             typedQuery.setMaxResults(1);
 //            System.out.println("Current page: " + typedQuery.getResultList());
             list = typedQuery.getResultList();
         }
         Part part = typedQuery.getResultList().stream().findFirst().orElse(null);
-        log.info("findPaginatedFilterOffset +necessare dao before " + "size List " + list.size() +  " count " + count + "pageable.getPageNumber() " + pageable.getPageNumber() + "pageSize " + pageSize + " list.toString " + list.toString());
+        log.info("findPaginatedFilterOffset +necessare dao before " + "size List " + list.size() + " count " + count + "pageable.getPageNumber() " + pageable.getPageNumber() + "pageSize " + pageSize + " list.toString " + list.toString());
 //        Page<Part> page = new PageImpl<>(list, pageable, count.intValue());
         Page<Part> page = new PageImpl<>(list, pageable, count);
         log.info("findPaginatedFilterOffset+ necessare dao after " + "page elements " + page.getTotalElements() + " page.toString " + page.toString() + " page content " + page.getContent().toString());
@@ -270,21 +278,21 @@ log.info(" result " + i + " " + results.get(i));
         CriteriaQuery<Part> criteriaQuery = criteriaBuilder.createQuery(Part.class);
         Root<Part> from = criteriaQuery.from(Part.class);
         CriteriaQuery<Part> select = criteriaQuery.select(from);
-        select.where(criteriaBuilder.like(from.get("component"),  "%" + component + "%"));
-       // select.where(criteriaBuilder.equal(from.get("component"), component));
+        select.where(criteriaBuilder.like(from.get("component"), "%" + component + "%"));
+        // select.where(criteriaBuilder.equal(from.get("component"), component));
         TypedQuery<Part> typedQuery = em.createQuery(select);
         List<Part> list = Collections.emptyList();
         int count = typedQuery.getResultList().size();
 //        Long count = getNubmerOfParts();
         int pageNumber = (int) ((count / pageSize) + 1);
         if (pageable.getPageNumber() < pageNumber) {
-            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize + pageSize -1);
+            typedQuery.setFirstResult(pageable.getPageNumber() * pageSize + pageSize - 1);
             typedQuery.setMaxResults(1);
 //            System.out.println("Current page: " + typedQuery.getResultList());
             list = typedQuery.getResultList();
         }
         Part part = typedQuery.getResultList().stream().findFirst().orElse(null);
-        log.info("findPaginatedFilterOffset +component dao before " + "size List " + list.size() + " count " + count + " pageable.getPageNumber() " + pageable.getPageNumber() +  "page Number " + pageNumber + " pageSize " + pageSize + " list.toString " + list.toString());
+        log.info("findPaginatedFilterOffset +component dao before " + "size List " + list.size() + " count " + count + " pageable.getPageNumber() " + pageable.getPageNumber() + "page Number " + pageNumber + " pageSize " + pageSize + " list.toString " + list.toString());
 //        Page<Part> page = new PageImpl<>(list, pageable, count.intValue());
         Page<Part> page = new PageImpl<>(list, pageable, count);
         log.info("findPaginatedFilterOffset +component  dao after " + "page elements " + page.getTotalElements() + " page.toString " + page.toString() + " page content " + page.getContent().toString());
@@ -322,7 +330,7 @@ log.info(" result " + i + " " + results.get(i));
 //        Long count = getNubmerOfParts();
         int pageNumber = (int) ((count / pageSize) + 1);
         if (pageable.getPageNumber() < pageNumber) {
-            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize );
+            typedQuery.setFirstResult(pageable.getPageNumber() * pageSize);
             typedQuery.setMaxResults(pageSize);
 //            System.out.println("Current page: " + typedQuery.getResultList());
             list = typedQuery.getResultList();
@@ -351,7 +359,7 @@ log.info(" result " + i + " " + results.get(i));
         CriteriaQuery<Part> select = criteriaQuery.select(from);
 
 //        select.where(criteriaBuilder.equal(from.get("component"), component));
-        select.where(criteriaBuilder.like(from.get("component"),  "%" + component + "%"));
+        select.where(criteriaBuilder.like(from.get("component"), "%" + component + "%"));
         /*CriteriaQuery<Part> select = criteriaQuery.select(from);
 
         Root<Office> Office = criteria.from(Office.class);
@@ -364,7 +372,7 @@ log.info(" result " + i + " " + results.get(i));
 //        Long count = getNubmerOfParts();
         int pageNumber = (int) ((count / pageSize) + 1);
         if (pageable.getPageNumber() < pageNumber) {
-            typedQuery.setFirstResult(pageable.getPageNumber()*pageSize );
+            typedQuery.setFirstResult(pageable.getPageNumber() * pageSize);
             typedQuery.setMaxResults(pageSize);
 //            System.out.println("Current page: " + typedQuery.getResultList());
             list = typedQuery.getResultList();

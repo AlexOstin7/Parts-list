@@ -199,6 +199,10 @@ public class PartControllerImpl implements PartController {
     @ApiOperation(value = "getMinQuantityWithNecessaryParts", nickname = "getMinQuantityWithNecessaryParts", httpMethod = "GET")
     @RequestMapping(value = "/min", method = {GET})
     public Response getMinQuantityWithNecessaryParts() {
-        return new ResponseSuccess("success", partService.getMinQuantityWithNecessaryParts());
+        int res = 0;
+        if (partService.getMinQuantityWithNecessaryParts() != null) {
+         res = partService.getMinQuantityWithNecessaryParts();
+        }
+        return new ResponseSuccess("success", res);
     }
 }

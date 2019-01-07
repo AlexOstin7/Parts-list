@@ -92,16 +92,23 @@
                 <ng-if ng-if="resultMessage != 'success'">ОШИБКА {{resultMessage}}</ng-if>
             </th>
         </tr>
-        <tr>
-            <th align="center" width="40%">
-                {{operation}}
-            </th>
-            <th align="left">
-                <ng-if ng-if="resultMessage == 'success'">УСПЕШНО</ng-if>
-                <ng-if ng-if="resultMessage != 'success'">ОШИБКА {{resultMessage}}</ng-if>
-            </th>
-        </tr>
     </table>
+    <!--ng-if="show"-->
+    <!--<alert type="danger" close="closeAlert()" ng-if="operation == 'Вычисление'"
+           dismiss-on-timeout="2000">Result {{resultMessage}}</alert>-->
+
+    <alert ng-repeat="alert in alerts" dismiss-on-timeout="5000" type="{{alert.type}}" close="closeAlert()">{{alert.msg}}</alert>
+   <!-- <div class="popup">
+        <span class="popuptext" id="myPopup">{{operation}}</span>
+    </div>-->
+    <!--<div class="popup">-->
+        <!--<h2>Close Alerts Via JavaScript</h2>-->
+        <!--<div class="alert alert-success alert-dismissible" id="myPopup">-->
+            <!--<a href="#" class="close">&times;</a>-->
+            <!--<strong>Success!</strong> This alert box could indicate a successful or positive action.-->
+        <!--</div>-->
+    <!--</div>-->
+
     <!--<p> Результат {{operation}}<ng-if ng-if="resultMessage == ''">УСПЕШНО</ng-if>{{resultMessage}}</p>
     <ng-if ng-if="filterTerm == 'undefined'">ВСЕ</ng-if>
     </br>
