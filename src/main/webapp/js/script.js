@@ -248,7 +248,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
 
     $scope.closeAlert = function(index) {
 
-        $scope.alerts.splice(0);
+        // $scope.alerts.splice(0);
+        for(i = 0; i < $scope.alerts.length; i++) {
+            $scope.alerts.splice(i, 1);
+        }
     };
 
     var popup = function () {
