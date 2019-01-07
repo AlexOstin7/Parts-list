@@ -1,5 +1,5 @@
-//02.01.2019
-var app = angular.module('influx', ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.pinning', 'ui.grid.moveColumns', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.bootstrap', 'ui.grid.edit', 'ui.grid.pagination', 'schemaForm'])
+//07.01.2019
+var app = angular.module('influx',  ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.pinning', 'ui.grid.moveColumns', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.bootstrap', 'ui.grid.edit', 'ui.grid.pagination', 'schemaForm'])
     .constant('PersonSchema', {
         type: 'object',
         properties: {
@@ -35,7 +35,7 @@ var config = {
     headers: {
         'Content-Type': 'application/json; charset=utf-8'
     }
-}
+};
 
 var flagFilterNecessary = false;
 
@@ -43,10 +43,8 @@ var dataFilterNecessary = "undefined";
 
 var flagSearchComponent = false;
 
-$scope.child = {};
-
-$scope.operation ={};
 MainCtrl.$inject = ['$scope', '$http', '$modal', 'RowEditor', 'uiGridConstants', '$rootScope'];
+child = {};
 
 function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope) {
     var parentScope = $scope.$parent;
