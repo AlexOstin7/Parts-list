@@ -93,7 +93,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         // gridFooterTemplate: "<button ng-click='edit-button.html'> Add Part </button>",
         /*gridFooterTemplate:'<div  style="text-align:left" ><button ng-click=\'addRow()\' > Add Part </button></div>',*/
         gridFooterTemplate: /* "<button ng-click='alert()'> Add Book </button>",*/
-            "<button ng-click='grid.appScope.addRow();' > Add Part </button> <span  class=\"ui-grid-cell-contents\">{{grid.appScope.filterTerm}} {{grid.appScope.vm.resultMessage}}</span>",
+            "<div align=\"left\"><button ng-click='grid.appScope.addRow();' > Add Part </button> <span  class=\"ui-grid-cell-contents\">Комплектующие в списке <ng-if ng-if=\"grid.appScope.filterTerm == 'undefined'\">ВСЕ</ng-if><ng-if ng-if=\"grid.appScope.filterTerm === 'true'\">необходимые для сборки</ng-if>\n" +
+            "                <ng-if ng-if=\"grid.appScope.filterTerm === 'false'\">опциональные</ng-if> </span></div>",
         /*rowTemplate : "<div ng-dblclick=\"grid.appScope.vm.editRow(grid, row)\" ng-repeat=\"(colRenderIndex, col) in colContainer.renderedColumns track by col.colDef.name\" class=\"ui-grid-cell\" ng-class=\"{ 'ui-grid-row-header-cell': col.isRowHeader }\" ui-grid-cell></div>"*/
         // rowTemlate : "ng-class='ui-grid-row-header-cell' "
     };

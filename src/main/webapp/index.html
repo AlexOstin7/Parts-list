@@ -41,7 +41,7 @@
 
 <div ng-controller="MainCtrl as vm"  align="center">
 
-    <table style="width:50%" align="center" border="1">
+   <!-- <table style="width:50%" align="center" border="1">
         <p>Фильтр</p>
         <tr>
             <th align="center" width="20%"> Детали в списке: </th>
@@ -52,28 +52,10 @@
             </th>
 
         </tr>
-    </table>
+    </table>-->
 
 
-    <p>Необходимость
-    <select ng-model="filterTerm">
-        <option value="true">Да</option>
-        <option value="false">Нет</option>
-    </select>
-    </p>
-    <!--<button ng-click="filterTerm ='undefined'">Сбросить фильтр</button>-->
-    <button ng-click="filterTerm = 'undefined'; searchTerm=''; vm.currentPageNumber=1; getCurrentPage();  ">Сброс</button>
-    <input type="button" value="Применить фильтр" ng-click=" searchTerm=''; vm.currentPageNumber=1; getCurrentPage()" >
-    <!--<button ng-click="getCurrentPage()">Сбросить фильтр</button>-->
-    <br>
 
-    <p>Поиск по наименованию детали
-
-    </p>
-    <input type="text" ng-model="searchTerm" >
-    <button ng-click="filterTerm = 'undefined'; vm.currentPageNumber=1; getCurrentPage()">Поиск</button>
-    <button ng-click="searchGrid()">Поиск2</button>
-    <br>
 
     </br>
     <br>
@@ -97,7 +79,7 @@
     <!--<alert type="danger" close="closeAlert()" ng-if="operation == 'Вычисление'"
            dismiss-on-timeout="2000">Result {{resultMessage}}</alert>-->
 <div style="width: 100%; height: 250px; overflow: auto;">
-    <alert ng-repeat="alert in alerts" dismiss-on-timeout="5000" type="{{alert.type}}" close="closeAlert()">{{alert.msg}}</alert>
+    <alert ng-repeat="alert in alerts" dismiss-on-timeout="10000" type="{{alert.type}}" close="closeAlert()">{{alert.msg}}</alert>
 
 </div >
    <!-- <div class="popup">
@@ -135,6 +117,25 @@
     <div style="padding-left: 10px;">
         <button type="button" id="addRow" class="btn btn-success" ng-click="addRow()">Add Row</button>
     </div>-->
+    <p>Фильтр Необходимость
+        <select ng-model="filterTerm">
+            <option value="true">Да</option>
+            <option value="false">Нет</option>
+        </select>
+    </p>
+    <!--<button ng-click="filterTerm ='undefined'">Сбросить фильтр</button>-->
+    <button ng-click="filterTerm = 'undefined'; searchTerm=''; vm.currentPageNumber=1; getCurrentPage();  ">Сброс</button>
+    <input type="button" value="Применить фильтр" ng-click=" searchTerm=''; vm.currentPageNumber=1; getCurrentPage()" >
+    <!--<button ng-click="getCurrentPage()">Сбросить фильтр</button>-->
+    <br>
+
+    <p>Поиск по наименованию детали
+
+    </p>
+    <input type="text" ng-model="searchTerm" >
+    <button ng-click="filterTerm = 'undefined'; vm.currentPageNumber=1; getCurrentPage()">Поиск</button>
+    <button ng-click="searchGrid()">Поиск2</button>
+    <br>
     <br/>
     <!--ui-grid-move-columns
 		ui-grid-resize-columns
