@@ -191,17 +191,17 @@ public class PartControllerImpl implements PartController {
     }
 //
 //    @Override
-//    public Response getMinQuantityWithNecessaryParts() {
+//    public Response getCountSets() {
 //        return null;
 //    }
 
     @Override
-    @ApiOperation(value = "getMinQuantityWithNecessaryParts", nickname = "getMinQuantityWithNecessaryParts", httpMethod = "GET")
+    @ApiOperation(value = "getCountSets", nickname = "getCountSets", httpMethod = "GET")
     @RequestMapping(value = "/min", method = {GET})
-    public Response getMinQuantityWithNecessaryParts() {
+    public Response getCountSets() {
         int res = 0;
-        if (partService.getMinQuantityWithNecessaryParts() != null) {
-         res = partService.getMinQuantityWithNecessaryParts();
+        if (partService.getCountSets() != null) {
+         res = partService.getCountSets();
         }
         return new ResponseSuccess("success", res);
     }

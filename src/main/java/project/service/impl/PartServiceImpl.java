@@ -85,8 +85,8 @@ public class PartServiceImpl implements PartService {
 
     @Override
     @Transactional(readOnly=true)
-    public Integer getMinQuantityWithNecessaryParts() {
-        return dao.getMinQuantityWithNecessaryParts();
+    public Integer getCountSets() {
+        return dao.getCountSets();
     }
 
     @Override

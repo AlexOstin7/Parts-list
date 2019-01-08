@@ -85,7 +85,7 @@ public class PartDAOImpl implements PartDAO {
 
 
     @Override
-    public Integer getMinQuantityWithNecessaryParts() {
+    public Integer getCountSets() {
         CriteriaBuilder criteriaBuilder = em.getCriteriaBuilder();
 
         Session session = em.unwrap(Session.class);

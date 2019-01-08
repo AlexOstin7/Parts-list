@@ -16,7 +16,7 @@ public interface PartController {
 
     Response parts();
 
-    Response getMinQuantityWithNecessaryParts();
+    Response getCountSets();
 
     Response getNumberOfParts();
 

@@ -46,7 +46,7 @@ public interface PartDAO {
 
     Long getNubmerOfParts();
 
-    Integer getMinQuantityWithNecessaryParts();
+    Integer getCountSets();
 
     @Query("SELECT n FROM Network n")
     Page<Part> findPaginated(Pageable pageable);

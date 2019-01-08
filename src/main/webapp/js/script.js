@@ -1,4 +1,4 @@
-//07.01.2019
+//08.01.2019
 var app = angular.module('influx',  ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.pinning', 'ui.grid.moveColumns', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.bootstrap', 'ui.grid.edit', 'ui.grid.pagination', 'schemaForm'])
     .constant('PersonSchema', {
         type: 'object',
@@ -106,7 +106,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
 
         $scope.getCurrentPage();
 
-        $scope.getMinQuantityWithNecessaryParts();
+        $scope.getCountSets();
         // gridApi.core.refresh();
         console.log(" gridApi ", gridApi);
         console.log(" gridApi current page ", gridApi.pagination.getPage());
@@ -250,9 +250,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
     $scope.closeAlert = function(index) {
 
         // $scope.alerts.splice(0);
-        for(i = 0; i < $scope.alerts.length; i++) {
+       /* for(i = 0; i < $scope.alerts.length; i++) {
             $scope.alerts.splice(i, 1);
-        }
+        }*/
+        $scope.alerts.splice(index, 1);
     };
 
     var popup = function () {
@@ -350,10 +351,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         console.log("call 1 next page necessary delete (not a last page) <<<<<<<");
     }
 
-    $scope.getMinQuantityWithNecessaryParts = function () {
+    $scope.getCountSets = function () {
         // var url = "http://localhost:8887/api/part/min";
         var url = "/part/min";
-        console.log("<<<<<<<<<< getMinQuantityWithNecessaryParts");
+        console.log("<<<<<<<<<< getCountSets");
         console.log("$rootScope.resultMessage 1", $rootScope.resultMessage);
         // $rootScope.resultMessage = "";
         if ($rootScope.resultMessage == 'success') {
@@ -378,7 +379,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                     $rootScope.resultMessage = response.data.error;
                 });
 
-            // console.log("getMinQuantityWithNecessaryParts timer tik ");
+            // console.log("getCountSets timer tik ");
             console.log("$rootScope.resultMessage 2", $rootScope.resultMessage);
         } else {
             console.log("$rootScope.resultMessage 3", $rootScope.resultMessage);
@@ -391,7 +392,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         console.log("timer tak  ");*/
         console.log("$rootScope.resultMessage 4", $rootScope.resultMessage);
 
-        console.log(">>>>>>>>> getMinQuantityWithNecessaryParts");
+        console.log(">>>>>>>>> getCountSets");
         // var myVar = setInterval(myTimer ,1000);
     }
 
@@ -488,7 +489,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                     console.log(" vm.serviceGrid", vm.serviceGrid);
                     console.log("response.data.data ", response.data.data);
                     // console.log("vm.serviceGrid.data  ", vm.serviceGrid);
-                    // $scope.getMinQuantityWithNecessaryParts();
+                    // $scope.getCountSets();
                 } else {
                     $rootScope.resultMessage = response.data.error;
                 }
@@ -604,7 +605,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                     console.log("cur page", vm.currentPageNumber, " item on page ", vm.numberOfItemsOnPage);
                     console.log("vm.serviceGrid after ", vm.serviceGrid);
                     console.log("vm.serviceGrid.totalItems", vm.serviceGrid.totalItems);
-                    $scope.getMinQuantityWithNecessaryParts();
+                    $scope.getCountSets();
 
                 } else {
                     console.log("delete else resultMessage", response.data.resultMessage);
@@ -818,7 +819,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
                 $rootScope.resultMessage = response.data.result;
                 $rootScope.operation = "Добавление "
                 if (response.data.result == "success") {
-                    $rootScope.child.getMinQuantityWithNecessaryParts();
+                    $rootScope.child.getCountSets();
                     console.log("----------- add >>>>>>>>>>>> ");
                     vm.totalItems = 1;
                     $modalInstance.close(row.entity);
@@ -900,7 +901,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
                     console.log("$rootScope", $rootScope);
                     console.log("$rootScope $$ChildScope", $rootScope.$$ChildScope);
                     console.log("$rootScope $$scope ", $rootScope.child);
-                    $rootScope.child.getMinQuantityWithNecessaryParts();
+                    $rootScope.child.getCountSets();
                     // $rootScope.getNubmberOfElements();
                     // console.log(" grid before ", grid);
                     // console.log(" dataFilterNecessary ", dataFilterNecessary);

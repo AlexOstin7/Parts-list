@@ -26,7 +26,7 @@ public interface PartService {
 
     Long getNubmerOfParts();
 
-    Integer getMinQuantityWithNecessaryParts();
+    Integer getCountSets();
 
     Page<Part> findPaginated(int page, int size);
 
