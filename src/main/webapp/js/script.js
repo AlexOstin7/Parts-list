@@ -264,12 +264,12 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
     };
     var getNubmberOfElements = function () {
         var urlGetNumberOfParts = '/part/number1';
-        $rootScope.operation = "Получение общего количество элементов в базе "
+        $scope.operation = "Получение общего количество элементов в базе "
         $http.get(urlGetNumberOfParts, config, $scope)
             .then(function (response) {
                 console.log("getNumberOfElements ", response.data);
                 if (response.data.result == "success") {
-                    $scope.addAlert("success", $rootScope.operation + "УСПЕШНО" );
+                    $scope.addAlert("success", $scope.operation + "УСПЕШНО" );
 
                     console.log("getNumberOfParts success ", response.data.data);
                     console.log("getNumberOfParts success numberOfItemsOnPage ", vm.numberOfItemsOnPage);
@@ -278,11 +278,11 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                     vm.serviceGrid.totalItems = response.data.data;
                 } else {
                     // $rootScope.resultMessage = response.data.error;
-                    $scope.addAlert("warning", $rootScope.operation + " " + response.data.error);
+                    $scope.addAlert("warning", $scope.operation + " " + response.data.error);
 
                 }
             }, function (response) {
-                $scope.addAlert("danger", $rootScope.operation + " " + "ОШИБКА " + response.data.status + " " + response.data.error);
+                $scope.addAlert("danger", $scope.operation + " " + "ОШИБКА " + response.data.status + " " + response.data.error);
 
                 // $rootScope.resultMessage = response.data.error;
             });
@@ -363,13 +363,14 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         var url = "/part/min";
         console.log("<<<<<<<<<< getCountSets");
         console.log("$rootScope.resultMessage 1", $rootScope.resultMessage);
+        $scope.operation = "Вычисление ";
+
         // $rootScope.resultMessage = "";
         if ($rootScope.resultMessage == 'success') {
             $http.get(url, config, $scope)
                 .then(function (response) {
-                    $rootScope.operation = "Вычисление";
                     $rootScope.resultMessage = response.data.result;
-                    $scope.addAlert(response.data.result, $rootScope.operation);
+                    $scope.addAlert(response.data.result, $scope.operation);
 
                     console.log("response  ", response.data);
                     console.log("$rootScope.resultMessage  ", $rootScope.resultMessage);
@@ -473,7 +474,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         console.log(" url ", url);
         vm.necessary = $scope.filterTerm;
         // $rootScope.resultMessage = "";
-        $rootScope.operation = "Чтение страницы " + vm.currentPageNumber + " размером в " + vm.numberOfItemsOnPage + " элемнтов ";
+        $scope.operation = "Чтение страницы " + vm.currentPageNumber + " размером в " + vm.numberOfItemsOnPage + " элемнтов ";
 
         $http.get(url, config)
             .then(function (response) {
@@ -483,7 +484,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                 // $scope.addAlert(response.data.result, $rootScope.operation);
                 // popup();
                 if (response.data.result == "success") {
-                    $scope.addAlert("success", $rootScope.operation + "УСПЕШНО" );
+                    $scope.addAlert("success", $scope.operation + "УСПЕШНО" );
 
                     console.log("$rootScope.resultMessage ", $rootScope.resultMessage);
                     vm.serviceGrid.data = response.data.data.content;
@@ -502,13 +503,13 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                     // $scope.getCountSets();
                 } else {
                     // $rootScope.resultMessage = response.data.error;
-                    $scope.addAlert("warning", $rootScope.operation + " " + response.data.error);
+                    $scope.addAlert("warning", $scope.operation + " " + response.data.error);
 
                 }
             }, function (response) {
                 // $rootScope.resultMessage = response.data.error;
                 console.log(">>>>>> getCurrentPage then  ", response.data);
-                $scope.addAlert("warning", $rootScope.operation + " " + response.data.error);
+                $scope.addAlert("warning", $scope.operation + " " + response.data.error);
 
             });
         console.log(">>>>>>> getCurrentPage");
@@ -575,7 +576,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                     console.log("offsetRow ", vm.rowOffset);
                 }*/
 
-        $rootScope.operation = "Удаление ";
+        $scope.operation = "Удаление ";
 
         $http.get(url, config)
             .then(function (response) {
@@ -586,7 +587,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                 // console.log("delete then  response.data.resultMessage", response.data.resultMessage);
                 $rootScope.resultMessage = response.data.result;
                 if (response.data.result == "success") {
-                    $scope.addAlert("success", $rootScope.operation );
+                    $scope.addAlert("success", $scope.operation );
 
                     console.log("delete success ", response.data);
                     console.log("vm.serviceGrid before ", vm.serviceGrid);
@@ -626,20 +627,20 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                     console.log("delete else", response.data.error);
                     console.log("delete else response 0", response.data);
                     // $rootScope.resultMessage = response.data.error;
-                    $scope.addAlert("warning", $rootScope.operation + " " + response.data.error);
+                    $scope.addAlert("warning", $scope.operation + " " + response.data.error);
 
                 }
             }, function (response) {
                 console.log("delete funtion response", response.data );
                 // $rootScope.operation += response.data.error;
-                console.log("delete funtion response 1", $rootScope.operation  );
+                console.log("delete funtion response 1", $scope.operation  );
                 // $rootScope.resultMessage = "danger";
-                $scope.addAlert("danger", $rootScope.operation + " " + "ОШИБКА " + response.data.status + " " + response.data.error);
+                $scope.addAlert("danger", $scope.operation + " " + "ОШИБКА " + response.data.status + " " + response.data.error);
 
             })
         // $scope.addAlert("danger", $rootScope.operation);
         // $scope.addAlert($rootScope.resultMessage, $rootScope.operation);
-        console.log("delete funtion response 2", $rootScope.resultMessage, $rootScope.operation  );
+        console.log("delete funtion response 2", $rootScope.resultMessage, $scope.operation  );
 
 
     };
@@ -842,7 +843,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
 
             $http.post(urlAdd, data, config).then(function (response) {
                 $rootScope.resultMessage = response.data.result;
-                $rootScope.operation = "Добавление "
+                $scope.operation = "Добавление "
                 if (response.data.result == "success") {
                     $rootScope.child.getCountSets();
                     console.log("----------- add >>>>>>>>>>>> ");
@@ -918,7 +919,7 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
             $http.post(urlUpDate, data, config).then(function (response) {
 
                 $rootScope.resultMessage = response.data.result;
-                $rootScope.operation = "Обновление ";
+                $scope.operation = "Обновление ";
                 if (response.data.result == "success") {
                     vm.totalItems = 1;
                     $modalInstance.close(row.entity);
