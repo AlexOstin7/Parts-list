@@ -38,7 +38,7 @@ public class PartControllerImpl implements PartController {
        @ApiResponses(value = {
                @ApiResponse(code = 200, message = "Success", response = String.class),
                @ApiResponse(code = 404, message = "Not Found"),
-               @ApiResponse(code = 405, message = "I don't know"),
+               @ApiResponse(code = 405, message = "Method Not Allowed"),
                @ApiResponse(code = 500, message = "Failure")})
        @RequestMapping(value = "/part/list", method = {POST})
        public Response filterParts(@RequestBody PartFilterView part) {
@@ -51,7 +51,7 @@ public class PartControllerImpl implements PartController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = String.class),
             @ApiResponse(code = 404, message = "Not Found"),
-            @ApiResponse(code = 405, message = "I don't know"),
+            @ApiResponse(code = 405, message = "Method Not Allowed"),
             @ApiResponse(code = 500, message = "Failure")})
     @RequestMapping(value = "/add", method = {POST})
     public Response addPart(@RequestBody PartView part) {
@@ -65,8 +65,8 @@ public class PartControllerImpl implements PartController {
     @ApiOperation(value = "deletePartById", nickname = "deletePartById", httpMethod = "POST")
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = String.class),
-            @ApiResponse(code = 404, message = "404 -Not Found"),
-            @ApiResponse(code = 405, message = "I don't know"),
+            @ApiResponse(code = 404, message = "Not Found"),
+            @ApiResponse(code = 405, message = "Method Not Allowed"),
             @ApiResponse(code = 500, message = "Failure")})
     @RequestMapping(value = "/delete/{id}", method = {GET})
     public Response deletePart(@PathVariable(value = "id") Long id) {
@@ -103,7 +103,7 @@ public class PartControllerImpl implements PartController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Success", response = String.class),
             @ApiResponse(code = 404, message = "Not Found"),
-            @ApiResponse(code = 405, message = "I don't know"),
+            @ApiResponse(code = 405, message = "Method Not Allowed"),
             @ApiResponse(code = 500, message = "Failure")})
     @RequestMapping(value = "/update", method = {POST})
     public Response updatePart(@RequestBody PartView part) {
