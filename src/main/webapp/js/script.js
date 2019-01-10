@@ -1,20 +1,15 @@
 //10.01.2019
-var app = angular.module('parts-list',  ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.pinning', 'ui.grid.moveColumns', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.bootstrap', 'ui.grid.edit', 'ui.grid.pagination', 'schemaForm'])
+var app = angular.module('parts-list', ['ui.grid', 'ui.bootstrap','ui.grid.pagination', 'schemaForm'])
     .constant('PersonSchema', {
         type: 'object',
         properties: {
             id: {type: 'string', editable: false, title: 'ID', "default": "0", nullable: false, "readOnly": true},
             component: {
-                type: 'string', title: 'Наименование', "default": "Franc", "minLength": 1, "maxLength": 100,
-                "validationMessage": "Введите наименование размером от 0 до 100 символов!"/*, validation: {
-                    required: true,
-                    customRule: function (input) {
-                        alert('bad data');
-                    }
-                }*/
+                type: 'string', title: 'Наименование', "minLength": 1, "maxLength": 100,
+                "validationMessage": "Введите наименование размером от 0 до 100 символов!"
             },
             quantity: {
-                type: 'integer', title: 'Количество', "default": 25, "minimum": 1, "maximum": 2147483647
+                type: 'integer', title: 'Количество', "default": 1, "minimum": 1, "maximum": 2147483647
                 // validation: {
                     // required: true,
                     /*customRule: function (input) {
@@ -153,17 +148,17 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
             /* vm.serviceGrid.totalPage = Math.ceil(vm.serviceGrid.totalItems / pageSize);
              console.log("Received: pageNumber=" + newPage + ", pageSize= " + pageSize, " total pages ", vm.serviceGrid.totalPage);*/
         });
-        vm.msg = {};
-        vm.serviceGrid.currentFocused = "";
-        gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
-            vm.msg.lastCellEdited = 'edited row id:' + rowEntity.id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue + " propName " + rowEntity.name;
-            console.log("rowEntity cell edit", rowEntity);
-            // $scope.addRow();
-            // postUpdatePart($scope, rowEntity);
-            // $scope.updateRow(rowEntity);
-            $scope.$apply();
-
-        });
+        // vm.msg = {};
+        // vm.serviceGrid.currentFocused = "";
+        // gridApi.edit.on.afterCellEdit($scope, function (rowEntity, colDef, newValue, oldValue) {
+        //     vm.msg.lastCellEdited = 'edited row id:' + rowEntity.id + ' Column:' + colDef.name + ' newValue:' + newValue + ' oldValue:' + oldValue + " propName " + rowEntity.name;
+        //     console.log("rowEntity cell edit", rowEntity);
+        //     // $scope.addRow();
+        //     // postUpdatePart($scope, rowEntity);
+        //     // $scope.updateRow(rowEntity);
+        //     $scope.$apply();
+        //
+        // });
     };
 
     vm.serviceGrid.columnDefs = [
