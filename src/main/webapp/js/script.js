@@ -1,11 +1,11 @@
 //10.01.2019
-var app = angular.module('influx',  ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.pinning', 'ui.grid.moveColumns', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.bootstrap', 'ui.grid.edit', 'ui.grid.pagination', 'schemaForm'])
+var app = angular.module('parts-list',  ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.pinning', 'ui.grid.moveColumns', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.bootstrap', 'ui.grid.edit', 'ui.grid.pagination', 'schemaForm'])
     .constant('PersonSchema', {
         type: 'object',
         properties: {
             id: {type: 'string', editable: false, title: 'ID', "default": "0", nullable: false, "readOnly": true},
             component: {
-                type: 'string', title: 'Component', "default": "Franc", "minLength": 1, "maxLength": 100,
+                type: 'string', title: 'Наименование', "default": "Franc", "minLength": 1, "maxLength": 100,
                 "validationMessage": "Введите наименование размером от 0 до 100 символов!"/*, validation: {
                     required: true,
                     customRule: function (input) {
@@ -14,7 +14,7 @@ var app = angular.module('influx',  ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid
                 }*/
             },
             quantity: {
-                type: 'integer', title: 'Quantity', "default": 25, "minimum": 1, "maximum": 2147483647
+                type: 'integer', title: 'Количество', "default": 25, "minimum": 1, "maximum": 2147483647
                 // validation: {
                     // required: true,
                     /*customRule: function (input) {
@@ -175,9 +175,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
             enableCellEdit: false,
             type: 'string',
             enableFiltering: false,
-            cellTooltip: function (row) {
+            cellTooltip: true,
+            /*cellTooltip: function (row) {
                 return row.entity.title;
-            },
+            },*/
             cellTemplate: '<div  style="text-align:left" white-space: normal title="TOOLTIP">{{COL_FIELD CUSTOM_FILTERS}}</div>',
             filter: {
                 /*noTerm: true,*/
@@ -194,7 +195,8 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
             width: '15%',
             enableCellEdit: false,
             type: 'number',
-            enableFiltering: false
+            enableFiltering: false,
+            cellTooltip: true
         },
         {
             name: 'necessary',

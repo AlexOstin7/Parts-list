@@ -2,160 +2,49 @@
 
 <head>
     <meta charset="utf-8">
-    <!--<link rel="styleSheet" href="http://ui-grid.info/release/ui-grid.min.css"/>-->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular-animate.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.6/angular-touch.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/angular-ui-grid/4.6.6/ui-grid.pinning.min.js"></script>
-    <!--<script src="http://ui-grid.info/release/ui-grid.js"></script>
-    <script src="http://angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.13.4.js"></script>-->
-
-   <!-- <script src="https://cdn.rawgit.com/mike-marcacci/objectpath/v1.1.0/lib/ObjectPath.js"></script>
-    <script src="https://cdn.rawgit.com/geraintluff/tv4/v1.1.9/tv4.min.js"></script>
-    <script src="https://cdn.rawgit.com/Textalk/angular-schema-form/0.8.0/dist/schema-form.js"></script>
-    <script src="https://cdn.rawgit.com/Textalk/angular-schema-form/0.8.0/dist/bootstrap-decorator.js"></script>
--->
     <link rel="styleSheet" href="/css/ui-grid.min.css"/>
-    <!--<link rel="stylesheet" href="/css/bootstrap.min.css">-->
     <link rel="stylesheet" href="/css/main.css">
-
-   <!-- <script src="/js/angularjs/1.4.6/angular.min.js"></script>
-    <script src="/js/angularjs/1.4.6/angular-animate.min.js"></script>
-    <script src="/js/angularjs/1.4.6/angular-touch.min.js"></script>
--->
     <script src="/js/grid/ui-grid.js"></script>
     <script src="/js/grid/ui-bootstrap-tpls-0.13.4.js"></script>
     <script src="/js/grid/ObjectPath.js"></script>
     <script src="/js/grid/tv4.min.js"></script>
     <script src="/js/grid/schema-form.js"></script>
     <script src="/js/grid/bootstrap-decorator.js"></script>
-
-
     <script src="/js/script.js"></script>
     <meta charset="utf-8">
 
 </head>
 
-<body ng-app="influx">
+<body ng-app="parts-list">
 
 <div ng-controller="MainCtrl as vm"  align="center">
-
-   <!-- <table style="width:50%" align="center" border="1">
-        <p>Фильтр</p>
-        <tr>
-            <th align="center" width="20%"> Детали в списке: </th>
-            <th align="left">
-                <ng-if ng-if="filterTerm === 'true'">необходимые для сборки</ng-if>
-                <ng-if ng-if="filterTerm === 'false'">опциональные</ng-if>
-                <ng-if ng-if="filterTerm == 'undefined'">ВСЕ</ng-if>
-            </th>
-
-        </tr>
-    </table>-->
-
-
-
-<!--
-    </br>
-    <br>
-    Фильтр {{filterTerm}}
-    Поиск {{searchTerm}}
-    </br>
-    <br>-->
-    <table style="width:50%" align="center" border="1">
-        <p>Результат операции</p>
-        <tr>
-            <th align="center" width="40%">
-                {{operation}}
-            </th>
-            <th align="left">
-                <ng-if ng-if="resultMessage == 'success'">УСПЕШНО</ng-if>
-                <ng-if ng-if="resultMessage != 'success'">ОШИБКА {{resultMessage}}</ng-if>
-            </th>
-        </tr>
-    </table>
-    <!--ng-if="show"-->
-    <!--<alert type="danger" close="closeAlert()" ng-if="operation == 'Вычисление'"
-           dismiss-on-timeout="2000">Result {{resultMessage}}</alert>-->
 <div style="width: 100%; height: 250px; overflow: auto;">
     <alert ng-repeat="alert in alerts" dismiss-on-timeout="5000" type="{{alert.type}}" close="closeAlert()">{{alert.msg}}</alert>
-
 </div >
-   <!-- <div class="popup">
-        <span class="popuptext" id="myPopup">{{operation}}</span>
-    </div>-->
-    <!--<div class="popup">-->
-        <!--<h2>Close Alerts Via JavaScript</h2>-->
-        <!--<div class="alert alert-success alert-dismissible" id="myPopup">-->
-            <!--<a href="#" class="close">&times;</a>-->
-            <!--<strong>Success!</strong> This alert box could indicate a successful or positive action.-->
-        <!--</div>-->
-    <!--</div>-->
-
-    <!--<p> Результат {{operation}}<ng-if ng-if="resultMessage == ''">УСПЕШНО</ng-if>{{resultMessage}}</p>
-    <ng-if ng-if="filterTerm == 'undefined'">ВСЕ</ng-if>
-    </br>
--->
-  <!--  <h3>Custom Filter Example</h3>
-    <div>Custom Component Filter: <input type="text" >
-        <button ng-click="filterComponent()">Filter By Component</button>
-
-    </div>
-
-    <div>Custom necessary Filter: <input type="text" ng-model="searchTerm">
-        <button ng-click="getCurrentPageFilterNecessary(searchTerm)" >Filter By Necessary</button>
-        &lt;!&ndash;<button ng-click="searchGrid(searchTerm)" ng-model="searchTerm">Filter By Necessary</button>&ndash;&gt;
-        <br>
-        term {{filterTerm}}
-        </br>
-        <button ng-click="filterReset()">Reset</button>
-    </div>
-
-    <br>
-
-    <div style="padding-left: 10px;">
-        <button type="button" id="addRow" class="btn btn-success" ng-click="addRow()">Add Row</button>
-    </div>-->
     <p>Фильтр Необходимость
         <select ng-model="filterTerm">
             <option value="true">Да</option>
             <option value="false">Нет</option>
         </select>
     </p>
-    <!--<button ng-click="filterTerm ='undefined'">Сбросить фильтр</button>-->
     <button ng-click="filterTerm = 'undefined'; searchTerm=''; vm.currentPageNumber=1; getCurrentPage();  ">Сброс</button>
     <input type="button" value="Применить фильтр" ng-click=" searchTerm=''; vm.currentPageNumber=1; getCurrentPage()" >
-    <!--<button ng-click="getCurrentPage()">Сбросить фильтр</button>-->
     <br>
-
     <p>Поиск по наименованию детали
-
     </p>
     <input type="text" ng-model="searchTerm" >
     <button ng-click="filterTerm = 'undefined'; vm.currentPageNumber=1; getCurrentPage()">Поиск</button>
-    <button ng-click="searchGrid()">Поиск2</button>
     <br>
     <br/>
-    <!--ui-grid-move-columns
-		ui-grid-resize-columns
-		ui-grid-pinning
-		ui-grid-exporter
-		ui-grid-auto-resize-->
-    <ui-grid-pagination class="grid" id="serviceGrid"
-
-                        ui-grid-auto-resize
-                        ui-grid-cellNav
-                        ui-grid-selection
-                        ui-grid-edit
-                        external-scopes="gridHandlers"
-                        style="width:50%"
-                        ui-grid="vm.serviceGrid">
-
+    <ui-grid-pagination class="grid" id="serviceGrid" ui-grid="vm.serviceGrid">
     </ui-grid-pagination>
     <p>Можно собрать {{min}}</p>
 </div>
 
 </body>
-
 </html>
