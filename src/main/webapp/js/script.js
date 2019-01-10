@@ -1,4 +1,4 @@
-//08.01.2019
+//10.01.2019
 var app = angular.module('influx',  ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid.pinning', 'ui.grid.moveColumns', 'ui.grid.selection', 'ui.grid.resizeColumns', 'ui.bootstrap', 'ui.grid.edit', 'ui.grid.pagination', 'schemaForm'])
     .constant('PersonSchema', {
         type: 'object',
