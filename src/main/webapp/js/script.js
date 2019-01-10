@@ -6,15 +6,21 @@ var app = angular.module('influx',  ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid
             id: {type: 'string', editable: false, title: 'ID', "default": "0", nullable: false, "readOnly": true},
             component: {
                 type: 'string', title: 'Component', "default": "Franc", "minLength": 1, "maxLength": 100,
-                "validationMessage": "Don't be greedy!"
-            },
-            quantity: {
-                type: 'number', title: 'Quantity', "default": 25, "minimum": 0, "maximum": 9999, validation: {
+                "validationMessage": "Введите наименование размером от 0 до 100 символов!"/*, validation: {
                     required: true,
                     customRule: function (input) {
                         alert('bad data');
                     }
-                }
+                }*/
+            },
+            quantity: {
+                type: 'integer', title: 'Quantity', "default": 25, "minimum": 1, "maximum": 2147483647
+                // validation: {
+                    // required: true,
+                    /*customRule: function (input) {
+                        alert('bad data');
+                    }*/
+                // }
             },
 
             /*   necessary: { type: 'string', title: 'Necessary', "default": true },*/
@@ -23,7 +29,11 @@ var app = angular.module('influx',  ['ngTouch', 'ngAnimate', 'ui.grid', 'ui.grid
                 type: 'boolean',
                 "default": true
             }
-        }
+        },
+        required: [
+            "component",
+            "quantity"
+        ]
 
     })
 
@@ -667,6 +677,8 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
     console.log("RowEditCtrl vm.currentPageNumber", vm.currentPageNumber);
 
     vm.schema = PersonSchema;
+    console.log("row.entity 1", row.entity);
+
     vm.entity = angular.copy(row.entity);
     vm.form = [
         'id',
@@ -686,6 +698,11 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
     vm.grid = grid;
     vm.row = row;
 
+    console.log("vm.schema", vm.schema);
+    console.log("vm.form", vm.form);
+    console.log("vm.grid", vm.grid);
+    console.log("vm.row", vm.row);
+
     vm.save = save;
 
     function save() {
@@ -697,151 +714,189 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
         console.log("rowEditCtrel add vm.currentPageNumber ", vm.currentPageNumber);
         console.log("rowEditCtrel add filterTerm", filterTerm);
         console.log("rowEditCtrel add searchTerm", searchTerm);
-        if (row.entity.id == '0') {
 
-            row.entity = angular.extend(row.entity, vm.entity);
-            // grid.data.push(row.entity);
-            console.log("rowEditCtrel row.entity after", row.entity);
-            console.log("grid data ", grid.data, " grid ", grid);
-            console.log("grid data index", grid.data.indexOf(row.entity), " grid ", grid);
-            var data = {
-                component: row.entity.component,
-                quantity: row.entity.quantity,
-                necessary: row.entity.necessary
-            };
+        console.log("vm.schema ", vm.schema);
+        console.log("vm.entity ", vm.entity);
+        console.log("row.entity ", row.entity);
+        console.log("row.entity.component ", row.entity.component);
+        console.log("row.entity.qu ", row.entity.quantity);
+        // console.log("vm.form.$valid ", vm.form.$valid);
+        // console.log("row.entity.$valid ", row.entity.$valid);
+        console.log("if ", (( (!angular.isUndefined(vm.entity.component)) && (vm.entity.quantity ) )));
+        console.log("if 1 ", !angular.isUndefined(vm.entity.component) );
+        console.log("if 2 ", vm.entity.quantity  );
 
-            $http.post(urlAdd, data, config).then(function (response) {
-                $rootScope.resultMessage = response.data.result;
-                // $scope.operation = "Добавление "
-                if (response.data.result == "success") {
-                    $rootScope.child.addAlert("success", "Добавление УПЕШНО ");
-                    $rootScope.child.getCountSets();
-                    console.log("----------- add >>>>>>>>>>>> ");
-                    vm.totalItems = 1;
-                    $modalInstance.close(row.entity);
-                    // grid.paginationCurrentPage = Math.ceil(grid.totalItems / grid.paginationPageSize);
+        if ( !angular.isUndefined(vm.entity.component) && vm.entity.quantity) {
+            if (row.entity.id == '0') {
 
-                    console.log("response.data.data.id ", response.data);
-                    row.entity.id = response.data.data;
+                row.entity = angular.extend(row.entity, vm.entity);
+                // grid.data.push(row.entity);
+                console.log("rowEditCtrel row.entity after", row.entity);
+                console.log("grid data ", grid.data, " grid ", grid);
+                console.log("grid data index", grid.data.indexOf(row.entity), " grid ", grid);
+                var data = {
+                    component: row.entity.component,
+                    quantity: row.entity.quantity,
+                    necessary: row.entity.necessary
+                };
+                console.log("data post ", data);
 
-                    console.log(" dataFilterNecessary ", dataFilterNecessary);
-                    console.log(" row.entity.necessary ", row.entity.necessary);
-                    console.log(" edit filterTerm ", filterTerm);
-                    console.log(" edit searchTerm ", searchTerm);
-                    console.log(" edit searchTerm == row.entity.component ", searchTerm == row.entity.component);
-                    console.log(" ((((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == \"\" ) ||\n" +
-                        "                        (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase())))",
-                        (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
-                            (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase())))
-                    );                 // console.log(" filterTerm ", filterTerm, "--- ",filterTerm);
-                    // if (dataFilterNecessary == 'undefined') {
-                    //     console.log(" flagFilterNecessary == true");
-                    //
-                    if (filterTerm == "true") {
-                        filterTerm = true;
-                    } else if (filterTerm == "false") {
-                        filterTerm = false;
-                    }
-                    if (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
-                        (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase()))) {
+                /* var validate = jsen(schema);
 
-                        grid.data.push(row.entity);
-                        grid.totalItems += 1;
-                        if (grid.data.length > grid.paginationPageSize) {
-                            grid.paginationCurrentPage = Math.ceil(grid.totalItems / grid.paginationPageSize);
+                 validate({});
+
+                 console.log("validate", validate);
+                 console.log("validate.errors", validate.errors);*/
+
+                /*
+                            var Ajv = require('ajv');
+                            var ajv = Ajv({allErrors: true});
+                            // var valid = ajv.validate(userSchema, userData);
+                            var valid = ajv.validate(vm.schema, row.entity);
+                            if (valid) {
+                                console.log('User data is valid');
+                            } else {
+                                console.log('User data is INVALID!');
+                                console.log(ajv.errors);
+                            }*/
+                $http.post(urlAdd, data, config).then(function (response) {
+                    $rootScope.resultMessage = response.data.result;
+                    // $scope.operation = "Добавление "
+                    if (response.data.result == "success") {
+                        $rootScope.child.addAlert("success", "Добавление УПЕШНО ");
+                        $rootScope.child.getCountSets();
+                        console.log("----------- add >>>>>>>>>>>> ");
+                        vm.totalItems = 1;
+
+
+                        $modalInstance.close(row.entity);
+                        console.log("$modalInstance ", $modalInstance);
+                        // grid.paginationCurrentPage = Math.ceil(grid.totalItems / grid.paginationPageSize);
+
+                        console.log("response.data.data.id ", response.data);
+                        row.entity.id = response.data.data;
+
+                        console.log(" dataFilterNecessary ", dataFilterNecessary);
+                        console.log(" row.entity.necessary ", row.entity.necessary);
+                        console.log(" edit filterTerm ", filterTerm);
+                        console.log(" edit searchTerm ", searchTerm);
+                        console.log(" edit searchTerm == row.entity.component ", searchTerm == row.entity.component);
+                        console.log(" ((((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == \"\" ) ||\n" +
+                            "                        (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase())))",
+                            (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
+                                (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase())))
+                        );                 // console.log(" filterTerm ", filterTerm, "--- ",filterTerm);
+                        // if (dataFilterNecessary == 'undefined') {
+                        //     console.log(" flagFilterNecessary == true");
+                        //
+                        if (filterTerm == "true") {
+                            filterTerm = true;
+                        } else if (filterTerm == "false") {
+                            filterTerm = false;
                         }
-                        console.log("  add in grid ", grid);
-                    }
-                    // }
+                        if (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
+                            (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase()))) {
 
+                            grid.data.push(row.entity);
+                            grid.totalItems += 1;
+                            if (grid.data.length > grid.paginationPageSize) {
+                                grid.paginationCurrentPage = Math.ceil(grid.totalItems / grid.paginationPageSize);
+                            }
+                            console.log("  add in grid ", grid);
+                        }
+                        // }
 
-                } else {
-                    $rootScope.resultMessage = response.data.error;
-                    $scope.addAlert("waring", "Добавление ОШИБКА КЛИЕНТА " + response.data.error);
-
-                }
-                console.log("----------- add <<<<<<<<<<<<<<<<");
-            }, function (response) {
-                $rootScope.resultMessage = response.data.error;
-                $scope.addAlert("danger", "Добавление ОШИБКА СЕРВЕРА " + response.data.error);
-
-            });
-
-            /*
-             * $http.post('http://localhost:8080/service/save', row.entity).success(function(response) { $modalInstance.close(row.entity); }).error(function(response) { alert('Cannot edit row (error in console)'); console.dir(response); });
-             */
-            console.log("rowEditCtrel row.entity ", row.entity);
-            // grid.data.push(row.entity);
-
-        } else {
-            console.log("update id <> 0 ", row.entity);
-            console.log(" update vm.entity before ", vm.entity, "row.entity ", row.entity);
-            row.entity = angular.extend(row.entity, vm.entity);
-            console.log(" update vm.entity after", vm.entity, "row.entity ", row.entity);
-            var data = {};
-            data = angular.copy(row.entity);
-            // var dataFilter
-            /*var data = {
-                id: row.entity.id,
-                component: row.entity.component,
-                quantity: row.entity.quantity,
-                necessary: row.entity.necessary
-            };*/
-            /*
-             * $http.post('http://localhost:8080/service/save', row.entity).success(function(response) { $modalInstance.close(row.entity); }).error(function(response) { alert('Cannot edit row (error in console)'); console.dir(response); });
-             */
-            $http.post(urlUpDate, data, config).then(function (response) {
-
-                $rootScope.resultMessage = response.data.result;
-                if (response.data.result == "success") {
-                    $rootScope.child.addAlert("success", "Обновление УПЕШНО ");
-                    vm.totalItems = 1;
-                    $modalInstance.close(row.entity);
-                    console.log("----------- update >>>>>>>>>>>>>>>>>>>>>>>");
-                    console.log("$rootScope", $rootScope);
-                    console.log("$rootScope $$ChildScope", $rootScope.$$ChildScope);
-                    console.log("$rootScope $$scope ", $rootScope.child);
-                    $rootScope.child.getCountSets();
-                    // $rootScope.getNubmberOfElements();
-                    // console.log(" grid before ", grid);
-                    // console.log(" dataFilterNecessary ", dataFilterNecessary);
-                    // console.log(" flagFilterNecessary ", flagFilterNecessary);
-                    // console.log(" row.entity.necessary ", row.entity.necessary);
-                    /*if (flagSearchComponent) {
-
-                    } else {*/
-                    console.log(" row.entity.necessary ", row.entity.necessary);
-                    console.log(" edit filterTerm ", filterTerm);
-                    console.log(" if update ", (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
-                        (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase()))));
-                    // if (filterTerm == row.entity.necessary || filterTerm == 'undefined') {
-                    if (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
-                        (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase()))) {
-                        grid.data[grid.data.indexOf(row.entity)] = angular.copy(row.entity);
-                        console.log("  stay in grid ", grid);
 
                     } else {
-
-                        var index = grid.data.indexOf(row.entity);
-                        grid.data.splice(index, 1);
-                        // grid.totalItems -= 1;
-                        console.log(" delete from grid ", grid);
+                        $rootScope.resultMessage = response.data.error;
+                        $rootScope.child.addAlert("waring", "Добавление ОШИБКА КЛИЕНТА " + response.data.error);
 
                     }
-                } else {
+                    console.log("----------- add <<<<<<<<<<<<<<<<");
+                }, function (response) {
                     $rootScope.resultMessage = response.data.error;
-                    $scope.addAlert("waring", "Обновление ОШИБКА КЛИЕНТА " + response.data.error);
+                    $rootScope.child.addAlert("danger", "Добавление ОШИБКА СЕРВЕРА " + response.data.error);
 
-                }
-                console.log("----------- update <<<<<<<<<<<<<<<<<<<<<<<<< ");
+                });
 
-            }, function (response) {
-                $rootScope.resultMessage = response.data.error;
-                $scope.addAlert("waring", "Обновление ОШИБКА СЕРВЕРА " + response.data.error);
+                /*
+                 * $http.post('http://localhost:8080/service/save', row.entity).success(function(response) { $modalInstance.close(row.entity); }).error(function(response) { alert('Cannot edit row (error in console)'); console.dir(response); });
+                 */
+                console.log("rowEditCtrel row.entity ", row.entity);
+                // grid.data.push(row.entity);
 
-            });
-            $modalInstance.close(row.entity);
-        }
+            } else {
+                console.log("update id <> 0 ", row.entity);
+                console.log(" update vm.entity before ", vm.entity, "row.entity ", row.entity);
+                row.entity = angular.extend(row.entity, vm.entity);
+                console.log(" update vm.entity after", vm.entity, "row.entity ", row.entity);
+                var data = {};
+                data = angular.copy(row.entity);
+                // var dataFilter
+                /*var data = {
+                    id: row.entity.id,
+                    component: row.entity.component,
+                    quantity: row.entity.quantity,
+                    necessary: row.entity.necessary
+                };*/
+                /*
+                 * $http.post('http://localhost:8080/service/save', row.entity).success(function(response) { $modalInstance.close(row.entity); }).error(function(response) { alert('Cannot edit row (error in console)'); console.dir(response); });
+                 */
+                $http.post(urlUpDate, data, config).then(function (response) {
+
+                    $rootScope.resultMessage = response.data.result;
+                    if (response.data.result == "success") {
+                        $rootScope.child.addAlert("success", "Обновление УПЕШНО ");
+                        vm.totalItems = 1;
+                        $modalInstance.close(row.entity);
+                        console.log("----------- update >>>>>>>>>>>>>>>>>>>>>>>");
+                        console.log("$rootScope", $rootScope);
+                        console.log("$rootScope $$ChildScope", $rootScope.$$ChildScope);
+                        console.log("$rootScope $$scope ", $rootScope.child);
+                        $rootScope.child.getCountSets();
+                        // $rootScope.getNubmberOfElements();
+                        // console.log(" grid before ", grid);
+                        // console.log(" dataFilterNecessary ", dataFilterNecessary);
+                        // console.log(" flagFilterNecessary ", flagFilterNecessary);
+                        // console.log(" row.entity.necessary ", row.entity.necessary);
+                        /*if (flagSearchComponent) {
+
+                        } else {*/
+                        console.log(" row.entity.necessary ", row.entity.necessary);
+                        console.log(" edit filterTerm ", filterTerm);
+                        console.log(" if update ", (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
+                            (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase()))));
+                        // if (filterTerm == row.entity.necessary || filterTerm == 'undefined') {
+                        if (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
+                            (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase()))) {
+                            grid.data[grid.data.indexOf(row.entity)] = angular.copy(row.entity);
+                            console.log("  stay in grid ", grid);
+
+                        } else {
+
+                            var index = grid.data.indexOf(row.entity);
+                            grid.data.splice(index, 1);
+                            // grid.totalItems -= 1;
+                            console.log(" delete from grid ", grid);
+
+                        }
+                    } else {
+                        $rootScope.resultMessage = response.data.error;
+                        $scope.addAlert("waring", "Обновление ОШИБКА КЛИЕНТА " + response.data.error);
+
+                    }
+                    console.log("----------- update <<<<<<<<<<<<<<<<<<<<<<<<< ");
+
+                }, function (response) {
+                    $rootScope.resultMessage = response.data.error;
+                    $rootScope.child.addAlert("waring", "Обновление ОШИБКА СЕРВЕРА " + response.data.error);
+
+                });
+                console.log("vm.form.$valid ", vm.form.$valid);
+
+                // $modalInstance.close(row.entity);
+            }
+    }
 
         vm.remove = remove;
 
