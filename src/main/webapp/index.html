@@ -23,7 +23,7 @@
 <body ng-app="parts-list">
 
 <div ng-controller="MainCtrl as vm"  align="center">
-<div style="width: 100%; height: 250px; overflow: auto;">
+<div style="width: 100%; height: 150px; overflow: auto;">
     <alert ng-repeat="alert in alerts" dismiss-on-timeout="5000" type="{{alert.type}}" close="closeAlert()">{{alert.msg}}</alert>
 </div >
     <p>Фильтр Необходимость
