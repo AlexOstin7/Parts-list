@@ -8,7 +8,6 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @ImportResource("spring_mvc_config.xml")
 @SpringBootApplication
-//@ComponentScan(basePackageClasses = {DummyControllerImpl.class, DummyServiceImpl.class, PersonDAOImpl.class})
 public class Application {
 
     public static void main(String[] args) {

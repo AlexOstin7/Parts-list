@@ -12,8 +12,6 @@ import java.util.List;
 
 public interface PartService {
 
-    List<Part> getAllParts();
-
     Part getPartById(Long id);
 
     Long addPart(PartView partView);
@@ -21,10 +19,6 @@ public interface PartService {
     void deletePart(Long id);
 
     void updatePart(PartView partView);
-
-    /*Page<Part> getAllByPage(Pageable pageable);*/
-
-    Long getNubmerOfParts();
 
     Integer getCountSets();
 
@@ -40,12 +34,4 @@ public interface PartService {
 
     Page<Part> findPaginated(int page, int size, String component);
 
-/*
-    Page<Part> findAllPartsByPage(Pageable pageable);
-
-    Page<Part> search(String term, int printYear, Pageable pageable);
-    Page<Part> search(String term, int printYear, boolean readAlReady, Pageable pageable);
-*/
-
-//    Part uploadFileData(Part part, MultipartFile file) throws IOException;
 }

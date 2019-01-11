@@ -1,5 +1,4 @@
-//10.01.2019
-var app = angular.module('parts-list', ['ui.grid', 'ui.bootstrap','ui.grid.pagination', 'schemaForm'])
+var app = angular.module('parts-list', ['ui.grid', 'ui.bootstrap', 'ui.grid.pagination', 'schemaForm'])
     .constant('PersonSchema', {
         type: 'object',
         properties: {
@@ -46,7 +45,6 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
     vm.rowOffset = {};
     vm.editRow = RowEditor.editRow;
     vm.numberOfItemsOnPage = 10;
-    // vm.size = 10;
     vm.currentPageNumber = 1;
     dataFilterNecessary = 'undefined';
     vm.serviceGrid = {
@@ -61,7 +59,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
         paginationPageSize: vm.numberOfItemsOnPage,
         enableHorizontalScrollbar: true,
         enableVerticalScrollbar: true,
-        // minRowsToShow: 14,
+        minRowsToShow: 14,
         enableFiltering: true,
         enableColumnMenus: false,
         useExternalPagination: true,
@@ -136,10 +134,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
             '</button>'
         }
     ];
-    $scope.addAlert = function(type, message) {
+    $scope.addAlert = function (type, message) {
         $scope.alerts.push({type: type, msg: message});
     };
-    $scope.closeAlert = function(index) {
+    $scope.closeAlert = function (index) {
         $scope.alerts.splice(index, 1);
     };
 
@@ -159,10 +157,10 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                     if (response.data.result == "success") {
                         $scope.min = response.data.data;
                     } else {
-                        $scope.addAlert("warning", "Вычисление поля можно собрать компьютров ОШИБКА КЛИЕНТА");
+                        $scope.addAlert("warning", "Вычисление поля можно собрать компьютров ОШИБКА КЛИЕНТА " + response.data.error);
                     }
                 }, function (response) {
-                    $scope.addAlert("danger", "Вычисление поля можно собрать компьютров ОШИБКА СЕРВВЕРА");
+                    $scope.addAlert("danger", "Вычисление поля можно собрать компьютров ОШИБКА СЕРВВЕРА " + response.data.error);
                 });
         }
     }
@@ -245,7 +243,7 @@ function MainCtrl($scope, $http, $modal, RowEditor, uiGridConstants, $rootScope)
                         vm.last = true;
                     }
                     if (vm.serviceGrid.paginationCurrentPage > lastPage) {
-                        vm.serviceGrid.paginationCurrentPage --;
+                        vm.serviceGrid.paginationCurrentPage--;
                     }
                     $scope.getCountSets();
                 } else {
@@ -333,8 +331,12 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
     function save() {
         var urlAdd = "/part/add";
         var urlUpDate = "/part/update";
-
-        if ( !angular.isUndefined(vm.entity.component) && vm.entity.quantity) {
+        if (filterTerm == "true") {
+            filterTerm = true;
+        } else if (filterTerm == "false") {
+            filterTerm = false;
+        }
+        if (!angular.isUndefined(vm.entity.component) && vm.entity.quantity) {
             if (row.entity.id == '0') {
                 row.entity = angular.extend(row.entity, vm.entity);
                 var data = {
@@ -347,12 +349,8 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
                     if (response.data.result == "success") {
                         vm.totalItems = 1;
                         $modalInstance.close(row.entity);
+                        $rootScope.child.getCountSets();
                         row.entity.id = response.data.data;
-                        if (filterTerm == "true") {
-                            filterTerm = true;
-                        } else if (filterTerm == "false") {
-                            filterTerm = false;
-                        }
                         if (((filterTerm == row.entity.necessary || filterTerm == 'undefined') && searchTerm == "" ) ||
                             (filterTerm == 'undefined' && row.entity.component.toLowerCase().match(searchTerm.toLowerCase()))) {
                             grid.data.push(row.entity);
@@ -395,7 +393,6 @@ function RowEditCtrl($http, $modalInstance, PersonSchema, grid, row, filterTerm,
                     $rootScope.child.addAlert("waring", "Обновление ОШИБКА СЕРВЕРА " + response.data.error);
                 });
             }
-    }
-
+        }
     }
 }

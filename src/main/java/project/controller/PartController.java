@@ -14,11 +14,7 @@ public interface PartController {
 
     Response deletePart(@PathVariable("id") Long id);
 
-    Response parts();
-
     Response getCountSets();
-
-    Response getNumberOfParts();
 
     Response getPartById(@PathVariable("id") Long id) ;
 
@@ -33,7 +29,5 @@ public interface PartController {
     Response findPaginatedFilterNecessary(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("term") boolean necessary);
 
     Response findPaginatedFilterComponent(@RequestParam("page") int page, @RequestParam("size") int size, @RequestParam("term") String component);
-
- /*   Response filterParts(@RequestBody PartFilterView part);*/
 
 }
